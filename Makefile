@@ -5,7 +5,7 @@ MAINTARGET=$(word 1, $(subst _, ,$(TARGET)))
 SUBTARGET=$(word 2, $(subst _, ,$(TARGET)))
 
 GIT_BRANCH=git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,'
-REVISION=git describe --always
+REVISION=$(shell git describe --always)
 
 # set dir and file names
 FW_DIR=$(shell pwd)
