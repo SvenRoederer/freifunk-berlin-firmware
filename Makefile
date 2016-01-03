@@ -149,7 +149,7 @@ firmwares: stamp-clean-firmwares .stamp-firmwares
 	for FEED in `cd $(OPENWRT_DIR); ./scripts/feeds list -n`; do \
 	  FEED_DIR=$(addprefix $(OPENWRT_DIR)/feeds/,$$FEED); \
 	  FEED_GIT_BRANCH_ESC=`cd $$FEED_DIR; $(GIT_BRANCH) | tr '/' '_'`; \
-	  FEED_REVISION=`cd $$FEED_DIR; $(shell $(REVISION))`; \
+	  FEED_REVISION=`cd $$FEED_DIR; $(REVISION)`; \
 	  echo "Feed $$FEED: git branch \"$$FEED_GIT_BRANCH_ESC\", revision $$FEED_REVISION" >> $$VERSION_FILE; \
 	done
 	# copy different firmwares (like vpn, minimal) including imagebuilder
