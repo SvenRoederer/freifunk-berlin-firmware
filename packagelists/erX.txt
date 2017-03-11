@@ -72,3 +72,7 @@ collectd-mod-memory
 
 #VPN
 openvpn-openssl
+
+#GPIO for PoE on ER-X SFP
+kmod-i2c-gpio-custom
+kmod-gpio-pca953x
