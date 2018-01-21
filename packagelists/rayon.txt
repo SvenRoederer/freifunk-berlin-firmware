@@ -38,11 +38,5 @@ uhttpd-mod-ubus
 usign
 wpad-mini
 
-# for shorewall-lite
-perlbase-config
-perlbase-digest
-perlbase-dynaloader
-perlbase-essential
-perlbase-fcntl
-perlbase-integer
-perlbase-xsloader
+shorewall-lite
+shorewall6-lite

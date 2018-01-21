@@ -50,9 +50,8 @@ openvpn-mbedtls
 ppp
 ppp-mod-pppoe
 
-#shorewall-core
-#shorewall-lite
-#shorewall6-lite
+shorewall-lite
+shorewall6-lite
 
 tcpdump
 
