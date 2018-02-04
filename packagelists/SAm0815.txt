@@ -3,7 +3,6 @@
 # magd  (842-v3)
 # olaf  (1043-v2)
 
-aiccu-gnutls
 block-mount
 ca-certificates
 curl
