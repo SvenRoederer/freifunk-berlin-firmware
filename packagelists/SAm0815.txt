@@ -37,6 +37,7 @@ luci-proto-ipv6
 luci-proto-ppp
 luci-theme-bootstrap
 luci-theme-material
+luci-app-firewall
 
 muninlite
 ethtool
