@@ -136,6 +136,11 @@ ifeq ($(BUILDTYPE),release)
 	# in the name (prevent *Hedy-1.0.0-v1.0.0*.bin)
 	sed -i "/^CONFIG_VERSION_CODE_FILENAMES=/c\CONFIG_VERSION_CODE_FILENAMES=n" $(OPENWRT_DIR)/.config
 endif
+ifeq ($(BUILDTYPE),release)
+	# always set CONFIG_VERSION_CODE_FILENAMES to false, to have only the official release-version
+	# in the name (prevent *Hedy-1.0.0-v1.0.0*.bin)
+	sed -i "/^CONFIG_VERSION_CODE_FILENAMES=/c\CONFIG_VERSION_CODE_FILENAMES=n" $(OPENWRT_DIR)/.config
+endif
 	$(UMASK); \
 	  $(MAKE) -C $(OPENWRT_DIR) defconfig
 
