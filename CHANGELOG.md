@@ -41,7 +41,6 @@ d2f4aa74bb configs: disable "HORST", which fails to build
 7251b6648f added RaspberryPi configuration
 a0d1ca0ecd backport Ubiquiti ERX SFP to LEDE 17.01
 f8dc9aa640 profiles: add TP-Link WR1043ND-v4
-8765a27ee5 added some buffalo ar71xx targets
 ```
 
 ### feeds
