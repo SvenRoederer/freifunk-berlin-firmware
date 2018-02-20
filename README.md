@@ -21,24 +21,30 @@ New features like a new network concept will be part of future releases.
   * Linux 3.18.45
   * OLSR 0.9.0.3
   * B.A.T.M.A.N. 2016.1
-* primary router target: TP-Link WDR 3500/3600/4300
 * custom package lists for different settings
   * "default" variant includes ffwizard, openvpn, BATMAN
+  * "default_4MB" like the "default" variant, but excludes public router statistics page (luci-mod-freifunk), monitoring (collectd), BATMAN to fit into boards with 4MB flash
+  * "tunnel-berlin" like default variant and uses the tunnel-service of the Berlin-community as default uplink
+  * "vpn03" like default variant and uses the VPN03-service (deprecated) as default uplink
   * "backbone" variant excludes ffwizard and openvpn, includes more debugging tools
-  * "default_4MB" variant excludes public router statistics page (luci-mod-freifunk), monitoring (collectd), BATMAN
   * "backbone_4MB" variant excludes ffwizard, luci-mod-freifunk, openvpn, collectd, includes BATMAN and more debugging tools
 * new OLSR setup and configuration:
   * SmartGateway for gateway selection (e.g. honors uplink speed)
   * dynamic gateway plugin for uplink connectivity tests (gwcheck script removed)
     on hosts: 85.214.20.141, 213.73.91.35, 194.150.168.168
-  * freifunk-policyrouting fixed/patched for VPN03 setup
-* new configuration [wizard](https://github.com/freifunk-berlin/packages-berlin/tree/master/utils/luci-app-ffwizard-berlin)
+* a configuration [wizard](https://github.com/freifunk-berlin/packages-berlin/tree/master/utils/luci-app-ffwizard-berlin)
   * starts after first boot and guides new users through the configuration of the router
 * monitoring of nodes through collectd
+* some well known network-interfaces
+  * "br-dhcp" for all client-traffic
+  * "wlan0-adhoc-2" and "wlan1-adhoc-5" for AdHoc-meshing between nodes in 2.4GHz and 5GHz
+  * "ffuplink" for all traffic sent via the uplink of the node-operator, in case "share traffic" is set up
+    * freifunk-policyrouting fixed/patched for ffuplink-interface
 * frei.funk as local DNS entry for your router
   * you do not have to remember your IP to get access
 * change default lan ip address to 192.168.42.1/24
   * avoids network collisions
+  * this is also used in OpenWRT failsafe
 * one dhcp network for APs and lan (bridged)
 * remove of autoipv6 and use of ULA ipv6 prefixes
 * default dns servers:
