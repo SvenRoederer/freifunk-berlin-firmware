@@ -21,7 +21,7 @@ for 4MB-models there ist only enough space in the default-image
 ```
 caa7958715 packages: remove "migration" for Hedy-1.0.0
 64cd8de4b1 patches: do not run policy-routing script on interface ffuplink
-5550d6bb52 configs: add package ffuplink-notunnel (as image-flavor "defaut")
+5550d6bb52 configs: add package ffuplink-notunnel (as image-flavor "default")
 0b7aa08806 Add "diffutils" and "patch" to optional packages
 3dd9eaf575 Allow ICMP for busybox traceroute
 8f5085c6f6 configs: build kmod-nf-nathelper-extra as module
@@ -58,7 +58,7 @@ fa3a118d collectd: fix for uptime plugin
 3f6a27fbf luci-mod-admin-full: Add mesh_fwding support
 33f6527cc luci-mod-admin-full: Add meshId support
 426c1043b luci-mod-admin-full: auto-migrate ifnames when changing VLAN configuration
-6e412cc78 luci-mod-admin-full: reload wifi settings page after changing countey code
+6e412cc78 luci-mod-admin-full: reload wifi settings page after changing country code
 1cd096d29 luci-mod-admin-full: allow unset txpower value
 ```
 
@@ -74,7 +74,7 @@ cad82aea78 Makefile: add BUILD env "IS_BUILDBOT"
 cdc1404263 Makefile: remove unused TOOLCHAIN_PATH
 e7b8a364d5 Makefile: define separate target for VERSION.txt
 105d293ef9 assemble_firmware: check for files in embedded-directory
-a66896d3ca Makefile: use openwrt/files to embedd files directly into image
+a66896d3ca Makefile: use openwrt/files to embed files directly into image
 ```
 
 Firmware:
