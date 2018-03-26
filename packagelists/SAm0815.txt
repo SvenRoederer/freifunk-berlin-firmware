@@ -45,6 +45,7 @@ xinetd
 
 #openvpn-openssl
 openvpn-mbedtls
+luci-app-wireguard
 #kmod-tun
 
 ppp
