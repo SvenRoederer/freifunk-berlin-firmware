@@ -38,7 +38,7 @@ luci-proto-ppp
 luci-theme-bootstrap
 luci-theme-material
 luci-app-firewall
-#libiwinfo-lua
+libiwinfo-lua
 
 muninlite
 ethtool
