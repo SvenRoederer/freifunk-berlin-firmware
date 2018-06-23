@@ -44,8 +44,8 @@ muninlite
 ethtool
 xinetd
 
-#openvpn-openssl
-openvpn-mbedtls
+openvpn-openssl
+#openvpn-mbedtls
 luci-app-wireguard
 #kmod-tun
 
