@@ -31,7 +31,7 @@ uhttpd
 uhttpd-mod-ubus
 px5g-mbedtls
 libustream-mbedtls
-luci-mod-freifunk-ui
+luci-mod-freifunk
 luci-app-olsr
 luci-app-olsr-services
 luci-app-opkg
