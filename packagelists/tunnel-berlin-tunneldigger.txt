@@ -35,7 +35,7 @@ uhttpd
 uhttpd-mod-ubus
 px5g-wolfssl
 luci-app-ffwizard-berlin
-luci-mod-freifunk-ui
+luci-mod-freifunk
 luci-app-olsr
 luci-app-firewall
 luci-app-olsr-services
