@@ -1,0 +1,17 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 8 Apr 2018 15:25:31 +0200
+Subject: ar71xx-tiny: deactivate PARTITION_ADVANCED
+
+on this crappy hardware it's nearly impossible to add external drives, so
+there seems no need for this partition-type.
+this will safe some kernel-size
+
+diff --git a/target/linux/ar71xx/tiny/config-default b/target/linux/ar71xx/tiny/config-default
+index 1148d8c451dee890c785ffb78ff0bb9de2454326..8ad13ad138cca959f549b79dd2e9bddb79ccffba 100644
+--- a/target/linux/ar71xx/tiny/config-default
++++ b/target/linux/ar71xx/tiny/config-default
+@@ -74,3 +74,4 @@ CONFIG_SOC_AR933X=y
+ CONFIG_SOC_AR934X=y
+ CONFIG_SOC_QCA953X=y
+ CONFIG_SOC_QCA956X=y
++# CONFIG_PARTITION_ADVANCED is not set
