@@ -1,0 +1,464 @@
+From 222ecbe2f48c540100076b35e5ddea0a33b2241e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andreas=20Br=C3=A4u?= <ab@andi95.de>
+Date: Tue, 10 Sep 2019 20:53:17 +0200
+Subject: [PATCH 1/2] Revert "remove virtualearth based freifunk map"
+
+This reverts commit eaff91e3c6b1d412b7744d6921cb21b6caf79b28.
+---
+ .../luasrc/controller/freifunk/freifunk.lua   |   2 +
+ .../luasrc/view/freifunk-map/frame.htm        |  29 +++++
+ .../luasrc/view/freifunk-map/map.htm          | 118 ++++++++++++++++++
+ 3 files changed, 149 insertions(+)
+ create mode 100644 modules/luci-mod-freifunk/luasrc/view/freifunk-map/frame.htm
+ create mode 100644 modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+
+diff --git a/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua b/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
+index e04cfaf7d..adad7508b 100644
+--- a/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
++++ b/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
+@@ -91,6 +91,8 @@ function index()
+ 	page.title  = _("Contact")
+ 	page.order  = 15
+ 
++	entry({"freifunk", "map"}, template("freifunk-map/frame"), _("Map"), 50)
++	entry({"freifunk", "map", "content"}, template("freifunk-map/map"), nil, 51)
+ 	entry({"admin", "freifunk", "profile_error"}, template("freifunk/profile_error"))
+ end
+ 
+diff --git a/modules/luci-mod-freifunk/luasrc/view/freifunk-map/frame.htm b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/frame.htm
+new file mode 100644
+index 000000000..bd936ac70
+--- /dev/null
++++ b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/frame.htm
+@@ -0,0 +1,29 @@
++<%+header%>
++
++<%
++	local has_latlon = false
++	local uci = require "luci.model.uci".cursor()
++	uci:foreach("olsrd", "LoadPlugin", function(s)
++		if s.library == "olsrd_nameservice" and s.latlon_file then
++			has_latlon = true
++		end
++	end)
++%>
++
++<% if has_latlon then %>
++	<iframe style="width:100%; height:640px; border:none" src="<%=url("freifunk/map/content")%>"></iframe>
++	<h3><%:Legend%>:</h3>
++	<ul>
++		<li><strong><span style="color:#00cc00"><%:Green%></span></strong>:<%:Very good (ETX < 2)%></li>
++		<li><strong><span style="color:#ffcb05"><%:Yellow%></span></strong>:<%:Good (2 < ETX < 4)%></li>
++		<li><strong><span style="color:#ff6600"><%:Orange%></span></strong>:<%:Still usable (4 < ETX < 10)%></li>
++		<li><strong><span style="color:#bb3333"><%:Red%></span></strong>:<%:Bad (ETX > 10)%></li>
++	</ul>
++
++<% else %>
++	<h2><%:Map Error%></h2>
++	<p><%_The OLSRd service is not configured to capture position data from the network.<br />
++		Please make sure that the nameservice plugin is properly configured and that the <em>latlon_file</em> option is enabled.%></p>
++<% end %>
++<%+footer%>
++
+diff --git a/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+new file mode 100644
+index 000000000..f69401d6e
+--- /dev/null
++++ b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+@@ -0,0 +1,118 @@
++<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
++<html>
++	<head>
++		<title>Map</title>
++	</head>
++
++	<body style="margin:0">
++		<script src="//dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1&s=1" type="text/javascript"></script>
++		<script type="text/javascript">
++			var alias = new Array;
++			var points = new Array;
++			var unkpos = new Array;
++			var lineid = 0;
++			onload=new Function("if(null!=window.ffmapinit)ffmapinit();");
++
++			function Mid(mainip,aliasip)
++			{
++				alias[aliasip]=mainip;
++			}
++
++			function Node(mainip,lat,lon,ishna,hnaip,name)
++			{
++				points[mainip] = new VELatLong(lat, lon);
++				map.AddPushpin(new VEPushpin(mainip, points[mainip],
++				'<%=luci.config.main.resourcebase%>/freifunk-map/'+(ishna?'hna':'node')+'.gif', 'Node:'+name,
++				'<br><img src="<%=luci.config.main.resourcebase%>/freifunk-map/'+(ishna?'hna':'node')+'.gif">'+
++				'<br>IP:'+mainip+'<br>DefGW:'+hnaip));
++			}
++
++			function Self(mainip,lat,lon,ishna,hnaip,name)
++			{
++				//map.SetDashboardSize(VEDashboardSize.Small);
++				map.LoadMap(new VELatLong(lat, lon), 15, VEMapStyle.Hybrid);
++				map.SetScaleBarDistanceUnit(VEDistanceUnit.Kilometers);
++				map.ShowMiniMap(14, 474);
++				Node(mainip,lat,lon,ishna,hnaip,name);
++			}
++
++			function Link(fromip,toip,lq,nlq,etx)
++			{
++				if (0==lineid && null!=window.ffmapstatic) ffmapstatic();
++				if (null != alias[toip]) toip = alias[toip];
++				if (null != alias[fromip]) fromip = alias[fromip];
++				if (null != points[fromip] && null != points[toip])
++				{
++					var color;
++					var red = 240;
++					var green = 0;
++					var blue = 0;
++					var w = 1
++
++					if (etx < 100) {red=252;green=102;blue=0;w=2};
++					if (etx < 10) {red=255;green=203;blue=5;w=3};
++					if (etx < 4) {red=240;green=255;blue=0;w=4};
++					if (etx < 2) {red=0;green=204;blue=0;w=5};
++					if (etx < 1) {red=80;green=0;blue=0;w=1};
++
++					map.AddPolyline(new VEPolyline('id'+lineid, [points[fromip], points[toip]],
++					new VEColor(red, green, blue, 0.5), w));
++
++
++				}
++				else
++				{
++					if (null == points[toip]) unkpos[toip] = '';
++					if (null == points[fromip]) unkpos[fromip] = '';
++				}
++				lineid++;
++			}
++
++			function PLink(fromip,toip,lq,nlq,etx,lata,lona,ishnaa,latb,lonb,ishnab)
++			{
++				Link(fromip,toip,lq,nlq,etx);
++			}
++
++			function ffmapinit()
++			{
++				if(null!=window.map)map.Dispose();
++
++				var INFINITE = 99.99;
++
++				map = new VEMap('ffmap');
++				<%
++					local fd
++					local uci = require "luci.model.uci".cursor()
++
++					uci:foreach("olsrd", "LoadPlugin", function(s)
++						if s.library == "olsrd_nameservice" and s.latlon_file then
++							fd = io.open(s.latlon_file)
++						end
++					end)
++
++					if fd then
++						local data = fd:read("*a")
++						fd:close()
++
++						if data then
++							local line
++							for line in data:gmatch("[^\n]+") do
++								if line:match(";$") then
++									write(line .. "\n")
++								else
++									break
++								end
++							end
++						end
++					end
++				%>
++			}
++
++			function ffgoto(ip)
++			{
++				map.SetCenter(points[ip]);
++			}
++		</script>
++		<div id="ffmap" style="position:relative; width:100%; height:640px;"></div>
++	</body>
++</html>
+-- 
+2.20.1
+
+From 22bb9b76f69f6aa7a0251b659a523cbbacb6051e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andreas=20Br=C3=A4u?= <ab@andi95.de>
+Date: Tue, 10 Sep 2019 21:06:09 +0200
+Subject: [PATCH 2/2] reverts #17 and adds an openwifimap based live map
+
+---
+ .../luasrc/view/freifunk-map/map.htm          | 255 ++++++++++--------
+ 1 file changed, 139 insertions(+), 116 deletions(-)
+
+diff --git a/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+index f69401d6e..e69227a96 100644
+--- a/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
++++ b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+@@ -1,118 +1,141 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+ <html>
+-	<head>
+-		<title>Map</title>
+-	</head>
+-
+-	<body style="margin:0">
+-		<script src="//dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1&s=1" type="text/javascript"></script>
+-		<script type="text/javascript">
+-			var alias = new Array;
+-			var points = new Array;
+-			var unkpos = new Array;
+-			var lineid = 0;
+-			onload=new Function("if(null!=window.ffmapinit)ffmapinit();");
+-
+-			function Mid(mainip,aliasip)
+-			{
+-				alias[aliasip]=mainip;
+-			}
+-
+-			function Node(mainip,lat,lon,ishna,hnaip,name)
+-			{
+-				points[mainip] = new VELatLong(lat, lon);
+-				map.AddPushpin(new VEPushpin(mainip, points[mainip],
+-				'<%=luci.config.main.resourcebase%>/freifunk-map/'+(ishna?'hna':'node')+'.gif', 'Node:'+name,
+-				'<br><img src="<%=luci.config.main.resourcebase%>/freifunk-map/'+(ishna?'hna':'node')+'.gif">'+
+-				'<br>IP:'+mainip+'<br>DefGW:'+hnaip));
+-			}
+-
+-			function Self(mainip,lat,lon,ishna,hnaip,name)
+-			{
+-				//map.SetDashboardSize(VEDashboardSize.Small);
+-				map.LoadMap(new VELatLong(lat, lon), 15, VEMapStyle.Hybrid);
+-				map.SetScaleBarDistanceUnit(VEDistanceUnit.Kilometers);
+-				map.ShowMiniMap(14, 474);
+-				Node(mainip,lat,lon,ishna,hnaip,name);
+-			}
+-
+-			function Link(fromip,toip,lq,nlq,etx)
+-			{
+-				if (0==lineid && null!=window.ffmapstatic) ffmapstatic();
+-				if (null != alias[toip]) toip = alias[toip];
+-				if (null != alias[fromip]) fromip = alias[fromip];
+-				if (null != points[fromip] && null != points[toip])
+-				{
+-					var color;
+-					var red = 240;
+-					var green = 0;
+-					var blue = 0;
+-					var w = 1
+-
+-					if (etx < 100) {red=252;green=102;blue=0;w=2};
+-					if (etx < 10) {red=255;green=203;blue=5;w=3};
+-					if (etx < 4) {red=240;green=255;blue=0;w=4};
+-					if (etx < 2) {red=0;green=204;blue=0;w=5};
+-					if (etx < 1) {red=80;green=0;blue=0;w=1};
+-
+-					map.AddPolyline(new VEPolyline('id'+lineid, [points[fromip], points[toip]],
+-					new VEColor(red, green, blue, 0.5), w));
+-
+-
+-				}
+-				else
+-				{
+-					if (null == points[toip]) unkpos[toip] = '';
+-					if (null == points[fromip]) unkpos[fromip] = '';
+-				}
+-				lineid++;
+-			}
+-
+-			function PLink(fromip,toip,lq,nlq,etx,lata,lona,ishnaa,latb,lonb,ishnab)
+-			{
+-				Link(fromip,toip,lq,nlq,etx);
+-			}
+-
+-			function ffmapinit()
+-			{
+-				if(null!=window.map)map.Dispose();
+-
+-				var INFINITE = 99.99;
+-
+-				map = new VEMap('ffmap');
+-				<%
+-					local fd
+-					local uci = require "luci.model.uci".cursor()
+-
+-					uci:foreach("olsrd", "LoadPlugin", function(s)
+-						if s.library == "olsrd_nameservice" and s.latlon_file then
+-							fd = io.open(s.latlon_file)
+-						end
+-					end)
+-
+-					if fd then
+-						local data = fd:read("*a")
+-						fd:close()
+-
+-						if data then
+-							local line
+-							for line in data:gmatch("[^\n]+") do
+-								if line:match(";$") then
+-									write(line .. "\n")
+-								else
+-									break
+-								end
+-							end
+-						end
+-					end
+-				%>
+-			}
+-
+-			function ffgoto(ip)
+-			{
+-				map.SetCenter(points[ip]);
+-			}
+-		</script>
+-		<div id="ffmap" style="position:relative; width:100%; height:640px;"></div>
+-	</body>
+-</html>
++<head>
++    <link
++            rel="stylesheet"
++            href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
++            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
++            crossorigin=""
++    />
++    <script
++            src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
++            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
++            crossorigin=""
++    >
++    </script>
++    <title>Map</title>
++</head>
++
++<body style="margin:0">
++<div id="ffmap" style="position:relative; width:100%; height:640px;"></div>
++<script type="text/javascript">
++
++      var INFINITE = 99.99;
++
++      var map = L.map('ffmap').setView([52.48, 12], 13);
++
++      var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
++	    var osmAttrib='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
++	    var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
++     	map.addLayer(osm);
++
++      var alias = new Array;
++      var points = new Array;
++      var unkpos = new Array;
++      var lineid = 0;
++      onload=new Function("if(null!=window.ffmapinit)ffmapinit();");
++
++      function Mid(mainip, aliasip)
++      {
++        alias[aliasip]=mainip;
++      }
++
++      function Node(mainip,lat,lon,ishna,hnaip,name)
++      {
++        points[mainip] = [lat, lon];
++        var marker = L.circleMarker([lat, lon]).addTo(map);
++        marker.bindPopup(
++          'Node: '+ name
++          +
++          '<br>IP: '+ mainip
++          + '<br>DefGW: '+ hnaip
++        );
++      }
++
++      function Self(mainip,lat,lon,ishna,hnaip,name)
++      {
++        //map.LoadMap(new VELatLong(lat, lon), 15, VEMapStyle.Hybrid);
++        //map.SetScaleBarDistanceUnit(VEDistanceUnit.Kilometers);
++        //map.ShowMiniMap(14, 474);
++        Node(mainip,lat,lon,ishna,hnaip,name);
++        map.setView([lat, lon], 13)
++      }
++
++      function Link(fromip,toip,lq,nlq,etx)
++      {
++        if (0==lineid && null!=window.ffmapstatic) ffmapstatic();
++        if (null != alias[toip]) toip = alias[toip];
++        if (null != alias[fromip]) fromip = alias[fromip];
++        if (null != points[fromip] && null != points[toip])
++        {
++          var color;
++          var red = 240;
++          var green = 0;
++          var blue = 0;
++          var w = 1
++
++          if (etx < 100) {red=252;green=102;blue=0;w=2};
++          if (etx < 10) {red=255;green=203;blue=5;w=3};
++          if (etx < 4) {red=240;green=255;blue=0;w=4};
++          if (etx < 2) {red=0;green=204;blue=0;w=5};
++          if (etx < 1) {red=80;green=0;blue=0;w=1};
++          var polyline = L.polyline([points[fromip], points[toip]], {color:
++            'rgb(' + red + ', ' + green +  ', ' + blue + ')'})
++            .addTo(map);
++          polyline.bindPopup(
++            fromip + " - " + toip + "<br>"
++            + "ETX: " + etx + "<br>"
++            + "LQ: " + lq + "<br>"
++            + "NLQ: " + nlq + "<br>"
++          );
++
++
++        }
++        else
++        {
++          if (null == points[toip]) unkpos[toip] = '';
++          if (null == points[fromip]) unkpos[fromip] = '';
++        }
++        lineid++;
++      }
++
++      function PLink(fromip,toip,lq,nlq,etx,lata,lona,ishnaa,latb,lonb,ishnab)
++      {
++        Link(fromip,toip,lq,nlq,etx);
++      }
++
++      function ffmapinit()
++      {
++
++        <%
++          local fd
++          local uci = require "luci.model.uci".cursor()
++
++          uci:foreach("olsrd", "LoadPlugin", function(s)
++            if s.library == "olsrd_nameservice.so.0.3" and s.latlon_file then
++              fd = io.open(s.latlon_file)
++            end
++          end)
++
++          if fd then
++            local data = fd:read("*a")
++            fd:close()
++
++            if data then
++              local line
++              for line in data:gmatch("[^\n]+") do
++                if line:match(";$") then
++                  write(line .. "\n")
++                else
++                  break
++                end
++              end
++            end
++          end
++        %>
++      }
++
++
++</script>
++</body>
++</html>
+\ No newline at end of file
+-- 
+2.20.1
+
