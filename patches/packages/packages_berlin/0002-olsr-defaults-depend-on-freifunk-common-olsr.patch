@@ -1,0 +1,26 @@
+From e68a2e122cf8cd8b49a2ddfd92cf61a5c3a63de3 Mon Sep 17 00:00:00 2001
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sat, 21 Dec 2019 13:38:48 +0100
+Subject: [PATCH] olsr-defaults: depend on freifunk-common-olsr
+
+This provides the dependency to olsrd
+---
+ defaults/freifunk-berlin-olsrd-defaults/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/defaults/freifunk-berlin-olsrd-defaults/Makefile b/defaults/freifunk-berlin-olsrd-defaults/Makefile
+index 269bbb7de..74994847a 100644
+--- a/defaults/freifunk-berlin-olsrd-defaults/Makefile
++++ b/defaults/freifunk-berlin-olsrd-defaults/Makefile
+@@ -13,7 +13,7 @@ define Package/freifunk-berlin-olsrd-defaults
+   CATEGORY:=freifunk-berlin
+   TITLE:=Freifunk Berlin olsrd default configuration
+   URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +olsrd +freifunk-berlin-lib-guard
++  DEPENDS+= +freifunk-common-olsr +freifunk-berlin-lib-guard
+   PKGARCH:=all
+ endef
+ 
+-- 
+2.20.1
+
