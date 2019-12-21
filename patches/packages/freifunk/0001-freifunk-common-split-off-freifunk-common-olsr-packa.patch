@@ -1,0 +1,149 @@
+From b05f79beba7a6a89bf221658211d532766bf1f8f Mon Sep 17 00:00:00 2001
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Fri, 20 Dec 2019 23:54:00 +0100
+Subject: [PATCH] freifunk-common: split off "freifunk-common-olsr" package
+
+Split the OLSRv1 specific things from the "freifunk-common" into a seperate package.
+To keep the current package dependencies, the new package "freifunk-common-olsrv1"
+must be included, which will include the basic "freifunk-common" package. For non-
+olsrv1 setups only the "freifunk-common" package is needed, this way there is no
+dependency to the olsr.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+---
+ contrib/package/freifunk-common/Makefile      | 23 ++++++++++++++++---
+ .../etc/config/freifunk                       |  3 ---
+ .../etc/init.d/freifunk                       |  0
+ .../etc/rc.local.d/01-config-migration        |  0
+ .../etc/uci-defaults/freifunk                 |  0
+ .../{files => files-common}/usr/bin/ffdzero   |  0
+ .../{files => files-common}/usr/bin/watch.sh  |  0
+ .../etc/uci-defaults/freifunk-olsrv1          |  6 +++++
+ .../{files => files-olsrv1}/usr/bin/neigh.sh  |  0
+ .../usr/sbin/ff_olsr_watchdog                 |  0
+ 10 files changed, 26 insertions(+), 6 deletions(-)
+ rename contrib/package/freifunk-common/{files => files-common}/etc/config/freifunk (96%)
+ rename contrib/package/freifunk-common/{files => files-common}/etc/init.d/freifunk (100%)
+ rename contrib/package/freifunk-common/{files => files-common}/etc/rc.local.d/01-config-migration (100%)
+ rename contrib/package/freifunk-common/{files => files-common}/etc/uci-defaults/freifunk (100%)
+ rename contrib/package/freifunk-common/{files => files-common}/usr/bin/ffdzero (100%)
+ rename contrib/package/freifunk-common/{files => files-common}/usr/bin/watch.sh (100%)
+ create mode 100644 contrib/package/freifunk-common/files-olsrv1/etc/uci-defaults/freifunk-olsrv1
+ rename contrib/package/freifunk-common/{files => files-olsrv1}/usr/bin/neigh.sh (100%)
+ rename contrib/package/freifunk-common/{files => files-olsrv1}/usr/sbin/ff_olsr_watchdog (100%)
+
+diff --git a/contrib/package/freifunk-common/Makefile b/contrib/package/freifunk-common/Makefile
+index 9f3dc0d26..8f74689b8 100644
+--- a/contrib/package/freifunk-common/Makefile
++++ b/contrib/package/freifunk-common/Makefile
+@@ -4,7 +4,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=freifunk-common
+-PKG_RELEASE:=5
++PKG_RELEASE:=6
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
+@@ -15,7 +15,7 @@ define Package/freifunk-common
+   CATEGORY:=LuCI
+   SUBMENU:=9. Freifunk
+   TITLE:=Freifunk common files
+-  DEPENDS:=+libuci-lua +olsrd
++  DEPENDS:=+libuci-lua
+ endef
+ 
+ define Package/freifunk-common/description
+@@ -26,6 +26,18 @@ define Package/freifunk-common/conffiles
+ /etc/config/freifunk
+ endef
+ 
++define Package/freifunk-common-olsr
++  SECTION:=luci
++  CATEGORY:=LuCI
++  SUBMENU:=9. Freifunk
++  TITLE:=Freifunk common files for olsr-v1
++  DEPENDS:=freifunk-common +olsrd
++endef
++
++define Package/freifunk-common-olsr/description
++  Additional files and scripts that are needed to run free wireless mesh networks based on OLSRv1.
++endef
++
+ define Build/Prepare
+ 	mkdir -p $(PKG_BUILD_DIR)
+ endef
+@@ -37,7 +49,12 @@ define Build/Compile
+ endef
+ 
+ define Package/freifunk-common/install
+-	$(CP) ./files/* $(1)/
++	$(CP) ./files-common/* $(1)/
++endef
++
++define Package/freifunk-common-olsr/install
++	$(CP) ./files-olsrv1/* $(1)/
+ endef
+ 
+ $(eval $(call BuildPackage,freifunk-common))
++$(eval $(call BuildPackage,freifunk-common-olsr))
+diff --git a/contrib/package/freifunk-common/files/etc/config/freifunk b/contrib/package/freifunk-common/files-common/etc/config/freifunk
+similarity index 96%
+rename from contrib/package/freifunk-common/files/etc/config/freifunk
+rename to contrib/package/freifunk-common/files-common/etc/config/freifunk
+index a43f4e3fa..f037e581d 100644
+--- a/contrib/package/freifunk-common/files/etc/config/freifunk
++++ b/contrib/package/freifunk-common/files-common/etc/config/freifunk
+@@ -116,9 +116,6 @@ config 'defaults' 'dhcp'
+ 	option 'start' '2'
+ 	option 'force' '1'
+ 
+-config 'defaults' 'olsr_interfacedefaults'
+-	option 'Ip4Broadcast' '255.255.255.255'
+-
+ config 'defaults' 'wifi_iface_80211s'
+ 	option 'mode' 'mesh'
+ 	option 'encryption' 'none'
+diff --git a/contrib/package/freifunk-common/files/etc/init.d/freifunk b/contrib/package/freifunk-common/files-common/etc/init.d/freifunk
+similarity index 100%
+rename from contrib/package/freifunk-common/files/etc/init.d/freifunk
+rename to contrib/package/freifunk-common/files-common/etc/init.d/freifunk
+diff --git a/contrib/package/freifunk-common/files/etc/rc.local.d/01-config-migration b/contrib/package/freifunk-common/files-common/etc/rc.local.d/01-config-migration
+similarity index 100%
+rename from contrib/package/freifunk-common/files/etc/rc.local.d/01-config-migration
+rename to contrib/package/freifunk-common/files-common/etc/rc.local.d/01-config-migration
+diff --git a/contrib/package/freifunk-common/files/etc/uci-defaults/freifunk b/contrib/package/freifunk-common/files-common/etc/uci-defaults/freifunk
+similarity index 100%
+rename from contrib/package/freifunk-common/files/etc/uci-defaults/freifunk
+rename to contrib/package/freifunk-common/files-common/etc/uci-defaults/freifunk
+diff --git a/contrib/package/freifunk-common/files/usr/bin/ffdzero b/contrib/package/freifunk-common/files-common/usr/bin/ffdzero
+similarity index 100%
+rename from contrib/package/freifunk-common/files/usr/bin/ffdzero
+rename to contrib/package/freifunk-common/files-common/usr/bin/ffdzero
+diff --git a/contrib/package/freifunk-common/files/usr/bin/watch.sh b/contrib/package/freifunk-common/files-common/usr/bin/watch.sh
+similarity index 100%
+rename from contrib/package/freifunk-common/files/usr/bin/watch.sh
+rename to contrib/package/freifunk-common/files-common/usr/bin/watch.sh
+diff --git a/contrib/package/freifunk-common/files-olsrv1/etc/uci-defaults/freifunk-olsrv1 b/contrib/package/freifunk-common/files-olsrv1/etc/uci-defaults/freifunk-olsrv1
+new file mode 100644
+index 000000000..6cc80e497
+--- /dev/null
++++ b/contrib/package/freifunk-common/files-olsrv1/etc/uci-defaults/freifunk-olsrv1
+@@ -0,0 +1,6 @@
++#!/bin/sh
++
++uci -m import freifunk <<EOF
++config 'defaults' 'olsr_interfacedefaults'
++	option 'Ip4Broadcast' '255.255.255.255'
++EOF
+diff --git a/contrib/package/freifunk-common/files/usr/bin/neigh.sh b/contrib/package/freifunk-common/files-olsrv1/usr/bin/neigh.sh
+similarity index 100%
+rename from contrib/package/freifunk-common/files/usr/bin/neigh.sh
+rename to contrib/package/freifunk-common/files-olsrv1/usr/bin/neigh.sh
+diff --git a/contrib/package/freifunk-common/files/usr/sbin/ff_olsr_watchdog b/contrib/package/freifunk-common/files-olsrv1/usr/sbin/ff_olsr_watchdog
+similarity index 100%
+rename from contrib/package/freifunk-common/files/usr/sbin/ff_olsr_watchdog
+rename to contrib/package/freifunk-common/files-olsrv1/usr/sbin/ff_olsr_watchdog
+-- 
+2.20.1
+
