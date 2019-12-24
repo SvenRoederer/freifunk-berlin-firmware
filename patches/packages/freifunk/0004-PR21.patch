@@ -1,0 +1,280 @@
+From c77dfa86b834af3d2b570c7b074a0628243bf776 Mon Sep 17 00:00:00 2001
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sat, 4 Aug 2018 01:35:20 +0200
+Subject: [PATCH 2/3] community-profiles: don't keep them during sysupgrade
+
+Having the community-profiles in /etc/config automatically keeps
+them during sysupgrades and also overwrite recent files with the
+old ones of the backup. Moving the files into /usr/share and
+symlinking them into /etc/config results in having the most recent
+versions in the system.
+fixes https://github.com/openwrt/luci/issues/944
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+---
+ .../files/etc/uci-defaults/freifunk-community-profiles     | 7 +++++++
+ .../share/freifunk/community-profiles}/profile_Freifunk    | 0
+ .../share/freifunk/community-profiles}/profile_altmark     | 0
+ .../share/freifunk/community-profiles}/profile_arig_arad   | 0
+ .../freifunk/community-profiles}/profile_arig_neot_semadar | 0
+ .../freifunk/community-profiles}/profile_arig_tel-aviv     | 0
+ .../share/freifunk/community-profiles}/profile_augsburg    | 0
+ .../share/freifunk/community-profiles}/profile_bayreuth    | 0
+ .../freifunk/community-profiles}/profile_bergischesland    | 0
+ .../share/freifunk/community-profiles}/profile_berlin      | 0
+ .../share/freifunk/community-profiles}/profile_carbodebit  | 0
+ .../share/freifunk/community-profiles}/profile_cottbus     | 0
+ .../share/freifunk/community-profiles}/profile_demo        | 0
+ .../share/freifunk/community-profiles}/profile_duesseldorf | 0
+ .../share/freifunk/community-profiles}/profile_erfurt      | 0
+ .../share/freifunk/community-profiles}/profile_evernet     | 0
+ .../share/freifunk/community-profiles}/profile_freiburg    | 0
+ .../freifunk/community-profiles}/profile_fuerstenwalde     | 0
+ .../share/freifunk/community-profiles}/profile_gadow       | 0
+ .../share/freifunk/community-profiles}/profile_guifibages  | 0
+ .../share/freifunk/community-profiles}/profile_halle       | 0
+ .../share/freifunk/community-profiles}/profile_hameln      | 0
+ .../share/freifunk/community-profiles}/profile_hooge       | 0
+ .../share/freifunk/community-profiles}/profile_kiberpipa   | 0
+ .../share/freifunk/community-profiles}/profile_kyritz      | 0
+ .../share/freifunk/community-profiles}/profile_l59         | 0
+ .../share/freifunk/community-profiles}/profile_leipzig     | 0
+ .../share/freifunk/community-profiles}/profile_marburg     | 0
+ .../share/freifunk/community-profiles}/profile_oldenburg   | 0
+ .../freifunk/community-profiles}/profile_openwireless_bern | 0
+ .../freifunk/community-profiles}/profile_piraten_dresden   | 0
+ .../share/freifunk/community-profiles}/profile_potsdam     | 0
+ .../share/freifunk/community-profiles}/profile_reihen      | 0
+ .../share/freifunk/community-profiles}/profile_rosbach     | 0
+ .../share/freifunk/community-profiles}/profile_schwarzach  | 0
+ .../share/freifunk/community-profiles}/profile_stuttgart   | 0
+ .../share/freifunk/community-profiles}/profile_tulumlibre  | 0
+ .../share/freifunk/community-profiles}/profile_vogtland    | 0
+ .../share/freifunk/community-profiles}/profile_weil        | 0
+ .../share/freifunk/community-profiles}/profile_weimar      | 0
+ .../share/freifunk/community-profiles}/profile_weinstadt   | 0
+ .../freifunk/community-profiles}/profile_wlanljubljana     | 0
+ 42 files changed, 7 insertions(+)
+ create mode 100644 contrib/package/community-profiles/files/etc/uci-defaults/freifunk-community-profiles
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_Freifunk (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_altmark (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_arig_arad (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_arig_neot_semadar (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_arig_tel-aviv (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_augsburg (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_bayreuth (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_bergischesland (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_berlin (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_carbodebit (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_cottbus (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_demo (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_duesseldorf (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_erfurt (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_evernet (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_freiburg (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_fuerstenwalde (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_gadow (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_guifibages (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_halle (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_hameln (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_hooge (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_kiberpipa (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_kyritz (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_l59 (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_leipzig (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_marburg (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_oldenburg (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_openwireless_bern (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_piraten_dresden (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_potsdam (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_reihen (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_rosbach (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_schwarzach (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_stuttgart (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_tulumlibre (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_vogtland (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_weil (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_weimar (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_weinstadt (100%)
+ rename contrib/package/community-profiles/files/{etc/config => usr/share/freifunk/community-profiles}/profile_wlanljubljana (100%)
+
+diff --git a/contrib/package/community-profiles/files/etc/uci-defaults/freifunk-community-profiles b/contrib/package/community-profiles/files/etc/uci-defaults/freifunk-community-profiles
+new file mode 100644
+index 000000000..e98d197e7
+--- /dev/null
++++ b/contrib/package/community-profiles/files/etc/uci-defaults/freifunk-community-profiles
+@@ -0,0 +1,7 @@
++#!/bin/sh
++
++rm -f /etc/config/profile_*
++cd /usr/share/freifunk/community-profiles
++for profile in profile_* ; do
++  ln -s /usr/share/freifunk/community-profiles/${profile} /etc/config/${profile}
++done
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_Freifunk b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_Freifunk
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_Freifunk
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_Freifunk
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_altmark b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_altmark
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_altmark
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_altmark
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_arig_arad b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_arig_arad
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_arig_arad
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_arig_arad
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_arig_neot_semadar b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_arig_neot_semadar
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_arig_neot_semadar
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_arig_neot_semadar
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_arig_tel-aviv b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_arig_tel-aviv
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_arig_tel-aviv
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_arig_tel-aviv
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_augsburg b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_augsburg
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_augsburg
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_augsburg
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_bayreuth b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_bayreuth
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_bayreuth
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_bayreuth
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_bergischesland b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_bergischesland
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_bergischesland
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_bergischesland
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_berlin b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_berlin
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_berlin
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_berlin
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_carbodebit b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_carbodebit
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_carbodebit
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_carbodebit
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_cottbus b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_cottbus
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_cottbus
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_cottbus
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_demo b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_demo
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_demo
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_demo
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_duesseldorf b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_duesseldorf
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_duesseldorf
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_duesseldorf
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_erfurt b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_erfurt
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_erfurt
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_erfurt
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_evernet b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_evernet
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_evernet
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_evernet
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_freiburg b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_freiburg
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_freiburg
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_freiburg
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_fuerstenwalde b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_fuerstenwalde
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_fuerstenwalde
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_fuerstenwalde
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_gadow b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_gadow
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_gadow
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_gadow
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_guifibages b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_guifibages
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_guifibages
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_guifibages
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_halle b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_halle
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_halle
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_halle
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_hameln b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_hameln
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_hameln
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_hameln
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_hooge b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_hooge
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_hooge
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_hooge
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_kiberpipa b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_kiberpipa
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_kiberpipa
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_kiberpipa
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_kyritz b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_kyritz
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_kyritz
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_kyritz
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_l59 b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_l59
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_l59
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_l59
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_leipzig b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_leipzig
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_leipzig
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_leipzig
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_marburg b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_marburg
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_marburg
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_marburg
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_oldenburg b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_oldenburg
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_oldenburg
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_oldenburg
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_openwireless_bern b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_openwireless_bern
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_openwireless_bern
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_openwireless_bern
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_piraten_dresden b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_piraten_dresden
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_piraten_dresden
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_piraten_dresden
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_potsdam b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_potsdam
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_potsdam
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_potsdam
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_reihen b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_reihen
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_reihen
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_reihen
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_rosbach b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_rosbach
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_rosbach
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_rosbach
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_schwarzach b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_schwarzach
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_schwarzach
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_schwarzach
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_stuttgart b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_stuttgart
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_stuttgart
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_stuttgart
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_tulumlibre b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_tulumlibre
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_tulumlibre
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_tulumlibre
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_vogtland b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_vogtland
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_vogtland
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_vogtland
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_weil b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_weil
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_weil
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_weil
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_weimar b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_weimar
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_weimar
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_weimar
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_weinstadt b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_weinstadt
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_weinstadt
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_weinstadt
+diff --git a/contrib/package/community-profiles/files/etc/config/profile_wlanljubljana b/contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_wlanljubljana
+similarity index 100%
+rename from contrib/package/community-profiles/files/etc/config/profile_wlanljubljana
+rename to contrib/package/community-profiles/files/usr/share/freifunk/community-profiles/profile_wlanljubljana
+-- 
+2.20.1
+
