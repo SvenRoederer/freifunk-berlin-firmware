@@ -1,0 +1,74 @@
+From e918dc9d7c8b90e0137e5cf74272cb8ad0cd9d3a Mon Sep 17 00:00:00 2001
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Fri, 27 Dec 2019 04:09:19 +0100
+Subject: [PATCH] generic.mk: import more from luci.mk and customize
+
+---
+ freifunk-berlin-generic.mk | 47 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+
+diff --git a/freifunk-berlin-generic.mk b/freifunk-berlin-generic.mk
+index a5dbd59..06fa188 100644
+--- a/freifunk-berlin-generic.mk
++++ b/freifunk-berlin-generic.mk
+@@ -15,6 +15,18 @@ else
+ #$(info found luci.mk at $(LUCIMKFILE))
+ endif
+ 
++LUCI_NAME?=$(notdir ${CURDIR})
++LUCI_TYPE?=$(word 2,$(subst -, ,$(LUCI_NAME)))
++LUCI_BASENAME?=$(patsubst luci-$(LUCI_TYPE)-%,%,$(LUCI_NAME))
++LUCI_LANGUAGES:=$(sort $(filter-out templates,$(notdir $(wildcard ${CURDIR}/po/*))))
++LUCI_DEFAULTS:=$(notdir $(wildcard ${CURDIR}/root/etc/uci-defaults/*))
++LUCI_PKGARCH?=$(if $(realpath src/Makefile),,all)
++
++
++PKG_NAME?=$(LUCI_NAME)
++
++PKG_BUILD_DEPENDS += $(LUCI_BUILD_DEPENDS)
++
+ PKG_VERSION?=$(if $(DUMP),x,$(strip $(shell \
+ 	if svn info >/dev/null 2>/dev/null; then \
+ 		revision="svn-r$$(LC_ALL=C svn info | sed -ne 's/^Revision: //p')"; \
+@@ -33,3 +45,38 @@ PKG_VERSION?=$(if $(DUMP),x,$(strip $(shell \
+ )))
+ 
+ include $(LUCIMKFILE)
++
++define Package/$(PKG_NAME)
++  SECTION:=freifunk-berlin
++  CATEGORY:=freifunk-berlin
++  SUBMENU:=$(if $(LUCI_MENU.$(LUCI_TYPE)),$(LUCI_MENU.$(LUCI_TYPE)),$(LUCI_MENU.app))
++  TITLE:=$(if $(LUCI_TITLE),$(LUCI_TITLE),LuCI $(LUCI_NAME) $(LUCI_TYPE))
++  DEPENDS:=$(LUCI_DEPENDS)
++  $(if $(LUCI_EXTRA_DEPENDS),EXTRA_DEPENDS:=$(LUCI_EXTRA_DEPENDS))
++  $(if $(LUCI_PKGARCH),PKGARCH:=$(LUCI_PKGARCH))
++endef
++
++ifneq ($(LUCI_DESCRIPTION),)
++ define Package/$(PKG_NAME)/description
++   $(strip $(LUCI_DESCRIPTION))
++ endef
++endif
++
++define Build/Configure
++endef
++
++ifneq ($(wildcard ${CURDIR}/src/Makefile),)
++ MAKE_PATH := src/
++ MAKE_VARS += FPIC="$(FPIC)" LUCI_VERSION="$(PKG_VERSION)" LUCI_GITBRANCH="$(PKG_GITBRANCH)"
++
++ define Build/Compile
++        $(call Build/Compile/Default,clean compile)
++ endef
++else
++ define Build/Compile
++ endef
++endif
++
++LUCI_BUILD_PACKAGES := $(PKG_NAME)
++
++$(foreach pkg,$(LUCI_BUILD_PACKAGES),$(eval $(call BuildPackage,$(pkg))))
+-- 
+2.20.1
+
