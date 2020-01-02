@@ -1,0 +1,25 @@
+From 08abe96b8021b74ab1bd4d675828559d0170cf5a Mon Sep 17 00:00:00 2001
+From: Sven Roederer <SvenRoederer@users.noreply.github.com>
+Date: Thu, 2 Jan 2020 21:55:02 +0100
+Subject: [PATCH] dhcp-defaults: enable DHCP-rapid commit by default
+
+---
+ .../uci-defaults/freifunk-berlin-dhcp-defaults                  | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/defaults/freifunk-berlin-dhcp-defaults/uci-defaults/freifunk-berlin-dhcp-defaults b/defaults/freifunk-berlin-dhcp-defaults/uci-defaults/freifunk-berlin-dhcp-defaults
+index 66a287d2d..daa7cf38e 100644
+--- a/defaults/freifunk-berlin-dhcp-defaults/uci-defaults/freifunk-berlin-dhcp-defaults
++++ b/defaults/freifunk-berlin-dhcp-defaults/uci-defaults/freifunk-berlin-dhcp-defaults
+@@ -5,6 +5,8 @@ guard "dhcp"
+ 
+ # quieten down dnsmasq a bit (do not log lease-mgmt)
+ uci set dhcp.@dnsmasq[0].quietdhcp=1
++# enable DHCP-rapidcommit (RFC4039)
++uci set dhcp.@dnsmasq[0].rapidcommit=1
+ 
+ # on IPv6-islands we also should give a default-route to the clients,
+ # so they can also reach IPv6-neighbours. 
+-- 
+2.20.1
+
