@@ -1,0 +1,66 @@
+-kmod-usb-core
+-kmod-usb2
+-kmod-usb-ledtrig-usbport
+-kmod-usb-ohci
+-kmod-ppp
+-kmod-usb-serial
+-ppp
+-ppp-mod-pppoe
+-wpad
+zram-swap
+
+# Defaults
+freifunk-berlin-dhcp-defaults
+freifunk-berlin-freifunk-defaults
+freifunk-berlin-network-defaults
+freifunk-berlin-olsrd-defaults
+freifunk-berlin-system-defaults
+freifunk-berlin-uhttpd-defaults
+community-profiles
+
+# Common
+dnsmasq
+iwinfo
+libiwinfo-lua
+
+# Utils
+tcpdump
+mtr
+ip
+iperf
+tmux
+#vnstat
+#ethtool
+iwinfo
+libiwinfo-lua
+
+# GUI
+uhttpd
+uhttpd-mod-ubus
+luci-mod-freifunk
+luci-mod-admin-full
+luci-app-olsr
+luci-app-olsr-services
+luci-app-opkg
+luci-app-owm
+luci-app-owm-ant
+luci-app-owm-cmd
+luci-theme-bootstrap
+# GUI addon
+luci-i18n-base-de
+luci-i18n-base-en
+luci-i18n-olsr-de
+luci-i18n-olsr-en
+
+# OLSR
+olsrd
+olsrd-mod-arprefresh
+olsrd-mod-dyn-gw
+olsrd-mod-jsoninfo
+olsrd-mod-nameservice
+kmod-ipip
+
+# BATMAN
+kmod-batman-adv
+alfred
+batctl-tiny
