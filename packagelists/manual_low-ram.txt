@@ -9,6 +9,7 @@
 -wpad-mini
 -wpad-basic-wolfssl
 hostapd-basic
+zram-swap
 
 # Defaults
 freifunk-berlin-dhcp-defaults

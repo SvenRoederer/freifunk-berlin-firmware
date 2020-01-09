@@ -13,6 +13,7 @@
 -wpad
 -wpad-basic-wolfssl
 hostapd-mini
+zram-swap
 -opkg
 -usign
 -openwrt-keyring
