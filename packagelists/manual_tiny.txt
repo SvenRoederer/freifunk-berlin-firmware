@@ -11,6 +11,7 @@
 hostapd-mini
 opkg
 -usign
+zram-swap
 
 # Defaults
 freifunk-berlin-dhcp-defaults
