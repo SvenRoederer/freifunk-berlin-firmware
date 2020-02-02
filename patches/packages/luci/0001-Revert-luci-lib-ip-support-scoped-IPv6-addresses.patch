@@ -1,0 +1,240 @@
+From 3839c331ca8a8f8b2ba3b39c5e62bf77e73c8611 Mon Sep 17 00:00:00 2001
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sun, 2 Feb 2020 11:40:06 +0100
+Subject: [PATCH] Revert "luci-lib-ip: support scoped IPv6 addresses"
+
+This reverts commit 1d2b4c777fd47f8d520b21d7085d3e7eb387cf02, as it seems
+to trigger https://github.com/freifunk-berlin/firmware/issues/754
+---
+ libs/luci-lib-ip/src/ip.c      | 64 +++++-----------------------------
+ libs/luci-lib-ip/src/ip.luadoc | 33 +++++-------------
+ 2 files changed, 16 insertions(+), 81 deletions(-)
+
+diff --git a/libs/luci-lib-ip/src/ip.c b/libs/luci-lib-ip/src/ip.c
+index 34a120d1a..188a70f14 100644
+--- a/libs/luci-lib-ip/src/ip.c
++++ b/libs/luci-lib-ip/src/ip.c
+@@ -62,7 +62,6 @@ typedef struct {
+ 		struct ether_addr mac;
+ 		uint8_t u8[16];
+ 	} addr;
+-	uint32_t scope;
+ 	uint16_t family;
+ 	int16_t bits;
+ } cidr_t;
+@@ -178,7 +177,7 @@ static bool parse_mask(int family, const char *mask, int16_t *bits)
+ 
+ static bool parse_cidr(const char *dest, cidr_t *pp)
+ {
+-	char *p, *s, buf[INET6_ADDRSTRLEN * 2 + 2];
++	char *p, buf[INET6_ADDRSTRLEN * 2 + 2];
+ 
+ 	strncpy(buf, dest, sizeof(buf) - 1);
+ 
+@@ -187,11 +186,6 @@ static bool parse_cidr(const char *dest, cidr_t *pp)
+ 	if (p)
+ 		*p++ = 0;
+ 
+-	s = strchr(buf, '%');
+-
+-	if (s)
+-		*s++ = 0;
+-
+ 	if (inet_pton(AF_INET, buf, &pp->addr.v4))
+ 		pp->family = AF_INET;
+ 	else if (inet_pton(AF_INET6, buf, &pp->addr.v6))
+@@ -201,22 +195,6 @@ static bool parse_cidr(const char *dest, cidr_t *pp)
+ 	else
+ 		return false;
+ 
+-	if (s)
+-	{
+-		if (pp->family != AF_INET6)
+-			return false;
+-
+-		if (!(pp->addr.v6.s6_addr[0] == 0xFE &&
+-		      pp->addr.v6.s6_addr[1] >= 0x80 &&
+-		      pp->addr.v6.s6_addr[2] <= 0xBF))
+-			return false;
+-
+-		pp->scope = if_nametoindex(s);
+-
+-		if (pp->scope == 0)
+-			return false;
+-	}
+-
+ 	if (p)
+ 	{
+ 		if (!parse_mask(pp->family, p, &pp->bits))
+@@ -232,7 +210,7 @@ static bool parse_cidr(const char *dest, cidr_t *pp)
+ 
+ static int format_cidr(lua_State *L, cidr_t *p)
+ {
+-	char *s, buf[INET6_ADDRSTRLEN + 1 + IF_NAMESIZE + 4];
++	char buf[INET6_ADDRSTRLEN];
+ 
+ 	if (p->family == AF_PACKET)
+ 	{
+@@ -251,19 +229,13 @@ static int format_cidr(lua_State *L, cidr_t *p)
+ 	}
+ 	else
+ 	{
+-		inet_ntop(p->family, &p->addr.v6, buf, sizeof(buf));
+-
+-		s = buf + strlen(buf);
+-
+-		if (p->scope != 0 && if_indextoname(p->scope, s + 1) != NULL) {
+-			*s++ = '%';
+-			s += strlen(s);
+-		}
+-
+ 		if (p->bits < AF_BITS(p->family))
+-			s += sprintf(s, "/%d", p->bits);
+-
+-		lua_pushstring(L, buf);
++			lua_pushfstring(L, "%s/%d",
++			                inet_ntop(p->family, &p->addr.v6, buf, sizeof(buf)),
++			                p->bits);
++		else
++			lua_pushstring(L,
++			               inet_ntop(p->family, &p->addr.v6, buf, sizeof(buf)));
+ 	}
+ 
+ 	return 1;
+@@ -793,25 +765,6 @@ static int cidr_mapped4(lua_State *L)
+ 	return 1;
+ }
+ 
+-static int cidr_unscoped(lua_State *L)
+-{
+-	cidr_t *p1 = L_checkcidr(L, 1, NULL);
+-	cidr_t *p2;
+-
+-	if (p1->family != AF_INET6)
+-		return 0;
+-
+-	if (!(p2 = lua_newuserdata(L, sizeof(*p2))))
+-		return 0;
+-
+-	*p2 = *p1;
+-	p2->scope = 0;
+-
+-	luaL_getmetatable(L, LUCI_IP_CIDR);
+-	lua_setmetatable(L, -2);
+-	return 1;
+-}
+-
+ static int cidr_tolinklocal(lua_State *L)
+ {
+ 	cidr_t *p1 = L_checkcidr(L, 1, NULL);
+@@ -1648,7 +1601,6 @@ static const luaL_reg ip_cidr_methods[] = {
+ 	{ "mask",			cidr_mask         },
+ 	{ "broadcast",		cidr_broadcast    },
+ 	{ "mapped4",		cidr_mapped4      },
+-	{ "unscoped",		cidr_unscoped     },
+ 	{ "tomac",			cidr_tomac        },
+ 	{ "tolinklocal",	cidr_tolinklocal  },
+ 	{ "contains",		cidr_contains     },
+diff --git a/libs/luci-lib-ip/src/ip.luadoc b/libs/luci-lib-ip/src/ip.luadoc
+index 3e0396340..afd171beb 100644
+--- a/libs/luci-lib-ip/src/ip.luadoc
++++ b/libs/luci-lib-ip/src/ip.luadoc
+@@ -837,23 +837,6 @@ instances which are not a mapped address, it will return nothing in this case.
+ print(addr:mapped4()) -- "172.16.19.1"`
+ ]]
+ 
+----[[
+-Derive unscoped IPv6 address of CIDR instance.
+-
+-Construct a copy of the given IPv6 CIDR instance and drop the associated
+-address scope information.
+-
+-This function has no effect on IPv4 instances or MAC address instances,
+-it will return nothing in this case.
+-
+-@class function
+-@sort 19
+-@name cidr.unscoped
+-@return Return a new CIDR instance representing the unscoped IPv6 address.
+-@usage `local addr = luci.ip.new("fe80::1234%eth0")
+-print(addr:unscoped()) -- "fe80::1234"`
+-]]
+-
+ ---[[
+ Derive MAC address of IPv6 link local CIDR instance.
+ 
+@@ -865,7 +848,7 @@ instances which are not a link local address, it will return nothing in this
+ case.
+ 
+ @class function
+-@sort 20
++@sort 19
+ @name cidr.tomac
+ @return Return a new CIDR instance representing the MAC address if this
+   instance is an IPv6 link local address, else return nothing.
+@@ -883,7 +866,7 @@ This function has no effect on IPv4 instances or IPv6 instances, it will return
+ nothing in this case.
+ 
+ @class function
+-@sort 21
++@sort 20
+ @name cidr.tolinklocal
+ @return Return a new CIDR instance representing the IPv6 link local address.
+ @usage `local mac = luci.ip.new("64:66:B3:47:E1:B9")
+@@ -894,7 +877,7 @@ print(mac:tolinklocal()) -- "fe80::6666:b3ff:fe47:e1b9"`
+ Test whether CIDR contains given range.
+ 
+ @class function
+-@sort 22
++@sort 21
+ @name cidr.contains
+ @param addr A `luci.ip.cidr` instance or a string convertible by
+ 	`luci.ip.new()` to test.
+@@ -919,7 +902,7 @@ Add given amount to CIDR instance. If the result would overflow the maximum
+ address space, the result is set to the highest possible address.
+ 
+ @class function
+-@sort 23
++@sort 22
+ @name cidr.add
+ @param amount A numeric value between 0 and 0xFFFFFFFF, a
+ 	`luci.ip.cidr` instance or a string convertible by
+@@ -968,7 +951,7 @@ Subtract given amount from CIDR instance. If the result would under, the lowest
+ possible address is returned.
+ 
+ @class function
+-@sort 24
++@sort 23
+ @name cidr.sub
+ @param amount A numeric value between 0 and 0xFFFFFFFF, a
+ 	`luci.ip.cidr` instance or a string convertible by
+@@ -1016,7 +999,7 @@ print(mac)                     -- "00:00:00:00:00:00"`
+ Calculate the lowest possible host address within this CIDR instance.
+ 
+ @class function
+-@sort 25
++@sort 24
+ @name cidr.minhost
+ @return Returns a new CIDR instance representing the lowest host address
+ 	within this range.
+@@ -1034,7 +1017,7 @@ print(mac:minhost())   -- "00:14:22:01:00:01"`
+ Calculate the highest possible host address within this CIDR instance.
+ 
+ @class function
+-@sort 26
++@sort 25
+ @name cidr.maxhost
+ @return Returns a new CIDR instance representing the highest host address
+ 	within this range.
+@@ -1059,7 +1042,7 @@ It is usually not required to call this function directly as CIDR objects
+ define it as __tostring function in the associated metatable.
+ 
+ @class function
+-@sort 27
++@sort 26
+ @name cidr.string
+ @return Returns a string representing the range or address of this CIDR instance
+ ]]
+-- 
+2.20.1
+
