@@ -24,12 +24,15 @@ kmod-ipt-nat-extra
 kmod-iptunnel
 kmod-iptunnel4
 kmod-lib-crc-ccitt
+kmod-nf-nathelper-extra
 kmod-sit
 kmod-slhc
 kmod-usb-core
 kmod-usb-ledtrig-usbport
 kmod-usb-storage
 kmod-usb2
+iptables-mod-nat-extra
+iptables-mod-conntrack-extra
 
 uhttpd
 luci-mod-admin-full
