@@ -1,3 +1,6 @@
+This branch is based on master and has some experimental features added
+Maintainer: SAm0815
+
 # Freifunk Berlin Firmware
 https://wiki.freifunk.net/Berlin:Firmware
 
