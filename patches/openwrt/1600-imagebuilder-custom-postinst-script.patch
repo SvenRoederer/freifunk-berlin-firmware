@@ -17,8 +17,8 @@ index 95df8bf113..0debd5a882 100644
 +	(cd "$(TARGET_DIR)" ; bash $(CUSTOM_POSTINST_SCRIPT))
 +endif
  	$(MAKE) -s build_image
+ 	$(MAKE) -s json_overview_image_info
  	$(MAKE) -s checksum
- 
 -- 
 2.20.1
 
