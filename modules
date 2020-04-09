@@ -1,0 +1,23 @@
+OPENWRT_REPO=https://git.openwrt.org/openwrt/openwrt.git
+OPENWRT_COMMIT=ae06a650d68026530beec4196869706866c2e4b1
+
+PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
+PACKAGES_PACKAGES_COMMIT=a8b212e9332d8c8953dc1b612cc489858e8687ae
+
+PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
+PACKAGES_LUCI_COMMIT=bdc86c8464139494b67faaa68ac3dae64359c8e8
+
+PACKAGES_FREIFUNK_REPO=https://github.com/freifunk/openwrt-packages.git
+PACKAGES_FREIFUNK_COMMIT=f6f61274e0ad2455792858994a79aaa0d3e13b4b
+
+PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
+PACKAGES_ROUTING_COMMIT=512240f48028bca1832fc79e38f3b40ba9f3b3af
+
+PACKAGES_PACKAGES_BERLIN_REPO=https://github.com/freifunk-berlin/firmware-packages.git
+PACKAGES_PACKAGES_BERLIN_COMMIT=fd19100f5fa56635889cb78109dbc4a555f79d99
+
+PACKAGES_PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
+PACKAGES_PACKAGES_GLUON_COMMIT=12e41d0ff07ec54bbd67a31ab50d12ca04f2238c
+
+GLUON_FEEDS='packages luci freifunk routing packages_berlin packages_gluon'
+
