@@ -1,4 +1,4 @@
-From 8ec386a5e5c0be8823e36c3ebe7d0291e9a49ed9 Mon Sep 17 00:00:00 2001
+From 035c137814d19079c7a8902eba50bc46da3bbd45 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Mon, 1 Jul 2019 21:52:07 +0200
 Subject: [PATCH 1/5] luci-base: move some generic classes into a separate
@@ -104,11 +104,15 @@ index 851a362eb..95f45d200 100644
 2.20.1
 
 
-From e26ede3d6777c47001b1a81cbaf2ecf4aa1cc8cb Mon Sep 17 00:00:00 2001
+From 0fe104c0240fab27b1fbbf7c07b1b301e17b4c8f Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sat, 6 Jul 2019 14:18:15 +0200
 Subject: [PATCH 2/5] luci-base(-libs): move pcdata() and striptags() from
  util- to xml-class
+
+To complete the previous commit these functions are defined in the resulting
+luci-base package but are also used in the new luci-base-libs package. So
+move them into the new xml-module of the new package.
 
 Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
 ---
@@ -256,7 +260,7 @@ index 000000000..58de53396
 2.20.1
 
 
-From 38ed226ace94916044d2f6a63931e7b43816fc76 Mon Sep 17 00:00:00 2001
+From 45e2e8bf9002fa9d256aa17c75c7e6e592b68199 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sun, 29 Mar 2020 14:00:49 +0200
 Subject: [PATCH 3/5] docs: move pcdata() and striptags() from util- to
@@ -1311,19 +1315,22 @@ index bf93619c9..36895486c 100644
 2.20.1
 
 
-From 87eed28d25f179440876e5ade963d9acf8ace196 Mon Sep 17 00:00:00 2001
+From 17712992c0d2750744db32db83e9be6689e1e0c5 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sat, 6 Jul 2019 14:27:42 +0200
 Subject: [PATCH 4/5] treewide: adapt to new luci.xml class
+
+In teh previous commit the luci.xml module was created, Let'S change all
+references to the old functions to the new xml-module.
 
 Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
 ---
  .../luasrc/view/openvpn/cbi-select-input-add.htm   |  2 +-
  .../luasrc/view/tinyproxy_status.htm               |  4 ++--
  .../luasrc/view/travelmate/wifi_scan.htm           | 14 +++++++-------
- modules/luci-base/luasrc/dispatcher.lua            |  7 ++++---
+ modules/luci-base/luasrc/dispatcher.lua            |  9 +++++----
  .../luasrc/model/cbi/admin_system/backupfiles.lua  |  2 +-
- 5 files changed, 15 insertions(+), 14 deletions(-)
+ 5 files changed, 16 insertions(+), 15 deletions(-)
 
 diff --git a/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm b/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm
 index 9ca1e87fa..6f3263590 100644
@@ -1402,7 +1409,7 @@ index 6bb60795a..4d4a93aa6 100644
  		</form>
  	</div>
 diff --git a/modules/luci-base/luasrc/dispatcher.lua b/modules/luci-base/luasrc/dispatcher.lua
-index 118ca221a..522347164 100644
+index 118ca221a..afb6ee794 100644
 --- a/modules/luci-base/luasrc/dispatcher.lua
 +++ b/modules/luci-base/luasrc/dispatcher.lua
 @@ -5,6 +5,7 @@
@@ -1412,6 +1419,15 @@ index 118ca221a..522347164 100644
 +local xml = require "luci.xml"
  local http = require "luci.http"
  local nixio = require "nixio", require "nixio.util"
+ 
+@@ -247,7 +248,7 @@ local function tree_to_json(node, json)
+ 	if type(node.nodes) == "table" then
+ 		for subname, subnode in pairs(node.nodes) do
+ 			local spec = {
+-				title = util.striptags(subnode.title),
++				title = xml.striptags(subnode.title),
+ 				order = subnode.order
+ 			}
  
 @@ -680,7 +681,7 @@ local function init_template_engine(ctx)
  				(scope and type(scope[key]) ~= "function" and scope[key]) or "")
@@ -1450,10 +1466,12 @@ index c81466c87..91c654916 100644
 2.20.1
 
 
-From 550f9fdc2cd1c1d7d074f971654001b0e8162f4e Mon Sep 17 00:00:00 2001
+From 32eb5f29c476fcfbbb3f14b712c990a40de12731 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sat, 6 Jul 2019 14:31:15 +0200
 Subject: [PATCH 5/5] luci-base: update dependency to luci-lib-base
+
+To satisfy the dependencies.
 
 Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
 ---
