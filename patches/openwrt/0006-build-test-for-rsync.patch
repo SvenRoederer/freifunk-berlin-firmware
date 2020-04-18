@@ -1,0 +1,27 @@
+From eac1c4f401a9b6a2f21a193e40140d78eb6af7ae Mon Sep 17 00:00:00 2001
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 19 Apr 2020 00:25:25 +0200
+Subject: [PATCH] build: test for rsync
+
+this is required to build package kernel-header v5.4+
+---
+ include/prereq-build.mk | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/prereq-build.mk b/include/prereq-build.mk
+index d626ab024f..08541278e0 100644
+--- a/include/prereq-build.mk
++++ b/include/prereq-build.mk
+@@ -154,6 +154,9 @@ $(eval $(call SetupHostCommand,git,Please install Git (git-core) >= 1.7.12.2, \
+ $(eval $(call SetupHostCommand,file,Please install the 'file' package, \
+ 	file --version 2>&1 | grep file))
+ 
++$(eval $(call SetupHostCommand,rsync,Please install 'rsync', \
++	rsync --version 2>&1 | grep rsync))
++
+ $(STAGING_DIR_HOST)/bin/mkhash: $(SCRIPT_DIR)/mkhash.c
+ 	mkdir -p $(dir $@)
+ 	$(CC) -O2 -I$(TOPDIR)/tools/include -o $@ $<
+-- 
+2.20.1
+
