@@ -1,4 +1,4 @@
-From 035c137814d19079c7a8902eba50bc46da3bbd45 Mon Sep 17 00:00:00 2001
+From 41dc89521e329bccedc0823603e8b9916b9cc7b4 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Mon, 1 Jul 2019 21:52:07 +0200
 Subject: [PATCH 1/5] luci-base: move some generic classes into a separate
@@ -104,7 +104,7 @@ index 851a362eb..95f45d200 100644
 2.20.1
 
 
-From 0fe104c0240fab27b1fbbf7c07b1b301e17b4c8f Mon Sep 17 00:00:00 2001
+From 302bd2d33d825d51814c0e9984c6fa4bf577d762 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sat, 6 Jul 2019 14:18:15 +0200
 Subject: [PATCH 2/5] luci-base(-libs): move pcdata() and striptags() from
@@ -260,7 +260,7 @@ index 000000000..58de53396
 2.20.1
 
 
-From 45e2e8bf9002fa9d256aa17c75c7e6e592b68199 Mon Sep 17 00:00:00 2001
+From 454a566a4fe4924ad3f326a7f63fe06daefca7f0 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sun, 29 Mar 2020 14:00:49 +0200
 Subject: [PATCH 3/5] docs: move pcdata() and striptags() from util- to
@@ -1315,7 +1315,7 @@ index bf93619c9..36895486c 100644
 2.20.1
 
 
-From 17712992c0d2750744db32db83e9be6689e1e0c5 Mon Sep 17 00:00:00 2001
+From 67eb84b856054cae00c44bd579e7f208e1a517a8 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sat, 6 Jul 2019 14:27:42 +0200
 Subject: [PATCH 4/5] treewide: adapt to new luci.xml class
@@ -1325,12 +1325,12 @@ references to the old functions to the new xml-module.
 
 Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
 ---
- .../luasrc/view/openvpn/cbi-select-input-add.htm   |  2 +-
- .../luasrc/view/tinyproxy_status.htm               |  4 ++--
- .../luasrc/view/travelmate/wifi_scan.htm           | 14 +++++++-------
- modules/luci-base/luasrc/dispatcher.lua            |  9 +++++----
- .../luasrc/model/cbi/admin_system/backupfiles.lua  |  2 +-
- 5 files changed, 16 insertions(+), 15 deletions(-)
+ .../luasrc/view/openvpn/cbi-select-input-add.htm    |  2 +-
+ .../luasrc/view/tinyproxy_status.htm                |  4 ++--
+ .../luasrc/view/travelmate/wifi_scan.htm            | 13 +++++++------
+ modules/luci-base/luasrc/dispatcher.lua             |  9 +++++----
+ .../luasrc/model/cbi/admin_system/backupfiles.lua   |  2 +-
+ 5 files changed, 16 insertions(+), 14 deletions(-)
 
 diff --git a/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm b/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm
 index 9ca1e87fa..6f3263590 100644
@@ -1361,19 +1361,18 @@ index 2ba9dddb8..9ff0b0292 100644
  	end
  
 diff --git a/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm b/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
-index 6bb60795a..4d4a93aa6 100644
+index 7d00eceed..491af1d92 100644
 --- a/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
 +++ b/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
-@@ -5,7 +5,7 @@ This is free software, licensed under the Apache License, Version 2.0
- 
+@@ -6,6 +6,7 @@ This is free software, licensed under the Apache License, Version 2.0
  <%-
  	local sys = require("luci.sys")
--	local utl = require("luci.util")
+ 	local utl = require("luci.util")
 +	local xml = require("luci.xml")
  	local dev = luci.http.formvalue("device")
- 	local iw  = luci.sys.wifi.getiwinfo(dev)
- 
-@@ -40,10 +40,10 @@ This is free software, licensed under the Apache License, Version 2.0
+ 	local ifn = utl.trim(sys.exec("/bin/ubus -S call network.wireless status 2>/dev/null | jsonfilter -l1 -e '@." .. dev .. ".interfaces[@.config.mode=\"sta\"].ifname' 2>/dev/null"))
+ 	local iw
+@@ -47,10 +48,10 @@ This is free software, licensed under the Apache License, Version 2.0
  			<%- for i, net in ipairs(iw.scanlist or { }) do -%>
  			<div class="tr cbi-section-table-row cbi-rowstyle-1">
  				<div class="td left" style="text-align: left !important">
@@ -1386,7 +1385,7 @@ index 6bb60795a..4d4a93aa6 100644
  				</div>
  				<div class="td left" style="text-align: left !important">
  					<%=net.encryption.description%>
-@@ -54,9 +54,9 @@ This is free software, licensed under the Apache License, Version 2.0
+@@ -61,9 +62,9 @@ This is free software, licensed under the Apache License, Version 2.0
  				<div class="td cbi-section-actions">
  					<form class="inline" action="<%=luci.dispatcher.build_url('admin/services/travelmate/wifiadd')%>" method="post">
  						<input type="hidden" name="token" value="<%=token%>"/>
@@ -1399,7 +1398,7 @@ index 6bb60795a..4d4a93aa6 100644
  						<input type="hidden" name="description" value="<%=net.encryption.description%>"/>
  						<input type="hidden" name="wep" value="<%=net.encryption.wep and 1 or 0%>"/>
  						<%- if net.encryption.wpa then -%>
-@@ -78,7 +78,7 @@ This is free software, licensed under the Apache License, Version 2.0
+@@ -85,7 +86,7 @@ This is free software, licensed under the Apache License, Version 2.0
  		</form>
  		<form class="inline" action="<%=luci.dispatcher.build_url('admin/services/travelmate/wifiscan')%>" method="post">
  			<input type="hidden" name="token" value="<%=token%>"/>
@@ -1409,7 +1408,7 @@ index 6bb60795a..4d4a93aa6 100644
  		</form>
  	</div>
 diff --git a/modules/luci-base/luasrc/dispatcher.lua b/modules/luci-base/luasrc/dispatcher.lua
-index 118ca221a..afb6ee794 100644
+index d14a86673..79ccf5892 100644
 --- a/modules/luci-base/luasrc/dispatcher.lua
 +++ b/modules/luci-base/luasrc/dispatcher.lua
 @@ -5,6 +5,7 @@
@@ -1420,7 +1419,7 @@ index 118ca221a..afb6ee794 100644
  local http = require "luci.http"
  local nixio = require "nixio", require "nixio.util"
  
-@@ -247,7 +248,7 @@ local function tree_to_json(node, json)
+@@ -276,7 +277,7 @@ local function tree_to_json(node, json)
  	if type(node.nodes) == "table" then
  		for subname, subnode in pairs(node.nodes) do
  			local spec = {
@@ -1429,7 +1428,7 @@ index 118ca221a..afb6ee794 100644
  				order = subnode.order
  			}
  
-@@ -680,7 +681,7 @@ local function init_template_engine(ctx)
+@@ -741,7 +742,7 @@ local function init_template_engine(ctx)
  				(scope and type(scope[key]) ~= "function" and scope[key]) or "")
  
  			if noescape ~= true then
@@ -1438,7 +1437,7 @@ index 118ca221a..afb6ee794 100644
  			end
  
  			return string.format(' %s="%s"', tostring(key), val)
-@@ -695,8 +696,8 @@ local function init_template_engine(ctx)
+@@ -756,8 +757,8 @@ local function init_template_engine(ctx)
  		translate   = i18n.translate;
  		translatef  = i18n.translatef;
  		export      = function(k, v) if tpl.context.viewns[k] == nil then tpl.context.viewns[k] = v end end;
@@ -1466,7 +1465,7 @@ index c81466c87..91c654916 100644
 2.20.1
 
 
-From 32eb5f29c476fcfbbb3f14b712c990a40de12731 Mon Sep 17 00:00:00 2001
+From 83ad2f793c4e23e67e112c63e7c643c6683a0038 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sat, 6 Jul 2019 14:31:15 +0200
 Subject: [PATCH 5/5] luci-base: update dependency to luci-lib-base
