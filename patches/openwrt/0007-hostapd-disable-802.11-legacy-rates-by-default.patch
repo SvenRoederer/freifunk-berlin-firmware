@@ -1,7 +1,6 @@
-From bf157f5b6bbb245f41a805b438f96511e19ed5de Mon Sep 17 00:00:00 2001
 From: template <nomail@local>
 Date: Fri, 6 Sep 2019 08:29:50 +0000
-Subject: [PATCH] hostapd: disable 802.11 legacy-rates by default
+Subject: hostapd: disable 802.11 legacy-rates by default
 
 In https://github.com/lede-project/source/commit/e194e1b3c838a301178effb639804c28fe67354d
 the option "legacy-rates" was added to uci.wireless.radio. So on
@@ -16,15 +15,12 @@ adding the legacy_rates option.
 
 This was also tested on a 5GHz radio of a Dualband-router and
 did no show any side-effects in this band.
----
- package/network/services/hostapd/files/hostapd.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/package/network/services/hostapd/files/hostapd.sh b/package/network/services/hostapd/files/hostapd.sh
-index 189760157e..df6162efe9 100644
+index 637f298ad9142a1725879192f4cfbae58a83b947..2c0137d7e2a8d9b69c51faca8ccdaf8366021a6d 100644
 --- a/package/network/services/hostapd/files/hostapd.sh
 +++ b/package/network/services/hostapd/files/hostapd.sh
-@@ -116,7 +116,7 @@ hostapd_prepare_device_config() {
+@@ -117,7 +117,7 @@ hostapd_prepare_device_config() {
  	set_default country_ie 1
  	set_default spectrum_mgmt_required 0
  	set_default doth 1
@@ -33,6 +29,3 @@ index 189760157e..df6162efe9 100644
  
  	[ "$hwmode" = "b" ] && legacy_rates=1
  
--- 
-2.20.1
-
