@@ -1,0 +1,35 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Tue, 21 Apr 2020 02:00:44 +0200
+Subject: system-defaults: set system.was_development flag when running non-release code
+
+This might help to detect if development code was run and probably setup
+conflicting options.
+
+diff --git a/defaults/freifunk-berlin-system-defaults/uci-defaults/freifunk-berlin-system-defaults b/defaults/freifunk-berlin-system-defaults/uci-defaults/freifunk-berlin-system-defaults
+index 73c5c02fce5dbcfb4bd197a559502ffc76cec0d3..3fb36b1c4e951c7721aa066a1f2265abadca1033 100755
+--- a/defaults/freifunk-berlin-system-defaults/uci-defaults/freifunk-berlin-system-defaults
++++ b/defaults/freifunk-berlin-system-defaults/uci-defaults/freifunk-berlin-system-defaults
+@@ -1,6 +1,7 @@
+ #!/bin/sh
+ 
+ . /lib/functions/guard.sh
++. /etc/openwrt_release
+ 
+ # change default hostname
+ if [ $(uci get system.@system[0].hostname) = OpenWrt ]; then
+@@ -8,6 +9,15 @@ if [ $(uci get system.@system[0].hostname) = OpenWrt ]; then
+   uci commit system
+ fi
+ 
++# set system.was_development flag if running non-releasecode was detected
++SEMVER=$(echo ${DISTRIB_RELEASE%%-*} | \
++  grep -E "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$")
++if [ -z ${SEMVER} ] && [ "$(uci -q get system.@system[0].was_development)" != "1"]; then 
++  uci set system.@system[0].was_development=1
++  uci commit system
++fi
++
++
+ guard "system"
+ 
+ uci set system.ntp.use_dhcp='0'
