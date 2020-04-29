@@ -1,15 +1,11 @@
-From 38fc962697f9568170ac491e67cf255073fb4723 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Wed, 8 Apr 2020 00:38:18 +0200
-Subject: [PATCH] freifunk-common: drop reloading of dnsmasq by crontab
+Subject: freifunk-common: drop reloading of dnsmasq by crontab
 
 this will be converted to "olsrd sighup" callback
----
- .../freifunk-common/files-common/etc/init.d/freifunk      | 8 --------
- 1 file changed, 8 deletions(-)
 
 diff --git a/contrib/package/freifunk-common/files-common/etc/init.d/freifunk b/contrib/package/freifunk-common/files-common/etc/init.d/freifunk
-index 8ff3138b4..f401075f4 100755
+index 8ff3138b4cb5f38ee7befeecdb6af36653d21940..f401075f418cb5ee268f7666e9723a6806c70e38 100755
 --- a/contrib/package/freifunk-common/files-common/etc/init.d/freifunk
 +++ b/contrib/package/freifunk-common/files-common/etc/init.d/freifunk
 @@ -5,17 +5,9 @@
@@ -30,6 +26,3 @@ index 8ff3138b4..f401075f4 100755
 -
 -	/etc/init.d/cron restart &
  }
--- 
-2.20.1
-

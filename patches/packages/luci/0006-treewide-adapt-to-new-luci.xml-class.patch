@@ -1,0 +1,138 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sat, 6 Jul 2019 14:27:42 +0200
+Subject: treewide: adapt to new luci.xml class
+
+In teh previous commit the luci.xml module was created, Let'S change all
+references to the old functions to the new xml-module.
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+
+diff --git a/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm b/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm
+index 9ca1e87fa4e9065f1a5fe1a2a7eb4455a6fa6925..6f3263590c31e75e959380a3f952f88f91ebda5d 100644
+--- a/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm
++++ b/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm
+@@ -84,7 +84,7 @@
+ 				<select id="instance_template" name="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.select">
+ 					<option value="" selected="selected" disabled="disabled"><%:Select template ...%></option>
+ 					<%- for k, v in luci.util.kspairs(self.add_select_options) do %>
+-						<option value="<%=k%>"><%=luci.util.pcdata(v)%></option>
++						<option value="<%=k%>"><%=luci.xml.pcdata(v)%></option>
+ 					<% end -%>
+ 				</select>
+ 			</div>
+diff --git a/applications/luci-app-tinyproxy/luasrc/view/tinyproxy_status.htm b/applications/luci-app-tinyproxy/luasrc/view/tinyproxy_status.htm
+index 2ba9dddb8e663c27b57e6daea8dd405913ca0955..9ff0b0292c781fc5cd2c5c809dd75ed9f2d928d2 100644
+--- a/applications/luci-app-tinyproxy/luasrc/view/tinyproxy_status.htm
++++ b/applications/luci-app-tinyproxy/luasrc/view/tinyproxy_status.htm
+@@ -35,8 +35,8 @@ if luci.http.formvalue("frame") == "1" then
+ 	if not data then
+ 		luci.http.write(translate("Failed to retrieve statistics from url:"))
+ 		luci.http.write(" http://%s:%s" %{
+-			luci.util.pcdata(addr),
+-			luci.util.pcdata(port)
++			luci.xml.pcdata(addr),
++			luci.xml.pcdata(port)
+ 		})
+ 	end
+ 
+diff --git a/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm b/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
+index 7d00eceed6a4ad34a6d8b68103afb3e208f564d0..491af1d92da1eae7870c6ee697ea714a674ad91e 100644
+--- a/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
++++ b/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
+@@ -6,6 +6,7 @@ This is free software, licensed under the Apache License, Version 2.0
+ <%-
+ 	local sys = require("luci.sys")
+ 	local utl = require("luci.util")
++	local xml = require("luci.xml")
+ 	local dev = luci.http.formvalue("device")
+ 	local ifn = utl.trim(sys.exec("/bin/ubus -S call network.wireless status 2>/dev/null | jsonfilter -l1 -e '@." .. dev .. ".interfaces[@.config.mode=\"sta\"].ifname' 2>/dev/null"))
+ 	local iw
+@@ -47,10 +48,10 @@ This is free software, licensed under the Apache License, Version 2.0
+ 			<%- for i, net in ipairs(iw.scanlist or { }) do -%>
+ 			<div class="tr cbi-section-table-row cbi-rowstyle-1">
+ 				<div class="td left" style="text-align: left !important">
+-					<%=net.ssid and utl.pcdata(net.ssid) or "<em>%s</em>" % translate("hidden")%>
++					<%=net.ssid and xml.pcdata(net.ssid) or "<em>%s</em>" % translate("hidden")%>
+ 				</div>
+ 				<div class="td left" style="text-align: left !important">
+-					<%=net.bssid and utl.pcdata(net.bssid)%>
++					<%=net.bssid and xml.pcdata(net.bssid)%>
+ 				</div>
+ 				<div class="td left" style="text-align: left !important">
+ 					<%=net.encryption.description%>
+@@ -61,9 +62,9 @@ This is free software, licensed under the Apache License, Version 2.0
+ 				<div class="td cbi-section-actions">
+ 					<form class="inline" action="<%=luci.dispatcher.build_url('admin/services/travelmate/wifiadd')%>" method="post">
+ 						<input type="hidden" name="token" value="<%=token%>"/>
+-						<input type="hidden" name="device" value="<%=utl.pcdata(dev)%>"/>
+-						<input type="hidden" name="ssid" value="<%=utl.pcdata(net.ssid)%>"/>
+-						<input type="hidden" name="bssid" value="<%=utl.pcdata(net.bssid)%>"/>
++						<input type="hidden" name="device" value="<%=xml.pcdata(dev)%>"/>
++						<input type="hidden" name="ssid" value="<%=xml.pcdata(net.ssid)%>"/>
++						<input type="hidden" name="bssid" value="<%=xml.pcdata(net.bssid)%>"/>
+ 						<input type="hidden" name="description" value="<%=net.encryption.description%>"/>
+ 						<input type="hidden" name="wep" value="<%=net.encryption.wep and 1 or 0%>"/>
+ 						<%- if net.encryption.wpa then -%>
+@@ -85,7 +86,7 @@ This is free software, licensed under the Apache License, Version 2.0
+ 		</form>
+ 		<form class="inline" action="<%=luci.dispatcher.build_url('admin/services/travelmate/wifiscan')%>" method="post">
+ 			<input type="hidden" name="token" value="<%=token%>"/>
+-			<input type="hidden" name="device" value="<%=utl.pcdata(dev)%>"/>
++			<input type="hidden" name="device" value="<%=xml.pcdata(dev)%>"/>
+ 			<input class="cbi-button cbi-input-find" type="submit" value="<%:Repeat scan%>"/>
+ 		</form>
+ 	</div>
+diff --git a/modules/luci-base/luasrc/dispatcher.lua b/modules/luci-base/luasrc/dispatcher.lua
+index d14a866737a15e438249e0cb4d71f30363fb6d53..79ccf5892da412f7df8171c0ea539c9dc1c01653 100644
+--- a/modules/luci-base/luasrc/dispatcher.lua
++++ b/modules/luci-base/luasrc/dispatcher.lua
+@@ -5,6 +5,7 @@
+ local fs = require "nixio.fs"
+ local sys = require "luci.sys"
+ local util = require "luci.util"
++local xml = require "luci.xml"
+ local http = require "luci.http"
+ local nixio = require "nixio", require "nixio.util"
+ 
+@@ -276,7 +277,7 @@ local function tree_to_json(node, json)
+ 	if type(node.nodes) == "table" then
+ 		for subname, subnode in pairs(node.nodes) do
+ 			local spec = {
+-				title = util.striptags(subnode.title),
++				title = xml.striptags(subnode.title),
+ 				order = subnode.order
+ 			}
+ 
+@@ -741,7 +742,7 @@ local function init_template_engine(ctx)
+ 				(scope and type(scope[key]) ~= "function" and scope[key]) or "")
+ 
+ 			if noescape ~= true then
+-				val = util.pcdata(val)
++				val = xml.pcdata(val)
+ 			end
+ 
+ 			return string.format(' %s="%s"', tostring(key), val)
+@@ -756,8 +757,8 @@ local function init_template_engine(ctx)
+ 		translate   = i18n.translate;
+ 		translatef  = i18n.translatef;
+ 		export      = function(k, v) if tpl.context.viewns[k] == nil then tpl.context.viewns[k] = v end end;
+-		striptags   = util.striptags;
+-		pcdata      = util.pcdata;
++		striptags   = xml.striptags;
++		pcdata      = xml.pcdata;
+ 		media       = media;
+ 		theme       = fs.basename(media);
+ 		resource    = luci.config.main.resourcebase;
+diff --git a/modules/luci-mod-system/luasrc/model/cbi/admin_system/backupfiles.lua b/modules/luci-mod-system/luasrc/model/cbi/admin_system/backupfiles.lua
+index c81466c87455dc66f0ac965015b7f3df397c582b..91c6549163aedda73b63d499bb9162b7b58f0234 100644
+--- a/modules/luci-mod-system/luasrc/model/cbi/admin_system/backupfiles.lua
++++ b/modules/luci-mod-system/luasrc/model/cbi/admin_system/backupfiles.lua
+@@ -68,7 +68,7 @@ else
+ 					break
+ 				else
+ 					files[#files+1] = "<li>"
+-					files[#files+1] = luci.util.pcdata(ln)
++					files[#files+1] = luci.xml.pcdata(ln)
+ 					files[#files+1] = "</li>"
+ 				end
+ 			end

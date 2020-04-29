@@ -1,18 +1,13 @@
-From 3e173466937e47caed40cccfc668bb0eaf160698 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <devel-sven@geroedel.de>
 Date: Tue, 10 Mar 2020 00:32:22 +0100
-Subject: [PATCH] olsrd: add patch to adapt to API changes in gpsd 3.20
+Subject: olsrd: add patch to adapt to API changes in gpsd 3.20
 
 This is PR https://github.com/OLSR/olsrd/pull/79.
 This code is only compile-tested but not runtime-tested.
----
- ...ud_adapt_to_API_changes_in_gpsd_3.20.patch | 99 +++++++++++++++++++
- 1 file changed, 99 insertions(+)
- create mode 100644 olsrd/patches/001-pud_adapt_to_API_changes_in_gpsd_3.20.patch
 
 diff --git a/olsrd/patches/001-pud_adapt_to_API_changes_in_gpsd_3.20.patch b/olsrd/patches/001-pud_adapt_to_API_changes_in_gpsd_3.20.patch
 new file mode 100644
-index 0000000..ebf253d
+index 0000000000000000000000000000000000000000..ebf253ddd62426c614f6046062cd3c37ebc4a703
 --- /dev/null
 +++ b/olsrd/patches/001-pud_adapt_to_API_changes_in_gpsd_3.20.patch
 @@ -0,0 +1,99 @@
@@ -115,6 +110,3 @@ index 0000000..ebf253d
 +     nmeaInfoSetPresent(&info->present, NMEALIB_PRESENT_ELV | NMEALIB_PRESENT_HEIGHT);
 +   }
 +   gpsdata->set &= ~ALTITUDE_SET;
--- 
-2.20.1
-

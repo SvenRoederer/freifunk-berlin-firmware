@@ -1,0 +1,142 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sat, 6 Jul 2019 14:18:15 +0200
+Subject: luci-base(-libs): move pcdata() and striptags() from util- to xml-class
+
+To complete the previous commit these functions are defined in the resulting
+luci-base package but are also used in the new luci-base-libs package. So
+move them into the new xml-module of the new package.
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+
+diff --git a/libs/luci-lib-base/luasrc/util.lua b/libs/luci-lib-base/luasrc/util.lua
+index a30e8b72f31466d28bec20792c6648c9b6989cb2..f3aa52603f8d7d3960951feeacd4a727727c5d81 100644
+--- a/libs/luci-lib-base/luasrc/util.lua
++++ b/libs/luci-lib-base/luasrc/util.lua
+@@ -159,10 +159,6 @@ end
+ -- String and data manipulation routines
+ --
+ 
+-function pcdata(value)
+-	return value and tparser.pcdata(tostring(value))
+-end
+-
+ function urlencode(value)
+ 	if value ~= nil then
+ 		local str = tostring(value)
+@@ -182,10 +178,6 @@ function urldecode(value, decode_plus)
+ 	return nil
+ end
+ 
+-function striptags(value)
+-	return value and tparser.striptags(tostring(value))
+-end
+-
+ function shellquote(value)
+ 	return string.format("'%s'", string.gsub(value or "", "'", "'\\''"))
+ end
+@@ -343,8 +335,6 @@ function parse_units(ustr)
+ end
+ 
+ -- also register functions above in the central string class for convenience
+-string.pcdata      = pcdata
+-string.striptags   = striptags
+ string.split       = split
+ string.trim        = trim
+ string.cmatch      = cmatch
+diff --git a/libs/luci-lib-base/luasrc/util.luadoc b/libs/luci-lib-base/luasrc/util.luadoc
+index 4ec68dd1efc0ed356876d584e8dee1e5e0a67b77..6ab130008a428a08b4939e84cec95de55b8330e3 100644
+--- a/libs/luci-lib-base/luasrc/util.luadoc
++++ b/libs/luci-lib-base/luasrc/util.luadoc
+@@ -67,15 +67,6 @@ Recursively dumps a table to stdout, useful for testing and debugging.
+ @return				Always nil
+ ]]
+ 
+----[[
+-Create valid XML PCDATA from given string.
+-
+-@class				function
+-@name				pcdata
+-@param value		String value containing the data to escape
+-@return				String value containing the escaped data
+-]]
+-
+ ---[[
+ Decode an URL-encoded string - optionally decoding the "+" sign to space.
+ 
+@@ -97,15 +88,6 @@ URL-encode given string.
+ @see				urldecode
+ ]]
+ 
+----[[
+-Strip HTML tags from given string.
+-
+-@class				function
+-@name				striptags
+-@param value		String containing the HTML text
+-@return				String with HTML tags stripped of
+-]]
+-
+ ---[[
+ Safely quote value for use in shell commands.
+ 
+diff --git a/modules/luci-base/luasrc/xml.lua b/modules/luci-base/luasrc/xml.lua
+new file mode 100644
+index 0000000000000000000000000000000000000000..30b37210bd83e9dc91e131d9f4eac5c443bfaf6e
+--- /dev/null
++++ b/modules/luci-base/luasrc/xml.lua
+@@ -0,0 +1,26 @@
++-- Copyright 2008 Steven Barth <steven@midlink.org>
++-- Licensed to the public under the Apache License 2.0.
++
++local tparser = require "luci.template.parser"
++local string = require "string"
++
++local tostring = tostring
++
++module "luci.xml"
++
++--
++-- String and data manipulation routines
++--
++
++function pcdata(value)
++	return value and tparser.pcdata(tostring(value))
++end
++
++function striptags(value)
++	return value and tparser.striptags(tostring(value))
++end
++
++
++-- also register functions above in the central string class for convenience
++string.pcdata      = pcdata
++string.striptags   = striptags
+diff --git a/modules/luci-base/luasrc/xml.luadoc b/modules/luci-base/luasrc/xml.luadoc
+new file mode 100644
+index 0000000000000000000000000000000000000000..58de53396641ddf4f759d83456926f183260d566
+--- /dev/null
++++ b/modules/luci-base/luasrc/xml.luadoc
+@@ -0,0 +1,23 @@
++---[[
++LuCI utility functions.
++]]
++module "luci.xml"
++
++---[[
++Create valid XML PCDATA from given string.
++
++@class				function
++@name				pcdata
++@param value		String value containing the data to escape
++@return				String value containing the escaped data
++]]
++
++---[[
++Strip HTML tags from given string.
++
++@class				function
++@name				striptags
++@param value		String containing the HTML text
++@return				String with HTML tags stripped of
++]]
++

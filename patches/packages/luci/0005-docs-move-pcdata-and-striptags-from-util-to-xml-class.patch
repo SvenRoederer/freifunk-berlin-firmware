@@ -1,318 +1,13 @@
-From 41dc89521e329bccedc0823603e8b9916b9cc7b4 Mon Sep 17 00:00:00 2001
-From: Sven Roederer <freifunk@it-solutions.geroedel.de>
-Date: Mon, 1 Jul 2019 21:52:07 +0200
-Subject: [PATCH 1/5] luci-base: move some generic classes into a separate
- luci-base-libs package
-
-The new package luci-base-libs provides the modules that not strictly relate
-to the web-interface of luci. By separating these libs they can be used by
-other packages without having to install the web-components.
-This change was inspired by providing a shell-only interface for 4MB-flash
-devices, by keeping as much code common with a full install.
-
-Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
----
- libs/luci-lib-base/Makefile                        | 14 ++++++++++++++
- .../luci-lib-base}/luasrc/debug.lua                |  0
- .../luci-lib-base}/luasrc/http.lua                 |  0
- .../luci-lib-base}/luasrc/http.luadoc              |  0
- .../luci-lib-base}/luasrc/ltn12.lua                |  0
- .../luci-lib-base}/luasrc/util.lua                 |  0
- .../luci-lib-base}/luasrc/util.luadoc              |  0
- libs/luci-lib-httpclient/Makefile                  |  2 +-
- libs/luci-lib-httpprotoutils/Makefile              |  2 +-
- 9 files changed, 16 insertions(+), 2 deletions(-)
- create mode 100644 libs/luci-lib-base/Makefile
- rename {modules/luci-base => libs/luci-lib-base}/luasrc/debug.lua (100%)
- rename {modules/luci-base => libs/luci-lib-base}/luasrc/http.lua (100%)
- rename {modules/luci-base => libs/luci-lib-base}/luasrc/http.luadoc (100%)
- rename {modules/luci-base => libs/luci-lib-base}/luasrc/ltn12.lua (100%)
- rename {modules/luci-base => libs/luci-lib-base}/luasrc/util.lua (100%)
- rename {modules/luci-base => libs/luci-lib-base}/luasrc/util.luadoc (100%)
-
-diff --git a/libs/luci-lib-base/Makefile b/libs/luci-lib-base/Makefile
-new file mode 100644
-index 000000000..35b1836ec
---- /dev/null
-+++ b/libs/luci-lib-base/Makefile
-@@ -0,0 +1,14 @@
-+#
-+# Copyright (C) 2008-2014 The LuCI Team <luci@lists.subsignal.org>
-+#
-+# This is free software, licensed under the Apache License, Version 2.0 .
-+#
-+
-+include $(TOPDIR)/rules.mk
-+
-+LUCI_TITLE:=basic libraries for luci
-+LUCI_DEPENDS:=+lua +luci-lib-nixio +luci-lib-ip +luci-lib-jsonc +liblucihttp-lua
-+
-+include ../../luci.mk
-+
-+# call BuildPackage - OpenWrt buildroot signature
-diff --git a/modules/luci-base/luasrc/debug.lua b/libs/luci-lib-base/luasrc/debug.lua
-similarity index 100%
-rename from modules/luci-base/luasrc/debug.lua
-rename to libs/luci-lib-base/luasrc/debug.lua
-diff --git a/modules/luci-base/luasrc/http.lua b/libs/luci-lib-base/luasrc/http.lua
-similarity index 100%
-rename from modules/luci-base/luasrc/http.lua
-rename to libs/luci-lib-base/luasrc/http.lua
-diff --git a/modules/luci-base/luasrc/http.luadoc b/libs/luci-lib-base/luasrc/http.luadoc
-similarity index 100%
-rename from modules/luci-base/luasrc/http.luadoc
-rename to libs/luci-lib-base/luasrc/http.luadoc
-diff --git a/modules/luci-base/luasrc/ltn12.lua b/libs/luci-lib-base/luasrc/ltn12.lua
-similarity index 100%
-rename from modules/luci-base/luasrc/ltn12.lua
-rename to libs/luci-lib-base/luasrc/ltn12.lua
-diff --git a/modules/luci-base/luasrc/util.lua b/libs/luci-lib-base/luasrc/util.lua
-similarity index 100%
-rename from modules/luci-base/luasrc/util.lua
-rename to libs/luci-lib-base/luasrc/util.lua
-diff --git a/modules/luci-base/luasrc/util.luadoc b/libs/luci-lib-base/luasrc/util.luadoc
-similarity index 100%
-rename from modules/luci-base/luasrc/util.luadoc
-rename to libs/luci-lib-base/luasrc/util.luadoc
-diff --git a/libs/luci-lib-httpclient/Makefile b/libs/luci-lib-httpclient/Makefile
-index b8bd428b2..9c28c35d8 100644
---- a/libs/luci-lib-httpclient/Makefile
-+++ b/libs/luci-lib-httpclient/Makefile
-@@ -7,7 +7,7 @@
- include $(TOPDIR)/rules.mk
- 
- LUCI_TITLE:=HTTP(S) client library
--LUCI_DEPENDS:=+luci-base +luci-lib-nixio +luci-lib-httpprotoutils
-+LUCI_DEPENDS:=+luci-lib-base +luci-lib-nixio +luci-lib-httpprotoutils
- 
- include ../../luci.mk
- 
-diff --git a/libs/luci-lib-httpprotoutils/Makefile b/libs/luci-lib-httpprotoutils/Makefile
-index 851a362eb..95f45d200 100644
---- a/libs/luci-lib-httpprotoutils/Makefile
-+++ b/libs/luci-lib-httpprotoutils/Makefile
-@@ -7,7 +7,7 @@
- include $(TOPDIR)/rules.mk
- 
- LUCI_TITLE:=HTTP protocol utility functions
--LUCI_DEPENDS:=+luci-base
-+LUCI_DEPENDS:=+luci-lib-base
- 
- include ../../luci.mk
- 
--- 
-2.20.1
-
-
-From 302bd2d33d825d51814c0e9984c6fa4bf577d762 Mon Sep 17 00:00:00 2001
-From: Sven Roederer <freifunk@it-solutions.geroedel.de>
-Date: Sat, 6 Jul 2019 14:18:15 +0200
-Subject: [PATCH 2/5] luci-base(-libs): move pcdata() and striptags() from
- util- to xml-class
-
-To complete the previous commit these functions are defined in the resulting
-luci-base package but are also used in the new luci-base-libs package. So
-move them into the new xml-module of the new package.
-
-Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
----
- libs/luci-lib-base/luasrc/util.lua    | 10 ----------
- libs/luci-lib-base/luasrc/util.luadoc | 18 ------------------
- modules/luci-base/luasrc/xml.lua      | 26 ++++++++++++++++++++++++++
- modules/luci-base/luasrc/xml.luadoc   | 23 +++++++++++++++++++++++
- 4 files changed, 49 insertions(+), 28 deletions(-)
- create mode 100644 modules/luci-base/luasrc/xml.lua
- create mode 100644 modules/luci-base/luasrc/xml.luadoc
-
-diff --git a/libs/luci-lib-base/luasrc/util.lua b/libs/luci-lib-base/luasrc/util.lua
-index a30e8b72f..f3aa52603 100644
---- a/libs/luci-lib-base/luasrc/util.lua
-+++ b/libs/luci-lib-base/luasrc/util.lua
-@@ -159,10 +159,6 @@ end
- -- String and data manipulation routines
- --
- 
--function pcdata(value)
--	return value and tparser.pcdata(tostring(value))
--end
--
- function urlencode(value)
- 	if value ~= nil then
- 		local str = tostring(value)
-@@ -182,10 +178,6 @@ function urldecode(value, decode_plus)
- 	return nil
- end
- 
--function striptags(value)
--	return value and tparser.striptags(tostring(value))
--end
--
- function shellquote(value)
- 	return string.format("'%s'", string.gsub(value or "", "'", "'\\''"))
- end
-@@ -343,8 +335,6 @@ function parse_units(ustr)
- end
- 
- -- also register functions above in the central string class for convenience
--string.pcdata      = pcdata
--string.striptags   = striptags
- string.split       = split
- string.trim        = trim
- string.cmatch      = cmatch
-diff --git a/libs/luci-lib-base/luasrc/util.luadoc b/libs/luci-lib-base/luasrc/util.luadoc
-index 4ec68dd1e..6ab130008 100644
---- a/libs/luci-lib-base/luasrc/util.luadoc
-+++ b/libs/luci-lib-base/luasrc/util.luadoc
-@@ -67,15 +67,6 @@ Recursively dumps a table to stdout, useful for testing and debugging.
- @return				Always nil
- ]]
- 
-----[[
--Create valid XML PCDATA from given string.
--
--@class				function
--@name				pcdata
--@param value		String value containing the data to escape
--@return				String value containing the escaped data
--]]
--
- ---[[
- Decode an URL-encoded string - optionally decoding the "+" sign to space.
- 
-@@ -97,15 +88,6 @@ URL-encode given string.
- @see				urldecode
- ]]
- 
-----[[
--Strip HTML tags from given string.
--
--@class				function
--@name				striptags
--@param value		String containing the HTML text
--@return				String with HTML tags stripped of
--]]
--
- ---[[
- Safely quote value for use in shell commands.
- 
-diff --git a/modules/luci-base/luasrc/xml.lua b/modules/luci-base/luasrc/xml.lua
-new file mode 100644
-index 000000000..30b37210b
---- /dev/null
-+++ b/modules/luci-base/luasrc/xml.lua
-@@ -0,0 +1,26 @@
-+-- Copyright 2008 Steven Barth <steven@midlink.org>
-+-- Licensed to the public under the Apache License 2.0.
-+
-+local tparser = require "luci.template.parser"
-+local string = require "string"
-+
-+local tostring = tostring
-+
-+module "luci.xml"
-+
-+--
-+-- String and data manipulation routines
-+--
-+
-+function pcdata(value)
-+	return value and tparser.pcdata(tostring(value))
-+end
-+
-+function striptags(value)
-+	return value and tparser.striptags(tostring(value))
-+end
-+
-+
-+-- also register functions above in the central string class for convenience
-+string.pcdata      = pcdata
-+string.striptags   = striptags
-diff --git a/modules/luci-base/luasrc/xml.luadoc b/modules/luci-base/luasrc/xml.luadoc
-new file mode 100644
-index 000000000..58de53396
---- /dev/null
-+++ b/modules/luci-base/luasrc/xml.luadoc
-@@ -0,0 +1,23 @@
-+---[[
-+LuCI utility functions.
-+]]
-+module "luci.xml"
-+
-+---[[
-+Create valid XML PCDATA from given string.
-+
-+@class				function
-+@name				pcdata
-+@param value		String value containing the data to escape
-+@return				String value containing the escaped data
-+]]
-+
-+---[[
-+Strip HTML tags from given string.
-+
-+@class				function
-+@name				striptags
-+@param value		String containing the HTML text
-+@return				String with HTML tags stripped of
-+]]
-+
--- 
-2.20.1
-
-
-From 454a566a4fe4924ad3f326a7f63fe06daefca7f0 Mon Sep 17 00:00:00 2001
 From: Sven Roederer <freifunk@it-solutions.geroedel.de>
 Date: Sun, 29 Mar 2020 14:00:49 +0200
-Subject: [PATCH 3/5] docs: move pcdata() and striptags() from util- to
- xml-class
+Subject: docs: move pcdata() and striptags() from util- to xml-class
 
 update according to previous commit
 
 Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
----
- docs/api/index.html                          |   9 +
- docs/api/modules/luci.dispatcher.html        |   4 +
- docs/api/modules/luci.http.conditionals.html |   4 +
- docs/api/modules/luci.http.date.html         |   4 +
- docs/api/modules/luci.http.html              |   4 +
- docs/api/modules/luci.http.mime.html         |   4 +
- docs/api/modules/luci.i18n.html              |   4 +
- docs/api/modules/luci.ip.cidr.html           |   4 +
- docs/api/modules/luci.ip.html                |   4 +
- docs/api/modules/luci.json.html              |   4 +
- docs/api/modules/luci.jsonc.html             |   4 +
- docs/api/modules/luci.jsonc.parser.html      |   4 +
- docs/api/modules/luci.model.ipkg.html        |   4 +
- docs/api/modules/luci.model.uci.html         |   4 +
- docs/api/modules/luci.rpcc.html              |   4 +
- docs/api/modules/luci.rpcc.ruci.html         |   4 +
- docs/api/modules/luci.sys.html               |   4 +
- docs/api/modules/luci.sys.init.html          |   4 +
- docs/api/modules/luci.sys.iptparser.html     |   4 +
- docs/api/modules/luci.sys.net.html           |   4 +
- docs/api/modules/luci.sys.process.html       |   4 +
- docs/api/modules/luci.sys.user.html          |   4 +
- docs/api/modules/luci.sys.wifi.html          |   4 +
- docs/api/modules/luci.util.html              |  82 +----
- docs/api/modules/luci.xml.html               | 321 +++++++++++++++++++
- docs/api/modules/nixio.CHANGELOG.html        |   4 +
- docs/api/modules/nixio.CryptoHash.html       |   4 +
- docs/api/modules/nixio.File.html             |   4 +
- docs/api/modules/nixio.README.html           |   4 +
- docs/api/modules/nixio.Socket.html           |   4 +
- docs/api/modules/nixio.TLSContext.html       |   4 +
- docs/api/modules/nixio.TLSSocket.html        |   4 +
- docs/api/modules/nixio.UnifiedIO.html        |   4 +
- docs/api/modules/nixio.bin.html              |   4 +
- docs/api/modules/nixio.bit.html              |   4 +
- docs/api/modules/nixio.crypto.html           |   4 +
- docs/api/modules/nixio.fs.html               |   4 +
- docs/api/modules/nixio.html                  |   4 +
- 38 files changed, 474 insertions(+), 78 deletions(-)
- create mode 100644 docs/api/modules/luci.xml.html
 
 diff --git a/docs/api/index.html b/docs/api/index.html
-index 5e3f3c211..66a27a33b 100644
+index 5e3f3c211a9a54a79dedb6270f4245c52168bda6..66a27a33bc6bc377bddf9d4ee36c404407753f23 100644
 --- a/docs/api/index.html
 +++ b/docs/api/index.html
 @@ -126,6 +126,10 @@
@@ -339,7 +34,7 @@ index 5e3f3c211..66a27a33b 100644
  		<td class="name"><a href="modules/nixio.html">nixio</a></td>
  		<td class="summary">
 diff --git a/docs/api/modules/luci.dispatcher.html b/docs/api/modules/luci.dispatcher.html
-index ea33a5c70..32cb49573 100644
+index ea33a5c706acd27c6d9218959e7f2199506113eb..32cb49573ba597ae0223e72b25d96ef3973fe465 100644
 --- a/docs/api/modules/luci.dispatcher.html
 +++ b/docs/api/modules/luci.dispatcher.html
 @@ -124,6 +124,10 @@
@@ -354,7 +49,7 @@ index ea33a5c70..32cb49573 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.http.conditionals.html b/docs/api/modules/luci.http.conditionals.html
-index 8c940bd3f..14ee627f6 100644
+index 8c940bd3f6c0bbefb4c5ce5da1e44073eca5fee8..14ee627f6880b3fbc39615587d24ca4f6616150d 100644
 --- a/docs/api/modules/luci.http.conditionals.html
 +++ b/docs/api/modules/luci.http.conditionals.html
 @@ -124,6 +124,10 @@
@@ -369,7 +64,7 @@ index 8c940bd3f..14ee627f6 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.http.date.html b/docs/api/modules/luci.http.date.html
-index 1ec5beb8b..680dd4313 100644
+index 1ec5beb8b7e446568628fed15679ff040196ed31..680dd43137d99b5413036dc2a8c3cf365d97b766 100644
 --- a/docs/api/modules/luci.http.date.html
 +++ b/docs/api/modules/luci.http.date.html
 @@ -124,6 +124,10 @@
@@ -384,7 +79,7 @@ index 1ec5beb8b..680dd4313 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.http.html b/docs/api/modules/luci.http.html
-index 473172784..3e8799e74 100644
+index 47317278491ddd2fc95f1ea88db844b68c21c1be..3e8799e744f7ee7f180cea20a38ac6fc23ac5a7a 100644
 --- a/docs/api/modules/luci.http.html
 +++ b/docs/api/modules/luci.http.html
 @@ -124,6 +124,10 @@
@@ -399,7 +94,7 @@ index 473172784..3e8799e74 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.http.mime.html b/docs/api/modules/luci.http.mime.html
-index 85eaf53ab..756b0727a 100644
+index 85eaf53ab042928ac32505d68ee9782bffb1d663..756b0727ae64e6c427c7803d96c41e4384c9edc1 100644
 --- a/docs/api/modules/luci.http.mime.html
 +++ b/docs/api/modules/luci.http.mime.html
 @@ -124,6 +124,10 @@
@@ -414,7 +109,7 @@ index 85eaf53ab..756b0727a 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.i18n.html b/docs/api/modules/luci.i18n.html
-index 0f315bebd..5ba44b4c0 100644
+index 0f315bebd5a4ab6d8daa893277e99b0bb9440ba5..5ba44b4c015a6125eacc3379d4551a8058563962 100644
 --- a/docs/api/modules/luci.i18n.html
 +++ b/docs/api/modules/luci.i18n.html
 @@ -124,6 +124,10 @@
@@ -429,7 +124,7 @@ index 0f315bebd..5ba44b4c0 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.ip.cidr.html b/docs/api/modules/luci.ip.cidr.html
-index ae6c61dc5..cfe190935 100644
+index ae6c61dc5db73cf0ef3e9871a2b9a65b439d3918..cfe1909352386da94fe1c75fd13aa064f69fd9df 100644
 --- a/docs/api/modules/luci.ip.cidr.html
 +++ b/docs/api/modules/luci.ip.cidr.html
 @@ -124,6 +124,10 @@
@@ -444,7 +139,7 @@ index ae6c61dc5..cfe190935 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.ip.html b/docs/api/modules/luci.ip.html
-index 0599396b6..8d503bd65 100644
+index 0599396b6fee71ec0a6d6355b1357e7a2ffd358e..8d503bd655d4b6079fcb2a8cdf9d307a174cf123 100644
 --- a/docs/api/modules/luci.ip.html
 +++ b/docs/api/modules/luci.ip.html
 @@ -124,6 +124,10 @@
@@ -459,7 +154,7 @@ index 0599396b6..8d503bd65 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.json.html b/docs/api/modules/luci.json.html
-index db2d1da3f..5885556d5 100644
+index db2d1da3f46c2d5de6d8ab5c2050b27b716b24e5..5885556d50e72973e28971256ad1b6571ba1555f 100644
 --- a/docs/api/modules/luci.json.html
 +++ b/docs/api/modules/luci.json.html
 @@ -124,6 +124,10 @@
@@ -474,7 +169,7 @@ index db2d1da3f..5885556d5 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.jsonc.html b/docs/api/modules/luci.jsonc.html
-index 79deb933d..f6ab990fa 100644
+index 79deb933d7bfcf03cda400ede667bfb3b2932f28..f6ab990faab8ee7c0db5eeafa29c66835af68e0b 100644
 --- a/docs/api/modules/luci.jsonc.html
 +++ b/docs/api/modules/luci.jsonc.html
 @@ -124,6 +124,10 @@
@@ -489,7 +184,7 @@ index 79deb933d..f6ab990fa 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.jsonc.parser.html b/docs/api/modules/luci.jsonc.parser.html
-index 709cb9afc..54e1e487d 100644
+index 709cb9afc56986886072c310519959108aae255e..54e1e487d54ab42049d61b9160f8c1779e934861 100644
 --- a/docs/api/modules/luci.jsonc.parser.html
 +++ b/docs/api/modules/luci.jsonc.parser.html
 @@ -124,6 +124,10 @@
@@ -504,7 +199,7 @@ index 709cb9afc..54e1e487d 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.model.ipkg.html b/docs/api/modules/luci.model.ipkg.html
-index a0af3187b..e97097db5 100644
+index a0af3187b74210d5b5ca87e86695fe77ac963626..e97097db5172f65f1bfd690e5e420dd197ff7bd5 100644
 --- a/docs/api/modules/luci.model.ipkg.html
 +++ b/docs/api/modules/luci.model.ipkg.html
 @@ -124,6 +124,10 @@
@@ -519,7 +214,7 @@ index a0af3187b..e97097db5 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.model.uci.html b/docs/api/modules/luci.model.uci.html
-index c1eaf5f81..84b6ecc1b 100644
+index c1eaf5f8137198f52d014b67f029811f9d8f7dc4..84b6ecc1b8bb24a1772573a870c5374ac4a70c29 100644
 --- a/docs/api/modules/luci.model.uci.html
 +++ b/docs/api/modules/luci.model.uci.html
 @@ -124,6 +124,10 @@
@@ -534,7 +229,7 @@ index c1eaf5f81..84b6ecc1b 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.rpcc.html b/docs/api/modules/luci.rpcc.html
-index 18065788b..10d628ff4 100644
+index 18065788bd342f7845631540c5e263725ee1e1c3..10d628ff4367d8946a7ee008a44bfa5419d785ae 100644
 --- a/docs/api/modules/luci.rpcc.html
 +++ b/docs/api/modules/luci.rpcc.html
 @@ -124,6 +124,10 @@
@@ -549,7 +244,7 @@ index 18065788b..10d628ff4 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.rpcc.ruci.html b/docs/api/modules/luci.rpcc.ruci.html
-index 7348f1932..598020df7 100644
+index 7348f1932b0956159ba73e990874de17445f8811..598020df7e4bd02cbbf57d54ffa022f3a31fa9be 100644
 --- a/docs/api/modules/luci.rpcc.ruci.html
 +++ b/docs/api/modules/luci.rpcc.ruci.html
 @@ -124,6 +124,10 @@
@@ -564,7 +259,7 @@ index 7348f1932..598020df7 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.sys.html b/docs/api/modules/luci.sys.html
-index b86d280fb..f601e17dd 100644
+index b86d280fba386d80eb2e321b3cf5933e1d8cae31..f601e17dd35a24829d312a325f4e31f9ca58858f 100644
 --- a/docs/api/modules/luci.sys.html
 +++ b/docs/api/modules/luci.sys.html
 @@ -124,6 +124,10 @@
@@ -579,7 +274,7 @@ index b86d280fb..f601e17dd 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.sys.init.html b/docs/api/modules/luci.sys.init.html
-index e2c51f953..b178cafca 100644
+index e2c51f9531e49aaf314d12a05e4c68ec7243d9a0..b178cafca36cb7aafa5c2091fe655c73f9abd12d 100644
 --- a/docs/api/modules/luci.sys.init.html
 +++ b/docs/api/modules/luci.sys.init.html
 @@ -124,6 +124,10 @@
@@ -594,7 +289,7 @@ index e2c51f953..b178cafca 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.sys.iptparser.html b/docs/api/modules/luci.sys.iptparser.html
-index 5928281cf..aa9f7ce1c 100644
+index 5928281cf48ec5c4dc93469f1eba427daf907335..aa9f7ce1c5be0dd1b353c759c5c9422c94e68efc 100644
 --- a/docs/api/modules/luci.sys.iptparser.html
 +++ b/docs/api/modules/luci.sys.iptparser.html
 @@ -124,6 +124,10 @@
@@ -609,7 +304,7 @@ index 5928281cf..aa9f7ce1c 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.sys.net.html b/docs/api/modules/luci.sys.net.html
-index e7802bb24..bf1bb54aa 100644
+index e7802bb244bcbcd59da63e18cbf2ad76a57f9375..bf1bb54aa639057b71f2f27cd7d7ecf8392f4d1e 100644
 --- a/docs/api/modules/luci.sys.net.html
 +++ b/docs/api/modules/luci.sys.net.html
 @@ -124,6 +124,10 @@
@@ -624,7 +319,7 @@ index e7802bb24..bf1bb54aa 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.sys.process.html b/docs/api/modules/luci.sys.process.html
-index d3664817c..ec42ecadd 100644
+index d3664817cc985b721b204366d52b0298c551ed5b..ec42ecadd96598d8dfe14a19dd7d53452cb0c892 100644
 --- a/docs/api/modules/luci.sys.process.html
 +++ b/docs/api/modules/luci.sys.process.html
 @@ -124,6 +124,10 @@
@@ -639,7 +334,7 @@ index d3664817c..ec42ecadd 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.sys.user.html b/docs/api/modules/luci.sys.user.html
-index b2307ad38..27b13ccbb 100644
+index b2307ad385eb126f5a25f0895c06f6dbb3d95929..27b13ccbbf629b76d695b24c0320301792f1bb71 100644
 --- a/docs/api/modules/luci.sys.user.html
 +++ b/docs/api/modules/luci.sys.user.html
 @@ -124,6 +124,10 @@
@@ -654,7 +349,7 @@ index b2307ad38..27b13ccbb 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.sys.wifi.html b/docs/api/modules/luci.sys.wifi.html
-index 6c893244c..37e7053fd 100644
+index 6c893244c12c21f08d56a91b79461405ed3e02b2..37e7053fd71cb37b4809f2766cc2d8c31a99229e 100644
 --- a/docs/api/modules/luci.sys.wifi.html
 +++ b/docs/api/modules/luci.sys.wifi.html
 @@ -124,6 +124,10 @@
@@ -669,7 +364,7 @@ index 6c893244c..37e7053fd 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/luci.util.html b/docs/api/modules/luci.util.html
-index f8baddf41..a8f8737aa 100644
+index f8baddf41056b3e10fd5445caef3337c139f40fe..a8f8737aa3ab8e89c5563ff22d6a54f30f6bf18c 100644
 --- a/docs/api/modules/luci.util.html
 +++ b/docs/api/modules/luci.util.html
 @@ -124,6 +124,10 @@
@@ -791,7 +486,7 @@ index f8baddf41..a8f8737aa 100644
  
 diff --git a/docs/api/modules/luci.xml.html b/docs/api/modules/luci.xml.html
 new file mode 100644
-index 000000000..63a91e4eb
+index 0000000000000000000000000000000000000000..63a91e4eb63eced4e69912f711cabd54ad370129
 --- /dev/null
 +++ b/docs/api/modules/luci.xml.html
 @@ -0,0 +1,321 @@
@@ -1117,7 +812,7 @@ index 000000000..63a91e4eb
 +</body>
 +</html>
 diff --git a/docs/api/modules/nixio.CHANGELOG.html b/docs/api/modules/nixio.CHANGELOG.html
-index 94b44a5ca..0def9a451 100644
+index 94b44a5ca6f092894c4297c08bca63dab70ca9d3..0def9a4512ffd0d36e0abe6a7b9b30d072f81c7f 100644
 --- a/docs/api/modules/nixio.CHANGELOG.html
 +++ b/docs/api/modules/nixio.CHANGELOG.html
 @@ -126,6 +126,10 @@
@@ -1132,7 +827,7 @@ index 94b44a5ca..0def9a451 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.CryptoHash.html b/docs/api/modules/nixio.CryptoHash.html
-index 7d2f48b1e..a333c407d 100644
+index 7d2f48b1e5ae1d162fb5549e50f6cdc4a593829e..a333c407d55798a416203b754344e3c59605a363 100644
 --- a/docs/api/modules/nixio.CryptoHash.html
 +++ b/docs/api/modules/nixio.CryptoHash.html
 @@ -126,6 +126,10 @@
@@ -1147,7 +842,7 @@ index 7d2f48b1e..a333c407d 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.File.html b/docs/api/modules/nixio.File.html
-index 7a7500a77..b46a317bc 100644
+index 7a7500a773586117005760f00c8d16ce63bf3819..b46a317bc1b11d76425edcc91e877c1b188c2beb 100644
 --- a/docs/api/modules/nixio.File.html
 +++ b/docs/api/modules/nixio.File.html
 @@ -126,6 +126,10 @@
@@ -1162,7 +857,7 @@ index 7a7500a77..b46a317bc 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.README.html b/docs/api/modules/nixio.README.html
-index e140659cc..b8481ef55 100644
+index e140659cc7d3b802dfce47e10aab167c02c2d4fe..b8481ef55a55329f96c67a3d514e3c88108e7d6c 100644
 --- a/docs/api/modules/nixio.README.html
 +++ b/docs/api/modules/nixio.README.html
 @@ -126,6 +126,10 @@
@@ -1177,7 +872,7 @@ index e140659cc..b8481ef55 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.Socket.html b/docs/api/modules/nixio.Socket.html
-index 185099125..f1d48ef2b 100644
+index 185099125d1940080e72b3babe30b82c8fe9d81b..f1d48ef2b6072761d003fa46d0e884681a077d9c 100644
 --- a/docs/api/modules/nixio.Socket.html
 +++ b/docs/api/modules/nixio.Socket.html
 @@ -126,6 +126,10 @@
@@ -1192,7 +887,7 @@ index 185099125..f1d48ef2b 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.TLSContext.html b/docs/api/modules/nixio.TLSContext.html
-index c84d31895..247670c56 100644
+index c84d318955d02cb60025064c601ef92bbea6252b..247670c56139b87cf73047f730c21f139fe554a9 100644
 --- a/docs/api/modules/nixio.TLSContext.html
 +++ b/docs/api/modules/nixio.TLSContext.html
 @@ -126,6 +126,10 @@
@@ -1207,7 +902,7 @@ index c84d31895..247670c56 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.TLSSocket.html b/docs/api/modules/nixio.TLSSocket.html
-index 5d6098a9f..20cdaa55a 100644
+index 5d6098a9f5fd69b80f530dd4f0cb8150f9a517e7..20cdaa55a196a0943559b3a6d2ff026bd13e7c61 100644
 --- a/docs/api/modules/nixio.TLSSocket.html
 +++ b/docs/api/modules/nixio.TLSSocket.html
 @@ -126,6 +126,10 @@
@@ -1222,7 +917,7 @@ index 5d6098a9f..20cdaa55a 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.UnifiedIO.html b/docs/api/modules/nixio.UnifiedIO.html
-index 6410ffb42..8521e3e2a 100644
+index 6410ffb42edec98c658e13b4ccc99a8f838181b6..8521e3e2afa17739847ea4da0214979d576b01b3 100644
 --- a/docs/api/modules/nixio.UnifiedIO.html
 +++ b/docs/api/modules/nixio.UnifiedIO.html
 @@ -126,6 +126,10 @@
@@ -1237,7 +932,7 @@ index 6410ffb42..8521e3e2a 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.bin.html b/docs/api/modules/nixio.bin.html
-index c8ef01831..aeb14eb53 100644
+index c8ef018317e46737dea9ee6cd73c1b5e5c8b2fe2..aeb14eb53e61c46010090e77c2777288b78b96fb 100644
 --- a/docs/api/modules/nixio.bin.html
 +++ b/docs/api/modules/nixio.bin.html
 @@ -126,6 +126,10 @@
@@ -1252,7 +947,7 @@ index c8ef01831..aeb14eb53 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.bit.html b/docs/api/modules/nixio.bit.html
-index 419736363..d0ce111db 100644
+index 419736363c3bf1bd3f19a95e918f017698be3b5e..d0ce111db29bd93eef4044232640b274b33f7cf5 100644
 --- a/docs/api/modules/nixio.bit.html
 +++ b/docs/api/modules/nixio.bit.html
 @@ -126,6 +126,10 @@
@@ -1267,7 +962,7 @@ index 419736363..d0ce111db 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.crypto.html b/docs/api/modules/nixio.crypto.html
-index b91fe28c1..498620bcd 100644
+index b91fe28c1dec102eb7fb2e0641eb033fa061dc97..498620bcdfccb96f727455335457631b3d707f8f 100644
 --- a/docs/api/modules/nixio.crypto.html
 +++ b/docs/api/modules/nixio.crypto.html
 @@ -126,6 +126,10 @@
@@ -1282,7 +977,7 @@ index b91fe28c1..498620bcd 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.fs.html b/docs/api/modules/nixio.fs.html
-index c9d34591c..956c0e93a 100644
+index c9d34591c2e0595fad8439b37e08da98e800d3bf..956c0e93a8ed394db82971a8f88f36d2436b6adf 100644
 --- a/docs/api/modules/nixio.fs.html
 +++ b/docs/api/modules/nixio.fs.html
 @@ -126,6 +126,10 @@
@@ -1297,7 +992,7 @@ index c9d34591c..956c0e93a 100644
  		<a href="../modules/nixio.html">nixio</a>
  	</li>
 diff --git a/docs/api/modules/nixio.html b/docs/api/modules/nixio.html
-index bf93619c9..36895486c 100644
+index bf93619c9106e543c3dcb4f7368454a4a17db825..36895486c78062dff9aa4cd7a7dbb8f595f6c54d 100644
 --- a/docs/api/modules/nixio.html
 +++ b/docs/api/modules/nixio.html
 @@ -126,6 +126,10 @@
@@ -1311,185 +1006,3 @@ index bf93619c9..36895486c 100644
  	<li><strong>nixio</strong></li>
  	
  	<li>
--- 
-2.20.1
-
-
-From 67eb84b856054cae00c44bd579e7f208e1a517a8 Mon Sep 17 00:00:00 2001
-From: Sven Roederer <freifunk@it-solutions.geroedel.de>
-Date: Sat, 6 Jul 2019 14:27:42 +0200
-Subject: [PATCH 4/5] treewide: adapt to new luci.xml class
-
-In teh previous commit the luci.xml module was created, Let'S change all
-references to the old functions to the new xml-module.
-
-Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
----
- .../luasrc/view/openvpn/cbi-select-input-add.htm    |  2 +-
- .../luasrc/view/tinyproxy_status.htm                |  4 ++--
- .../luasrc/view/travelmate/wifi_scan.htm            | 13 +++++++------
- modules/luci-base/luasrc/dispatcher.lua             |  9 +++++----
- .../luasrc/model/cbi/admin_system/backupfiles.lua   |  2 +-
- 5 files changed, 16 insertions(+), 14 deletions(-)
-
-diff --git a/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm b/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm
-index 9ca1e87fa..6f3263590 100644
---- a/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm
-+++ b/applications/luci-app-openvpn/luasrc/view/openvpn/cbi-select-input-add.htm
-@@ -84,7 +84,7 @@
- 				<select id="instance_template" name="cbi.cts.<%=self.config%>.<%=self.sectiontype%>.select">
- 					<option value="" selected="selected" disabled="disabled"><%:Select template ...%></option>
- 					<%- for k, v in luci.util.kspairs(self.add_select_options) do %>
--						<option value="<%=k%>"><%=luci.util.pcdata(v)%></option>
-+						<option value="<%=k%>"><%=luci.xml.pcdata(v)%></option>
- 					<% end -%>
- 				</select>
- 			</div>
-diff --git a/applications/luci-app-tinyproxy/luasrc/view/tinyproxy_status.htm b/applications/luci-app-tinyproxy/luasrc/view/tinyproxy_status.htm
-index 2ba9dddb8..9ff0b0292 100644
---- a/applications/luci-app-tinyproxy/luasrc/view/tinyproxy_status.htm
-+++ b/applications/luci-app-tinyproxy/luasrc/view/tinyproxy_status.htm
-@@ -35,8 +35,8 @@ if luci.http.formvalue("frame") == "1" then
- 	if not data then
- 		luci.http.write(translate("Failed to retrieve statistics from url:"))
- 		luci.http.write(" http://%s:%s" %{
--			luci.util.pcdata(addr),
--			luci.util.pcdata(port)
-+			luci.xml.pcdata(addr),
-+			luci.xml.pcdata(port)
- 		})
- 	end
- 
-diff --git a/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm b/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
-index 7d00eceed..491af1d92 100644
---- a/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
-+++ b/applications/luci-app-travelmate/luasrc/view/travelmate/wifi_scan.htm
-@@ -6,6 +6,7 @@ This is free software, licensed under the Apache License, Version 2.0
- <%-
- 	local sys = require("luci.sys")
- 	local utl = require("luci.util")
-+	local xml = require("luci.xml")
- 	local dev = luci.http.formvalue("device")
- 	local ifn = utl.trim(sys.exec("/bin/ubus -S call network.wireless status 2>/dev/null | jsonfilter -l1 -e '@." .. dev .. ".interfaces[@.config.mode=\"sta\"].ifname' 2>/dev/null"))
- 	local iw
-@@ -47,10 +48,10 @@ This is free software, licensed under the Apache License, Version 2.0
- 			<%- for i, net in ipairs(iw.scanlist or { }) do -%>
- 			<div class="tr cbi-section-table-row cbi-rowstyle-1">
- 				<div class="td left" style="text-align: left !important">
--					<%=net.ssid and utl.pcdata(net.ssid) or "<em>%s</em>" % translate("hidden")%>
-+					<%=net.ssid and xml.pcdata(net.ssid) or "<em>%s</em>" % translate("hidden")%>
- 				</div>
- 				<div class="td left" style="text-align: left !important">
--					<%=net.bssid and utl.pcdata(net.bssid)%>
-+					<%=net.bssid and xml.pcdata(net.bssid)%>
- 				</div>
- 				<div class="td left" style="text-align: left !important">
- 					<%=net.encryption.description%>
-@@ -61,9 +62,9 @@ This is free software, licensed under the Apache License, Version 2.0
- 				<div class="td cbi-section-actions">
- 					<form class="inline" action="<%=luci.dispatcher.build_url('admin/services/travelmate/wifiadd')%>" method="post">
- 						<input type="hidden" name="token" value="<%=token%>"/>
--						<input type="hidden" name="device" value="<%=utl.pcdata(dev)%>"/>
--						<input type="hidden" name="ssid" value="<%=utl.pcdata(net.ssid)%>"/>
--						<input type="hidden" name="bssid" value="<%=utl.pcdata(net.bssid)%>"/>
-+						<input type="hidden" name="device" value="<%=xml.pcdata(dev)%>"/>
-+						<input type="hidden" name="ssid" value="<%=xml.pcdata(net.ssid)%>"/>
-+						<input type="hidden" name="bssid" value="<%=xml.pcdata(net.bssid)%>"/>
- 						<input type="hidden" name="description" value="<%=net.encryption.description%>"/>
- 						<input type="hidden" name="wep" value="<%=net.encryption.wep and 1 or 0%>"/>
- 						<%- if net.encryption.wpa then -%>
-@@ -85,7 +86,7 @@ This is free software, licensed under the Apache License, Version 2.0
- 		</form>
- 		<form class="inline" action="<%=luci.dispatcher.build_url('admin/services/travelmate/wifiscan')%>" method="post">
- 			<input type="hidden" name="token" value="<%=token%>"/>
--			<input type="hidden" name="device" value="<%=utl.pcdata(dev)%>"/>
-+			<input type="hidden" name="device" value="<%=xml.pcdata(dev)%>"/>
- 			<input class="cbi-button cbi-input-find" type="submit" value="<%:Repeat scan%>"/>
- 		</form>
- 	</div>
-diff --git a/modules/luci-base/luasrc/dispatcher.lua b/modules/luci-base/luasrc/dispatcher.lua
-index d14a86673..79ccf5892 100644
---- a/modules/luci-base/luasrc/dispatcher.lua
-+++ b/modules/luci-base/luasrc/dispatcher.lua
-@@ -5,6 +5,7 @@
- local fs = require "nixio.fs"
- local sys = require "luci.sys"
- local util = require "luci.util"
-+local xml = require "luci.xml"
- local http = require "luci.http"
- local nixio = require "nixio", require "nixio.util"
- 
-@@ -276,7 +277,7 @@ local function tree_to_json(node, json)
- 	if type(node.nodes) == "table" then
- 		for subname, subnode in pairs(node.nodes) do
- 			local spec = {
--				title = util.striptags(subnode.title),
-+				title = xml.striptags(subnode.title),
- 				order = subnode.order
- 			}
- 
-@@ -741,7 +742,7 @@ local function init_template_engine(ctx)
- 				(scope and type(scope[key]) ~= "function" and scope[key]) or "")
- 
- 			if noescape ~= true then
--				val = util.pcdata(val)
-+				val = xml.pcdata(val)
- 			end
- 
- 			return string.format(' %s="%s"', tostring(key), val)
-@@ -756,8 +757,8 @@ local function init_template_engine(ctx)
- 		translate   = i18n.translate;
- 		translatef  = i18n.translatef;
- 		export      = function(k, v) if tpl.context.viewns[k] == nil then tpl.context.viewns[k] = v end end;
--		striptags   = util.striptags;
--		pcdata      = util.pcdata;
-+		striptags   = xml.striptags;
-+		pcdata      = xml.pcdata;
- 		media       = media;
- 		theme       = fs.basename(media);
- 		resource    = luci.config.main.resourcebase;
-diff --git a/modules/luci-mod-system/luasrc/model/cbi/admin_system/backupfiles.lua b/modules/luci-mod-system/luasrc/model/cbi/admin_system/backupfiles.lua
-index c81466c87..91c654916 100644
---- a/modules/luci-mod-system/luasrc/model/cbi/admin_system/backupfiles.lua
-+++ b/modules/luci-mod-system/luasrc/model/cbi/admin_system/backupfiles.lua
-@@ -68,7 +68,7 @@ else
- 					break
- 				else
- 					files[#files+1] = "<li>"
--					files[#files+1] = luci.util.pcdata(ln)
-+					files[#files+1] = luci.xml.pcdata(ln)
- 					files[#files+1] = "</li>"
- 				end
- 			end
--- 
-2.20.1
-
-
-From 83ad2f793c4e23e67e112c63e7c643c6683a0038 Mon Sep 17 00:00:00 2001
-From: Sven Roederer <freifunk@it-solutions.geroedel.de>
-Date: Sat, 6 Jul 2019 14:31:15 +0200
-Subject: [PATCH 5/5] luci-base: update dependency to luci-lib-base
-
-To satisfy the dependencies.
-
-Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
----
- modules/luci-base/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/modules/luci-base/Makefile b/modules/luci-base/Makefile
-index 501964661..6cb2b6409 100644
---- a/modules/luci-base/Makefile
-+++ b/modules/luci-base/Makefile
-@@ -12,7 +12,7 @@ LUCI_TYPE:=mod
- LUCI_BASENAME:=base
- 
- LUCI_TITLE:=LuCI core libraries
--LUCI_DEPENDS:=+lua +luci-lib-nixio +luci-lib-ip +rpcd +libubus-lua +luci-lib-jsonc +liblucihttp-lua +rpcd-mod-file +rpcd-mod-luci +cgi-io
-+LUCI_DEPENDS:=+lua +luci-lib-nixio +luci-lib-ip +rpcd +libubus-lua +luci-lib-jsonc +liblucihttp-lua +luci-lib-base +rpcd-mod-file +rpcd-mod-luci +cgi-io
- 
- PKG_LICENSE:=MIT
- 
--- 
-2.20.1
-
