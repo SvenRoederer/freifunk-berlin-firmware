@@ -24,7 +24,7 @@ index 73c5c02fce5dbcfb4bd197a559502ffc76cec0d3..3fb36b1c4e951c7721aa066a1f2265ab
 +# set system.was_development flag if running non-releasecode was detected
 +SEMVER=$(echo ${DISTRIB_RELEASE%%-*} | \
 +  grep -E "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$")
-+if [ -z ${SEMVER} ] && [ "$(uci -q get system.@system[0].was_development)" != "1"]; then 
++if [ -z ${SEMVER} ] && [ "$(uci -q get system.@system[0].was_development)" != "1" ]; then 
 +  uci set system.@system[0].was_development=1
 +  uci commit system
 +fi
