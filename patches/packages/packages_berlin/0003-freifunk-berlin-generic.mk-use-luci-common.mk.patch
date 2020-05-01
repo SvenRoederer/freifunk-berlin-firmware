@@ -1,0 +1,20 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 2 May 2020 01:48:47 +0200
+Subject: freifunk-berlin-generic.mk: use luci-common.mk
+
+after splitting luci-common.mk from luci.mk we only need to include
+the file with the common definitions.
+
+diff --git a/freifunk-berlin-generic.mk b/freifunk-berlin-generic.mk
+index 82d5b602561d9ed3bf229f9f27b6e354eddf9f04..a5dbd59534841822451b9003b5d905b2bbb33185 100644
+--- a/freifunk-berlin-generic.mk
++++ b/freifunk-berlin-generic.mk
+@@ -2,7 +2,7 @@
+ # This is free software, licensed under the GNU General Public License v3.0 .
+ #
+ 
+-LUCIMKFILE:=$(wildcard $(TOPDIR)/feeds/*/luci.mk)
++LUCIMKFILE:=$(wildcard $(TOPDIR)/feeds/*/luci-common.mk)
+ 
+ # verify that there is only one single file returned
+ ifneq (1,$(words $(LUCIMKFILE)))
