@@ -1,0 +1,18 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 2 May 2020 14:21:30 +0200
+Subject: freifunk-berlin-generic.mk: remove SUBMENU from package-definiton
+
+this is a leftover from LuCI
+
+diff --git a/freifunk-berlin-generic.mk b/freifunk-berlin-generic.mk
+index 95d7b67f0be81b9ce3134714a84d648b3fc6d2b6..a7febf7ddc17446a804c14fa28127ef6ad5821ce 100644
+--- a/freifunk-berlin-generic.mk
++++ b/freifunk-berlin-generic.mk
+@@ -47,7 +47,6 @@ include $(LUCIMKFILE)
+ define Package/$(PKG_NAME)
+   SECTION:=freifunk-berlin
+   CATEGORY:=freifunk-berlin
+-  SUBMENU:=$(if $(LUCI_MENU.$(LUCI_TYPE)),$(LUCI_MENU.$(LUCI_TYPE)),$(LUCI_MENU.app))
+   TITLE:=$(if $(LUCI_TITLE),$(LUCI_TITLE),LuCI $(LUCI_NAME) $(LUCI_TYPE))
+   DEPENDS:=$(LUCI_DEPENDS)
+   VERSION:=$(if $(PKG_VERSION),$(PKG_VERSION),1)

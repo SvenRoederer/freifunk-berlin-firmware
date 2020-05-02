@@ -1,0 +1,25 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 2 May 2020 14:20:12 +0200
+Subject: network-defautls: remove prepare, configure which is defined via generic.mk
+
+diff --git a/defaults/freifunk-berlin-network-defaults/Makefile b/defaults/freifunk-berlin-network-defaults/Makefile
+index d26c2e8ff4a1e218c13d0cc699a8655e94415906..fb68b5db7a8c02b276606278a9b3e9279d758169 100644
+--- a/defaults/freifunk-berlin-network-defaults/Makefile
++++ b/defaults/freifunk-berlin-network-defaults/Makefile
+@@ -17,16 +17,6 @@ define Package/freifunk-berlin-network-defaults/description
+   Freifunk Berlin configuration files for network
+ endef
+ 
+-define Build/Prepare
+-	mkdir -p $(PKG_BUILD_DIR)
+-endef
+-
+-define Build/Configure
+-endef
+-
+-define Build/Compile
+-endef
+-
+ define Package/freifunk-berlin-network-defaults/install
+ 	$(INSTALL_DIR) $(1)/etc/uci-defaults
+ 	$(CP) ./uci-defaults/* $(1)/etc/uci-defaults
