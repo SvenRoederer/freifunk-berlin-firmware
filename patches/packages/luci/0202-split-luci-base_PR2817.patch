@@ -1,4 +1,4 @@
-From 7f6c4bc07a175c8e7cf7f9a801382f63896e4887 Mon Sep 17 00:00:00 2001
+From 81a5e3578f9e351de0740ac2cbfec77f7a1e8637 Mon Sep 17 00:00:00 2001
 From: template <nomail@local>
 Date: Fri, 6 Sep 2019 08:29:50 +0000
 Subject: [PATCH] split-luci-base_PR2817
@@ -218,7 +218,7 @@ index ea2330910..fde712a50 100644
  
  PKG_SOURCE:=v1.0.0.tar.gz
 diff --git a/modules/luci-base/luasrc/dispatcher.lua b/modules/luci-base/luasrc/dispatcher.lua
-index 17228ac32..68f1cc0f1 100644
+index 1eeffb2b6..dee58e43f 100644
 --- a/modules/luci-base/luasrc/dispatcher.lua
 +++ b/modules/luci-base/luasrc/dispatcher.lua
 @@ -5,6 +5,7 @@
@@ -229,26 +229,26 @@ index 17228ac32..68f1cc0f1 100644
  local http = require "luci.http"
  local nixio = require "nixio", require "nixio.util"
  
-@@ -413,7 +414,7 @@ function dispatch(request)
- 					(scope and type(scope[key]) ~= "function" and scope[key]) or "")
+@@ -700,7 +701,7 @@ local function init_template_engine(ctx)
+ 				(scope and type(scope[key]) ~= "function" and scope[key]) or "")
  
- 				if noescape ~= true then
--					val = util.pcdata(val)
-+					val = xml.pcdata(val)
- 				end
+ 			if noescape ~= true then
+-				val = util.pcdata(val)
++				val = xml.pcdata(val)
+ 			end
  
- 				return string.format(' %s="%s"', tostring(key), val)
-@@ -428,8 +429,8 @@ function dispatch(request)
- 		   translate   = i18n.translate;
- 		   translatef  = i18n.translatef;
- 		   export      = function(k, v) if tpl.context.viewns[k] == nil then tpl.context.viewns[k] = v end end;
--		   striptags   = util.striptags;
--		   pcdata      = util.pcdata;
-+		   striptags   = xml.striptags;
-+		   pcdata      = xml.pcdata;
- 		   media       = media;
- 		   theme       = fs.basename(media);
- 		   resource    = luci.config.main.resourcebase;
+ 			return string.format(' %s="%s"', tostring(key), val)
+@@ -715,8 +716,8 @@ local function init_template_engine(ctx)
+ 		translate   = i18n.translate;
+ 		translatef  = i18n.translatef;
+ 		export      = function(k, v) if tpl.context.viewns[k] == nil then tpl.context.viewns[k] = v end end;
+-		striptags   = util.striptags;
+-		pcdata      = util.pcdata;
++		striptags   = xml.striptags;
++		pcdata      = xml.pcdata;
+ 		media       = media;
+ 		theme       = fs.basename(media);
+ 		resource    = luci.config.main.resourcebase;
 diff --git a/modules/luci-base/luasrc/xml.lua b/modules/luci-base/luasrc/xml.lua
 new file mode 100644
 index 000000000..30b37210b
