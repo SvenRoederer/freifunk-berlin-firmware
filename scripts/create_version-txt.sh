@@ -14,7 +14,7 @@ echo "https://wiki.freifunk.net/Berlin:Firmware" >> ${VERSION_FILE}
 echo "Firmware: git branch \"${GIT_BRANCH_ESC}\", revision $(${REVISION_CMD})" >> ${VERSION_FILE}
 # add openwrt revision with data from config.mk
 OPENWRT_REVISION=$(cd ${OPENWRT_DIR}; eval $REVISION_CMD base)
-[ -z ${OPENWRT_BRANCH} ] && export ${OPENWRT_BRANCH}=master
+[ -z ${OPENWRT_BRANCH} ] && OPENWRT_BRANCH=master
 echo "OpenWRT: repository from ${OPENWRT_REPO}, git branch \"${OPENWRT_BRANCH}\", revision ${OPENWRT_REVISION}" >> ${VERSION_FILE}
 # add feed revisions
 for FEED in `cd ${OPENWRT_DIR}; ./scripts/feeds list -n`; do \
