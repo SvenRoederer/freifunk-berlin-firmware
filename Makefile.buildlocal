@@ -170,6 +170,8 @@ initrd: .stamp-initrd
 	done
 	touch $@
 
+version-file: stamp-clean-$(VERSION_FILE) $(VERSION_FILE)
+
 $(VERSION_FILE): .stamp-prepared $(FW_DIR)/scripts/create_version-txt.sh
 	mkdir -p $(FW_TARGET_DIR)
 	VERSION_FILE=$(VERSION_FILE) \
