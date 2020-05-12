@@ -170,7 +170,7 @@ initrd: .stamp-initrd
 	done
 	touch $@
 
-version-file: stamp-clean-$(VERSION_FILE) $(VERSION_FILE)
+version-file: clean-$(VERSION_FILE) $(VERSION_FILE)
 
 $(VERSION_FILE): .stamp-prepared $(FW_DIR)/scripts/create_version-txt.sh
 	mkdir -p $(FW_TARGET_DIR)
@@ -214,6 +214,9 @@ endif
 stamp-clean-firmwares:
 	rm -f $(OPENWRT_DIR)/.config
 	rm -f .stamp-$*
+
+clean-$(VERSION_FILE):
+	rm -f $(VERSION_FILE)
 
 stamp-clean-%:
 	rm -f .stamp-$*
