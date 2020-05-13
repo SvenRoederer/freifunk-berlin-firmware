@@ -8,12 +8,15 @@ SUBTARGET=$(word 2, $(subst -, ,$(TARGET)))
 FW_DIR=$(shell pwd)
 OPENWRT_DIR=$(FW_DIR)/openwrt
 FW_TARGET_DIR=$(FW_DIR)/firmwares/$(MAINTARGET)-$(SUBTARGET)
+BUILD_DURATION=$(FW_DIR)/build-times.txt
 
 autobuild:
 	TARGET_CONFIG_AUTOBUILD=$(FW_DIR)/configs/common-autobuild.config
 	cat $(FW_DIR)/configs/common-autobuild.config >>$(FW_DIR)/configs/common.config
-	$(MAKE) -f Makefile.buildlocal prepare
-	$(MAKE) -f Makefile.buildlocal compile
+	/usr/bin/time --append -o $(BUILD_DURATION) --format "step prepare:\t%E real,\t%U user,\t%S sys" \
+	  $(MAKE) -f Makefile.buildlocal prepare
+	/usr/bin/time --append -o $(BUILD_DURATION) --format "step compile:\t%E real,\t%U user,\t%S sys" \
+	  $(MAKE) -f Makefile.buildlocal compile
 	$(MAKE) -f Makefile.buildlocal version-file
 	# copy imagebuilder, sdk and toolchain (if existing)
 	# remove old versions
@@ -31,7 +34,9 @@ autobuild:
 	cp -a $(OPENWRT_DIR)/bin/packages $$PACKAGES_DIR/
 	rm -rf $(OPENWRT_DIR)
 	rm -rf $(FW_DIR)/dl
-	$(MAKE) -f Makefile.buildlocal IB_FILE=$(FW_TARGET_DIR)/*-imagebuilder-*.tar.xz images
+	/usr/bin/time --append -o $(BUILD_DURATION) --format "step images:\t%E real,\t%U user,\t%S sys" \
+	  $(MAKE) -f Makefile.buildlocal IB_FILE=$(FW_TARGET_DIR)/*-imagebuilder-*.tar.xz images
+	mv $(BUILD_DURATION) $(FW_TARGET_DIR)
 
 .FORCE:
 .SUFFIXES:
