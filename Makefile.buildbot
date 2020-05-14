@@ -9,7 +9,7 @@ FW_DIR=$(shell pwd)
 OPENWRT_DIR=$(FW_DIR)/openwrt
 FW_TARGET_DIR=$(FW_DIR)/firmwares/$(MAINTARGET)-$(SUBTARGET)
 BUILD_DURATION=$(FW_DIR)/build-times.txt
-TIMECMD_FORMAT=--format "step $(1):\t%E real,\t%U user,\t%S sys"
+TIMECMD_FORMAT=--format "step $(1):\t%e real,\t%U user,\t%S sys"
 
 autobuild:
 	TARGET_CONFIG_AUTOBUILD=$(FW_DIR)/configs/common-autobuild.config
