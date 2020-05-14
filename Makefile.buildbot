@@ -9,14 +9,14 @@ FW_DIR=$(shell pwd)
 OPENWRT_DIR=$(FW_DIR)/openwrt
 FW_TARGET_DIR=$(FW_DIR)/firmwares/$(MAINTARGET)-$(SUBTARGET)
 BUILD_DURATION=$(FW_DIR)/build-times.txt
-TIMECMD_FORMAT=--format "step $(1):\t%e real,\t%U user,\t%S sys"
+TIMECMD=/usr/bin/time --append -o $(BUILD_DURATION) --format "step $(1):\t%e real,\t%U user,\t%S sys"
 
 autobuild:
 	TARGET_CONFIG_AUTOBUILD=$(FW_DIR)/configs/common-autobuild.config
 	cat $(FW_DIR)/configs/common-autobuild.config >>$(FW_DIR)/configs/common.config
-	/usr/bin/time --append -o $(BUILD_DURATION) $(call TIMECMD_FORMAT,prepare) \
+	$(call TIMECMD,prepare) \
 	  $(MAKE) prepare
-	/usr/bin/time --append -o $(BUILD_DURATION) $(call TIMECMD_FORMAT,compile) \
+	$(call TIMECMD,compile) \
 	  $(MAKE) compile
 	$(MAKE) version-file
 	# copy imagebuilder, sdk and toolchain (if existing)
@@ -35,7 +35,7 @@ autobuild:
 	cp -a $(OPENWRT_DIR)/bin/packages $$PACKAGES_DIR/
 	rm -rf $(OPENWRT_DIR)
 	rm -rf $(FW_DIR)/dl
-	/usr/bin/time --append -o $(BUILD_DURATION) $(call TIMECMD_FORMAT,images) \
+	$(call TIMECMD,images) \
 	  $(MAKE) IB_FILE=$(FW_TARGET_DIR)/*-imagebuilder-*.tar.xz images
 	mv $(BUILD_DURATION) $(FW_TARGET_DIR)
 
