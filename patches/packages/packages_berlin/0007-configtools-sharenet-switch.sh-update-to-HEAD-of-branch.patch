@@ -1,0 +1,715 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 17 May 2020 19:30:45 +0200
+Subject: configtools: sharenet-switch.sh: update to HEAD of branch
+
+update to commit d6033b7e90b198c7a3dfe24f6d49d86c29b8e077
+
+diff --git a/addons/freifunk-berlin-configtools/Makefile b/addons/freifunk-berlin-configtools/Makefile
+index 5ea3c143af8e9eecd1b17b61e4875c73cad0a465..3d53c765229c4865cd9473e5042bd252a96d5f6e 100644
+--- a/addons/freifunk-berlin-configtools/Makefile
++++ b/addons/freifunk-berlin-configtools/Makefile
+@@ -20,6 +20,7 @@ define Package/freifunk-berlin-configtools
+   TITLE:=Freifunk Berlin console configtools
+   URL:=http://github.com/freifunk-berlin/packages_berlin
+   PKGARCH:=all
++  DEPENDS:=+libuci-lua +lua
+ endef
+ 
+ define Package/freifunk-berlin-configtools/description
+diff --git a/addons/freifunk-berlin-configtools/root/usr/share/freifunk-berlin/sharenet-switch.sh b/addons/freifunk-berlin-configtools/root/usr/share/freifunk-berlin/sharenet-switch.sh
+index 83ded04b94c82a1ccc56b18cf8fdf0868484b2df..c1412858f39712f92d1c3b6eead82e99c40b47e4 100755
+--- a/addons/freifunk-berlin-configtools/root/usr/share/freifunk-berlin/sharenet-switch.sh
++++ b/addons/freifunk-berlin-configtools/root/usr/share/freifunk-berlin/sharenet-switch.sh
+@@ -5,6 +5,9 @@
+ #
+ # This script should set a wan-Port if u want to share ur internet-connection.
+ # It should run after wizard did the necessary settings (sharenet = yes)
++
++. /lib/functions.sh
++
+ # what shall I do?
+ AUTOCOMMIT="no"
+ 
+@@ -23,520 +26,184 @@ shift $((OPTIND - 1))
+ 
+ echo "usage $0 -c [commit]"
+ 
+-# should this script run?
+-if [ "$(uci get ffwizard.settings.sharenet 2> /dev/null)" == "0" ]; then
+-    echo 'dont share my internet' && exit 0
++# redefines the assignment of the VLANs of the switch ports
++# e.g. eth0.1: from switchport 4 to port 5 (TPLink CPE)
++swap_port_switch() {
++  local port1=$1
++  local port2=$2
++  local port_section=""
++  local port1_section
++  local port2_section
++
++  is_interface_of() {
++    local port=$2
++    local result_ports
++    local result_vlan
++
++    config_get result_ports $1 ports
++    config_get result_vlan $1 vlan
++    echo "checking interface $1"
++    echo " vlan \"$result_vlan\" has ports \"$result_ports\""
++    _option_contains_ "${result_ports}" ${port} || { echo " -> not found"; port_section="$1 $port_section"; }
++  }
++
++  config_load "network"
++  config_foreach is_interface_of "switch_vlan" $port1
++  port1_section=$port_section
++  port_section=""
++  config_foreach is_interface_of "switch_vlan" $port2
++  port2_section=$port_section
++  port_section=""
++
++  echo "---"
++  echo "found port $port1 in config-section \"$port1_section\""
++  echo "found port $port2 in config-section \"$port2_section\""
++  echo "---"
++
++  for section in $port1_section; do
++    local current_ports=$(uci get network.$section.ports)
++    local new_ports
++
++    echo "change section $section"
++    echo " current ports: $current_ports"
++    echo "  replacing $port1 with $port2"
++    new_ports=$(echo $current_ports | tr $port2 $port1)
++    uci set network.$section.ports="$new_ports"
++  done
++  for section in $port2_section; do
++    local current_ports=$(uci get network.$section.ports)
++    local new_ports
++                            
++    echo "change section $section"
++    echo " current ports: $current_ports"
++    echo "  replacing $port2 with $port3"
++    new_ports=$(echo $current_ports | tr $port1 $port2)
++    uci set network.$section.ports="$new_ports"
++  done                                                     
++}
++
++# swaps the assignment of pyhsical ports of the device
++# e.g. eth0 <--> eth1 (NSM)
++swap_port_physical() {
++  local port1=$1
++  local port2=$2
++  local port1_interfaces=""
++  local port2_interfaces=""
++
++  interfaces_of_dev() {
++    local device=$1
++
++    lua <<EOF
++uci=require("uci")
++local ifaces = ""
++x=uci.cursor()
++x:foreach("network", "interface", function(s)
++-- io.stderr:write(" testing interface:" .. tostring(s[".name"] .. "\n"))
++ if string.find(s["ifname"], "${device}") then
++--  io.stderr:write("  fount ${device} on interface " .. tostring(s[".name"] .. "\n"))
++  ifaces = ifaces .. " " .. s[".name"]
++ end
++end)
++print(ifaces)
++EOF
++  }
++
++  port1_interfaces=$(interfaces_of_dev ${port1})
++  port2_interfaces=$(interfaces_of_dev ${port2})
++echo $port1 is interface of $port1_interfaces
++echo $port2 is interface of $port2_interfaces
++  for iface in ${port1_interfaces}; do
++    uciif=$(uci get network.${iface}.ifname)
++    uci set network.${iface}.ifname="$(echo $uciif | sed -e s/${port1}/${port2}/g)"
++  done
++  for iface in ${port2_interfaces}; do
++    uciif=$(uci get network.${iface}.ifname)
++    uci set network.${iface}.ifname="$(echo $uciif | sed -e s/${port2}/${port1}/g)"
++  done
++}
++
++# replaces the interface assigned to the pyhsical ports of the device
++# this is used on single-LANport board w/o switch (NSM loco)
++swap_port_interface() {
++  echo "todo: implement swap_port_interface"
++  exit 200
++}
++
++# a fresh installed single-port device has no WAN-interface generated by
++# OpenWrt initial setup. So we need to create one ourself.
++create_wan_interface() {
++  if [ "interface" = $(uci -q get network.wan) ]; then
++    echo "WAN-interface already exisiting"
++    return
++  fi
++  echo "todo: implement create_wan_interface"
++  
++}
++
++sharenet=$(uci -q get ffwizard.settings.sharenet)
++[ $? -ne 0 ] && {
++  echo 'sharenet value unknown'
++  exit 1
++}
++
++if [ "${sharenet}" = "0" ]; then
++    echo 'dont share my internet - set Freifunk-LAN to PoE-port'
++    POEPORT='dhcp'
++elif [ "${sharenet}" = "1" ]; then
++    echo 'share my internet - set WAN to PoE-port'
++    POEPORT='wan'
+ else
+-	if [ "$(uci get ffwizard.settings.sharenet 2> /dev/null)" == "1" ]; then
+-    		echo 'share my internet'
+-	else
+-		echo 'sharenet value unknown' && exit 0
+-	fi
++    echo 'sharenet has invalid value'
++    exit 2
+ fi
+-# can we change a network file?
+-[ -e /etc/config/network ] || echo 'file network not found' && exit 0
+-#
+-#touch /etc/config/network
+-#
++
+ . /lib/functions/uci-defaults.sh 	# routines that set switch etc
+-. /lib/ar71xx.sh 			# detect board name
+ 
+ # which board are we running on, what will we change?
+-# board=$(ar71xx_board_name) #is not sufficient for all boards
+-board=$(ubus -v call system board | jsonfilter -e '$.model')
++board=$(board_name)
+ 
+ echo $board
+ 
+ case "$board" in
+-#all0315n |\
+-#all0258n |\
+-#ja76pf2|\
+-#rocket-m-ti |\
+-#ubnt-unifi-outdoor)
+-#	ucidef_set_interface_lan "eth0 eth1"
+-#	;;
+-#
+-#ap132 |\
+-#wlr8100)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 2 3 4 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 1"
+-#	;;
+-#
+-#esr1750 |\
+-#epg5000)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 5"
+-#	;;
+-#
+-#ap136-010)
+-#	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "5 6"
+-#	;;
+-#
+-#ap147-010)
+-#	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "5 6"
+-#	;;
+-#
+-#ap136-020 |\
+-#ap135-020 |\
+-#tl-wr1043nd-v2 |\
+-#wzr-450hp2)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "5 6"
+-#	;;
+-#
+-#archer-c5 |\
+-#archer-c7 |\
+-#tl-wdr4900-v2)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 2 3 4 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "1 6"
+-#	;;
+-#
+-#bsb)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 3"
+-#	ucidef_set_interface_wlan
+-#	;;
+-#
+-'GL AR150')
++gl-ar150|\
++glinet,gl-ar150)
+ 	echo $board found
++	swap_port_physical
++	;;
++cpe210|\
++cpe510)
++	echo $board - found swapping switch ports
++	swap_port_switch 4 5
+ 	;;
+-'TP-Link CPE210 v1.1')
++tplink,cpe210-v1|\
++tplink,cpe510-v1)
++	echo $board found - swapping LAN-ports
++	swap_port_physical eth0 eth1
++	;;
++nanostation-m|\
++nanostation-m-xw|\
++ubnt,nanostation-m|\
++ubnt,nanostation-m-xw)
+ 	echo $board found
+-#	should this be more sophisticated?
+-	uci set network.@switch_vlan[0].ports='0t 4'
+-	uci set network.@switch_vlan[1].ports='0t 5'
++#	eth tauschen?
++	swap_port_physical eth0 eth1
+ 	;;
+-'Ubiquiti NanoStation M2' |\
+-'Ubiquiti NanoStation loco M2')
++loco-m-xw|\
++ubnt,nanostation-loco-m)
+ 	echo $board found
++	create_wan_interface
+ #	eth tauschen?
++	swap_port_interface
++	;;
++rb-wapg-5hact2hnd)
++	echo $board found
++	create_wan_interface
++#	eth tauschen?
++	swap_port_switch
++	;;
++*)
++	echo "This board ($board) is not PoE powered"
+ 	;;
+-
+-
+-#cpe510)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 4"
+-#	;;
+-#
+-#airgatewaypro)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 5"
+-#	;;
+-#
+-#db120 |\
+-#rb-2011l | \
+-#rb-2011uas |\
+-#rb-2011uias |\
+-#rb-2011uas-2hnd|\
+-#rb-2011uias-2hnd)
+-#	ucidef_set_interfaces_lan_wan "eth0.1 eth1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 2 3 4 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 1"
+-#	ucidef_add_switch "switch1" "1" "1"
+-#	ucidef_add_switch_vlan "switch1" "1" "0 1 2 3 4 5"
+-#
+-#	case "$board" in
+-#	rb-2011uas* | rb-2011uias | rb-2011uias-2hnd)
+-#		ucidef_set_interface_raw "sfp" "eth0.3"
+-#		ucidef_add_switch_vlan "switch0" "3" "0t 6"
+-#		;;
+-#	esac
+-#	;;
+-#
+-#dir-825-b1|\
+-#tew-673gru)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 5t"
+-#	;;
+-#
+-#f9k1115v2)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "2 3 4 5 6"
+-#	ucidef_add_switch_vlan "switch0" "2" "0 1"
+-#	;;
+-#
+-#nbg460n_550n_550nh)
+-#	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "0" "0 1 2 3 5"
+-#	;;
+-#
+-#nbg6716)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "5 6"
+-#	;;
+-#
+-#ap143 |\
+-#rb-433 |\
+-#rb-433u)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "1 2 5"
+-#	;;
+-#
+-#rb-435g)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2"
+-#	;;
+-#
+-#rb-450)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 5"
+-#	;;
+-#
+-#rb-450g |\
+-#routerstation-pro)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+-#	;;
+-#
+-#ap136 |\
+-#rb-750gl |\
+-#rb-751g |\
+-#rb-951g-2hnd |\
+-#wzr-hp-g450h)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 2 3 4 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 1"
+-#	;;
+-#
+-#rb-951ui-2hnd)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	;;
+-#
+-#rb-493g)
+-#	ucidef_set_interfaces_lan_wan "eth0 eth1.1" "eth1.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+-#	ucidef_add_switch "switch1" "1" "1"
+-#	ucidef_add_switch_vlan "switch1" "1" "0t 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch1" "2" "0t 5"
+-#	;;
+-#
+-#wzr-hp-g300nh2 |\
+-#pb92 |\
+-#ap113)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1 3 4 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 2"
+-#	;;
+-#
+-#el-m150)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 3"
+-#	;;
+-#
+-#tl-wdr4300|\
+-#tl-wr1041n-v2)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 2 3 4 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 1"
+-#	;;
+-#
+-#tl-wr1043nd)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 5t"
+-#	ucidef_add_switch_vlan "switch0" "2" "0 5t"
+-#	;;
+-#
+-#tl-wr2543n)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "1 2 3 4 9t"
+-#	ucidef_add_switch_vlan "switch0" "2" "0 9t"
+-#	;;
+-#
+-#tl-wr841n-v1|\
+-#tl-wr941nd)
+-#	ucidef_set_interface_raw "eth" "eth0"
+-#	ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "wan"
+-#	;;
+-#
+-#dir-615-i1 |\
+-#r6100 |\
+-#smart-300 |\
+-#tl-mr3420-v2 |\
+-#tl-wr841n-v8 |\
+-#tl-wr842n-v2 |\
+-#tl-wr941nd-v5 |\
+-#tl-wdr6500-v2 |\
+-#wnr2000-v3 |\
+-#wnr2000-v4 |\
+-#wnr2200 |\
+-#wnr612-v2 |\
+-#wnr1000-v2)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+-#	;;
+-#
+-#uap-pro)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 2"
+-#	;;
+-#
+-#nanostation-m-xw)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 1"
+-#	;;
+-#
+-#wrt160nl)
+-#	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4 5"
+-#	;;
+-#
+-#wzr-hp-g300nh)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 5t"
+-#	;;
+-#
+-#dgl-5500-a1 |\
+-#dir-825-c1)
+-#	local mac
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 5"
+-#	mac=$(mtd_get_mac_ascii nvram "wan_mac")
+-#	[ -n "$mac" ] && ucidef_set_interface_macaddr "wan" "$mac"
+-#	;;
+-#
+-#mynet-n750)
+-#	local mac
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 5"
+-#	mac=$(mtd_get_mac_ascii devdata "wanmac")
+-#	[ -n "$mac" ] && ucidef_set_interface_macaddr "wan" "$mac"
+-#	;;
+-#
+-#onion-omega)
+-#	ucidef_set_interface_lan "wlan0"
+-#	;;
+-#
+-#dhp-1565-a1 |\
+-#dir-835-a1 |\
+-#wndr3700v4 | \
+-#wndr4300)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 5"
+-#	mac_lan=$(mtd_get_mac_binary caldata 0)
+-#	[ -n "$mac_lan" ] && ucidef_set_interface_macaddr "lan" "$mac_lan"
+-#	mac_wan=$(mtd_get_mac_binary caldata 6)
+-#	[ -n "$mac_wan" ] && ucidef_set_interface_macaddr "wan" "$mac_wan"
+-#	;;
+-#
+-#esr900)
+-#	local mac
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1 2 3 4"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 5"
+-#	mac=$(mtd_get_mac_ascii u-boot-env "wanaddr")
+-#	[ -n "$mac" ] && ucidef_set_interface_macaddr "wan" "$mac"
+-#	;;
+-#
+-#dlan-pro-500-wp)
+-#	ucidef_set_interface_lan "eth0 eth1"
+-#	;;
+-#
+-#dlan-pro-1200-ac)
+-#	ucidef_set_interface_lan "eth0"
+-#	ucidef_add_switch "switch0" "1" "0"
+-#	ucidef_add_switch_vlan "switch0" "0" "0 2 3 4"
+-#	;;
+-#
+-#all0305 |\
+-#antminer-s1 |\
+-#antminer-s3 |\
+-#aw-nr580 |\
+-#bullet-m |\
+-#cap4200ag |\
+-#eap300v2 |\
+-#eap7660d |\
+-#el-mini |\
+-#loco-m-xw |\
+-#mr1750 |\
+-#mr600 |\
+-#mr600v2 |\
+-#mr900 |\
+-#mr900v2 |\
+-#rb-411 |\
+-#rb-911g-2hpnd |\
+-#rb-911g-5hpacd |\
+-#rb-911g-5hpnd |\
+-#rb-912uag-2hpnd |\
+-#rb-912uag-5hpnd |\
+-#rb-sxt2n |\
+-#rb-sxt5n |\
+-#rocket-m-xw |\
+-#tl-mr10u |\
+-#tl-mr11u |\
+-#tl-mr12u |\
+-#tl-mr13u |\
+-#tl-mr3020 |\
+-#tl-mr3040 |\
+-#tl-mr3040-v2 |\
+-#tl-wa701nd-v2 |\
+-#tl-wa7210n-v2 |\
+-#tl-wa750re |\
+-#tl-wa850re |\
+-#tl-wa830re-v2 |\
+-#tl-wa801nd-v2 |\
+-#tl-wa901nd |\
+-#tl-wa901nd-v2 |\
+-#tl-wa901nd-v3 |\
+-#tl-wr703n |\
+-#tube2h |\
+-#wndap360 |\
+-#mynet-rext |\
+-#wp543)
+-#	ucidef_set_interface_lan "eth0"
+-#	;;
+-#
+-#dir-505-a1)
+-#	ucidef_set_interface_lan "eth1"
+-#	;;
+-#
+-#alfa-ap96 |\
+-#alfa-nx |\
+-#ap83 |\
+-#gl-inet |\
+-#jwap003 |\
+-#pb42 |\
+-#pb44 |\
+-#routerstation|\
+-#tl-wr710n |\
+-#tl-wr720n-v3|\
+-#wpe72)
+-#	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+-#	;;
+-#
+-#wpj344)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 3"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 2"
+-#	;;
+-#
+-#wpj531)
+-#	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+-#	;;
+-#
+-#wpj558)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "5 6t"
+-#	ucidef_add_switch_vlan "switch0" "2" "1 6t"
+-#	;;
+-#
+-#ap121 |\
+-#ap121-mini |\
+-#ap96 |\
+-#airrouter |\
+-#dir-600-a1 |\
+-#dir-615-c1 |\
+-#dir-615-e1 |\
+-#dir-615-e4 |\
+-#hiwifi-hc6361 |\
+-#ja76pf |\
+-#mc-mac1200r|\
+-#minibox-v1 |\
+-#mynet-n600 |\
+-#oolite |\
+-#qihoo-c301 |\
+-#rb-750 |\
+-#rb-751 |\
+-#tew-632brp |\
+-#tew-712br |\
+-#tl-mr3220 |\
+-#tl-mr3220-v2 |\
+-#tl-mr3420 |\
+-#tl-wdr3320-v2 |\
+-#tl-wdr3500 |\
+-#tl-wr741nd |\
+-#tl-wr741nd-v4 |\
+-#tl-wr841n-v7 |\
+-#tl-wr841n-v9 |\
+-#whr-g301n |\
+-#whr-hp-g300n |\
+-#whr-hp-gn |\
+-#wzr-hp-ag300h)
+-#	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 4"
+-#	;;
+-#
+-#wzr-hp-g450h)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 2 3 4 5"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 1"
+-#	;;
+-#
+-#ew-dorin)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0t 1 2"
+-#	ucidef_add_switch_vlan "switch0" "2" "0t 3"
+-#	;;
+-#
+-#ew-dorin-router)
+-#	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 2 3"
+-#	;;
+-#
+-#wndr3700)
+-#	ucidef_set_interfaces_lan_wan "eth0.1" "eth1"
+-#	ucidef_add_switch "switch0" "1" "1"
+-#	ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 5t"
+-#	ucidef_add_switch_port "switch0" "1"
+-#
+-#*)
+-#	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+-#	;;
+ esac
+ 
+ # shall I commit changes? Yes, when called by hand.
