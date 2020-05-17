@@ -167,7 +167,7 @@ endif
 #  * packages directory
 #  * firmware-images are already in place (target images)
 firmwares: stamp-clean-firmwares .stamp-firmwares
-.stamp-firmwares: .stamp-images $(VERSION_FILE) .stamp-initrd
+.stamp-firmwares: .stamp-images $(VERSION_FILE) .stamp-initrd build-logs
 	# copy imagebuilder, sdk and toolchain (if existing)
 	# remove old versions
 	rm -f $(FW_TARGET_DIR)/*.tar.xz
@@ -208,6 +208,15 @@ $(VERSION_FILE): .stamp-prepared
 	  REVISION_CMD="$(REVISION)" \
 	  GIT_BRANCH=$(shell $(GIT_BRANCH)) \
 	  ./scripts/create_version-txt.sh
+
+build-logs: clean-build-logs .stamp-compiled
+	mkdir -p $(FW_TARGET_DIR)
+	[ -d $(OPENWRT_DIR)/logs ] && mv $(OPENWRT_DIR)/logs $(FW_TARGET_DIR)
+	touch .stamp-$@
+
+clean-build-logs:
+	rm -rf $(FW_TARGET_DIR)/logs
+	rm -rf .stamp-build-logs
 
 images: .stamp-images
 
@@ -256,7 +265,7 @@ stamp-clean:
 
 clean: stamp-clean .stamp-openwrt-cleaned
 
-.PHONY: openwrt-clean openwrt-clean-bin patch feeds-update prepare compile firmwares stamp-clean clean
+.PHONY: openwrt-clean openwrt-clean-bin clean-build-logs patch feeds-update prepare compile firmwares stamp-clean clean
 .NOTPARALLEL:
 .FORCE:
 .SUFFIXES:
