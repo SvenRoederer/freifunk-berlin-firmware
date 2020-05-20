@@ -9,10 +9,10 @@ FW_DIR=$(shell pwd)
 OPENWRT_DIR=$(FW_DIR)/openwrt
 FW_TARGET_DIR=$(FW_DIR)/firmwares/$(MAINTARGET)-$(SUBTARGET)
 
-autobuild:
-	TARGET_CONFIG_AUTOBUILD=$(FW_DIR)/configs/common-autobuild.config
-	cat $(FW_DIR)/configs/common-autobuild.config >>$(FW_DIR)/configs/common.config
-	$(MAKE) prepare
+travis: $(OPENWRT_DIR)/.config
+	umask 0022; cd $(OPENWRT_DIR); make toolchain/install
+
+buildbot: $(OPENWRT_DIR)/.config
 	$(MAKE) compile
 	$(MAKE) version-file
 	# copy imagebuilder, sdk and toolchain (if existing)
@@ -32,6 +32,13 @@ autobuild:
 	rm -rf $(OPENWRT_DIR)
 	rm -rf $(FW_DIR)/dl
 	$(MAKE) IB_FILE=$(FW_TARGET_DIR)/*-imagebuilder-*.tar.xz images
+
+config: $(OPENWRT_DIR)/.config
+$(OPENWRT_DIR)/.config: $(FW_DIR)/configs/common-autobuild.config
+	TARGET_CONFIG_AUTOBUILD=$(FW_DIR)/configs/common-autobuild.config
+	cat $(FW_DIR)/configs/common-autobuild.config >>$(FW_DIR)/configs/common.config
+	$(MAKE) prepare
+
 
 .FORCE:
 .SUFFIXES:
