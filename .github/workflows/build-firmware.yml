@@ -6,14 +6,14 @@ on:
   pull_request:
     branches: [ master ]
 
-strategy:
-  matrix:
-    target: ["ath79-generic", "ramips-mt7620"]
-
 jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        target: [ath79-generic, ramips-mt7620]
 
     steps:
     - uses: actions/checkout@v2
