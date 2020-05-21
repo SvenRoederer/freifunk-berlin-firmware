@@ -29,7 +29,8 @@ kmods:
 	touch .stamp-$@
 
 packages:
-	$(MAKE) -C $(OPENWRT_DIR) package/compile/install
+	$(MAKE) -C $(OPENWRT_DIR) package/compile
+	$(MAKE) -C $(OPENWRT_DIR) package/install
 	touch .stamp-$@
 
 linux:
