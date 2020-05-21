@@ -51,6 +51,10 @@ linux:
 	$(MAKE) -C $(OPENWRT_DIR) BUILD_LOG_DIR=$(FW_DIR)/logs target/linux/install
 	touch .autobuild_stamp-$@
 
+linux:
+	$(MAKE) -C $(OPENWRT_DIR) target/linux/install
+	touch .stamp-$@
+
 imagebuilder:
 	$(MAKE) -C $(OPENWRT_DIR) BUILD_LOG_DIR=$(FW_DIR)/logs target/imagebuilder/install
 	touch .autobuild_stamp-$@
