@@ -9,8 +9,37 @@ FW_DIR=$(shell pwd)
 OPENWRT_DIR=$(FW_DIR)/openwrt
 FW_TARGET_DIR=$(FW_DIR)/firmwares/$(MAINTARGET)-$(SUBTARGET)
 
+
+download: $(OPENWRT_DIR)/.config
+	$(MAKE) -C $(OPENWRT_DIR) download
+	touch .stamp-$@
+
+tools: .stamp-download
+	$(MAKE) -C $(OPENWRT_DIR) tools/install
+	touch .stamp-$@
+
+toolchain: 
+	$(MAKE) -C $(OPENWRT_DIR) toolchain/install
+	touch .stamp-$@
+
+kmods: 
+	$(MAKE) -C $(OPENWRT_DIR) target/compile
+	touch .stamp-$@
+
+packages:
+	$(MAKE) -C $(OPENWRT_DIR) package/compile/install
+	touch .stamp-$@
+
+imagebuilder:
+	$(MAKE) -C $(OPENWRT_DIR) target/imagebuilder/install
+	touch .stamp-$@
+
+sdk:
+	$(MAKE) -C $(OPENWRT_DIR) target/sdk
+	touch .stamp-$@
+
 travis: $(OPENWRT_DIR)/.config
-	umask 0022; cd $(OPENWRT_DIR); make toolchain/install
+	travis_wait $(MAKE) -C $(OPENWRT_DIR) toolchain/install
 
 buildbot: $(OPENWRT_DIR)/.config
 	$(MAKE) compile
