@@ -16,3 +16,5 @@ jobs:
     - run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python libssl-dev
     - name: configure build
       run: make -f Makefile.autobuild IS_BUILDBOT=yes config
+    - name: download openwrt packages
+      run: make -f Makefile.autobuild -j$(nproc) TARGET=${CI_TARGET} IS_BUILDBOT=${IS_BUILDBOT} download
