@@ -25,7 +25,7 @@ jobs:
         sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
         sudo mkdir /mnt/diskfs
         sudo mkdir /mnt/ramfs
-        sudo mount -t tmpfs -o 4G none /mnt/ramfs
+        sudo mount -t tmpfs -o size=4G none /mnt/ramfs
         sudo mkdir /mnt/join
         sudo mergerfs -o allow_other,use_ino /mnt/diskfs:/mnt/ramfs ${GITHUB_WORKSPACE}
         df -h
