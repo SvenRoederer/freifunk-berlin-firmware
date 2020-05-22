@@ -22,7 +22,7 @@ jobs:
     - name: extend host storage
       run: |
         df -h
-        ls -l /mnt
+        ls -l -R1 /mnt
         sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
         sudo umount /mnt
         sudo mkdir /tmp/mergerfs_disk
