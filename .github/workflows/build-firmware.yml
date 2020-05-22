@@ -24,13 +24,13 @@ jobs:
         df -h
         ls -l /mnt
         sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
-        sudo umount /mnt
-        sudo mkdir /tmp/mergerfs_disk
-        sudo mount /dev/sda1 /tmp/mergerfs_disk
-        sudo mkdir /tmp/mergerfs_ram
+        mkdir /tmp/mergerfs_ram
         sudo mount -t tmpfs -o size=4G none /tmp/mergerfs_ram
-        sudo mergerfs -o allow_other,use_ino /tmp/mergerfs_\* /mnt/work
-        sudo chown -R runner /mnt
+        mkdir /tmp/mergerfs_disk
+        mv /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware_orig
+        sudo mount --bind /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware_orig /tmp/mergerfs_disk
+        sudo mergerfs -o allow_other,use_ino /tmp/mergerfs_\* /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware
+        sudo chown -R runner:docker /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware
         df -h
     - uses: actions/checkout@v2
     - name: install dependencies
