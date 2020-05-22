@@ -19,6 +19,17 @@ jobs:
       IS_BUILDBOT: yes
 
     steps:
+    - name: extend host storage
+      run: |
+        df -h
+        sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
+        sudo mkdir /mnt/diskfs
+        sudo mkdir /mnt/ramfs
+        sudo mount -t tmpfs -o 4G none /mnt/ramfs
+        sudo mkfs.ext4 /mnt/ramfs
+        sudo mkdir /mnt/join
+        sudo mergerfs -o allow_other,use_ino /mnt/diskfs:/mnt/ramfs ${GITHUB_WORKSPACE}
+        df -h
     - uses: actions/checkout@v2
     - name: install dependencies
       run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python libssl-dev
