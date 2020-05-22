@@ -28,6 +28,7 @@ jobs:
         sudo mount -t tmpfs -o size=4G none /tmp/mergerfs_ram
         mkdir /tmp/mergerfs_disk
         mv /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware_orig
+        mkdir /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware
         sudo mount --bind /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware_orig /tmp/mergerfs_disk
         sudo mergerfs -o allow_other,use_ino /tmp/mergerfs_\* /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware
         sudo chown -R runner:docker /mnt/work/freifunk-berlin-firmware/freifunk-berlin-firmware
