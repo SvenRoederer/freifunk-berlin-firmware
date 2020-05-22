@@ -27,6 +27,7 @@ jobs:
         ls -l /home/runner
         echo "home ${HOME}"
         echo "github_workspace ${GITHUB_WORKSPACE}"
+        ls -l -R1 ${GITHUB_WORKSPACE}
         ls -l -R1 /mnt || true
         sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
         mkdir /tmp/mergerfs_ram
