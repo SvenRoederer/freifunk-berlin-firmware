@@ -28,6 +28,7 @@ jobs:
         sudo mount -t tmpfs -o size=4G none /mnt/ramfs
         sudo mkdir /mnt/join
         sudo mergerfs -o allow_other,use_ino /mnt/diskfs:/mnt/ramfs ${GITHUB_WORKSPACE}
+        sudo chown -R runner ${GITHUB_WORKSPACE}
         df -h
     - uses: actions/checkout@v2
     - name: install dependencies
