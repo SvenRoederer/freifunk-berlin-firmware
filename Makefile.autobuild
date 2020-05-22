@@ -46,7 +46,7 @@ imagebuilder:
 	touch .autobuild_stamp-$@
 
 sdk:
-	$(MAKE) -C $(OPENWRT_DIR) target/sdk
+	$(MAKE) -C $(OPENWRT_DIR) target/sdk/install
 	touch .autobuild_stamp-$@
 
 travis: $(OPENWRT_DIR)/.config
