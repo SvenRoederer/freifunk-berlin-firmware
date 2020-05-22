@@ -26,7 +26,6 @@ jobs:
         sudo mkdir /mnt/diskfs
         sudo mkdir /mnt/ramfs
         sudo mount -t tmpfs -o 4G none /mnt/ramfs
-        sudo mkfs.ext4 /mnt/ramfs
         sudo mkdir /mnt/join
         sudo mergerfs -o allow_other,use_ino /mnt/diskfs:/mnt/ramfs ${GITHUB_WORKSPACE}
         df -h
