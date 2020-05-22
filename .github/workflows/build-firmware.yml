@@ -17,7 +17,7 @@ jobs:
 
     env:
       IS_BUILDBOT: yes
-      MAKE_OPTS: -j$(nproc) TARGET=${{matrix.target}}
+      MAKE_OPTS: -j2 TARGET=${{matrix.target}}
 
     steps:
     - name: extend host storage
