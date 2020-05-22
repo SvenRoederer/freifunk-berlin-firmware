@@ -26,10 +26,10 @@ jobs:
         sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
         sudo umount /mnt
         sudo mkdir /tmp/mergerfs_disk
-        sudo mount /dev/sda1 /tmp/diskfs
+        sudo mount /dev/sda1 /tmp/mergerfs_disk
         sudo mkdir /tmp/mergerfs_ram
         sudo mount -t tmpfs -o size=4G none /tmp/mergerfs_ram
-        sudo mergerfs -o allow_other,use_ino /tmp/merferfs_\* /mnt
+        sudo mergerfs -o allow_other,use_ino /tmp/mergerfs_\* /mnt/work
         sudo chown -R runner /mnt
         df -h
     - uses: actions/checkout@v2
