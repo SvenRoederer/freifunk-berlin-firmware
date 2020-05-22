@@ -22,6 +22,7 @@ jobs:
     - name: extend host storage
       run: |
         df -h
+        pwd
         ls -l -R1 /mnt || true
         sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
         mkdir /tmp/mergerfs_ram
