@@ -43,13 +43,9 @@ jobs:
     - name: download openwrt packages
       run: make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} download
     - name: build openwrt tools
-      run: |
-        make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} tools
-        df -h
+      run: make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} tools
     - name: build openwrt toolchain
-      run: |
-        make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} toolchain
-        df -h
+      run: make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} toolchain
     - name: build openwrt kmods
       run: make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} kmods
     - name: build openwrt packages
@@ -64,3 +60,5 @@ jobs:
       with:
         name: ${{matrix.target}}_logs
         path: logs
+    - run: df -h
+      if: ${{ !cancelled() }}
