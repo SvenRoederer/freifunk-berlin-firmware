@@ -22,13 +22,15 @@ jobs:
     - name: extend host storage
       run: |
         df -h
+        ls -l /mnt
         sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
-        sudo mkdir /mnt/diskfs
-        sudo mkdir /mnt/ramfs
-        sudo mount -t tmpfs -o size=4G none /mnt/ramfs
-        sudo mkdir /mnt/join
-        sudo mergerfs -o allow_other,use_ino /mnt/diskfs:/mnt/ramfs ${GITHUB_WORKSPACE}
-        sudo chown -R runner ${GITHUB_WORKSPACE}
+        sudo umount /mnt
+        sudo mkdir /tmp/mergerfs_disk
+        sudo mount /dev/sda1 /tmp/diskfs
+        sudo mkdir /tmp/mergerfs_ram
+        sudo mount -t tmpfs -o size=4G none /tmp/mergerfs_ram
+        sudo mergerfs -o allow_other,use_ino /tmp/merferfs_\* /mnt
+        sudo chown -R runner /mnt
         df -h
     - uses: actions/checkout@v2
     - name: install dependencies
