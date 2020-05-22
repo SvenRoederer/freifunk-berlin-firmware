@@ -43,9 +43,13 @@ jobs:
     - name: download openwrt packages
       run: make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} download
     - name: build openwrt tools
-      run: make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} tools
+      run: 
+        - make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} tools
+        - df -h
     - name: build openwrt toolchain
-      run: make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} toolchain
+      run: 
+        - make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} toolchain
+        - df -h
     - name: build openwrt kmods
       run: make -f Makefile.autobuild -j$(nproc) TARGET=${{matrix.target}} kmods
     - name: build openwrt packages
