@@ -24,10 +24,11 @@ jobs:
       run: |
         df -h
         pwd
-        ls -l /home/runner
         echo "home ${HOME}"
+        ls -l ${HOME}
         echo "github_workspace ${GITHUB_WORKSPACE}"
         ls -l -R1 ${GITHUB_WORKSPACE}
+        echo "list /mnt"
         ls -l -R1 /mnt || true
         sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
         mkdir /tmp/mergerfs_ram
