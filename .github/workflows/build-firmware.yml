@@ -60,3 +60,5 @@ jobs:
       with:
         name: ${{matrix.target}}_logs
         path: logs
+    - run: df -h
+      if: ${{ !cancelled() }}
