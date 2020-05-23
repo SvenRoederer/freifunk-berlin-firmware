@@ -13,11 +13,12 @@ FW_TARGET_DIR=$(FW_DIR)/firmwares/$(MAINTARGET)-$(SUBTARGET)
 BUILD_STEPS=config:download download:tools tools:toolchain toolchain:kmods kmods:packages packages:linux linux:sdk sdk:imagebuilder imagebuilder:images images:
 
 info:
-	ifneq ($(IS_BUILDBOT),yes)
-	$(error This Makefile ist specialized to run on CI-builds. You might no want to use it for local builds.)
-	else
+ifeq ($(IS_BUILDBOT),yes)
+	$(info IS_BUILDBOT is $(IS_BUILDBOT))
 	$(info This is a CI-build with options $(MAKE))
-	endif
+else
+	$(error This Makefile ist specialized to run on CI-builds. You might no want to use it for local builds.)
+endif
 
 download: info .autobuild_stamp-download .FORCE
 .autobuild_stamp-download: $(OPENWRT_DIR)/.config
