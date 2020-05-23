@@ -39,7 +39,12 @@ jobs:
     - name: install dependencies
       run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python libssl-dev
     - name: setup folders
-      run: mkdir logs
+      # Setup log folder
+      # update MAKE_OPTS to set BUILD_LOGS_DIR for OpenWrt, as this became a config-option after 19.07 branch off
+      run: |
+        mkdir $(pwd)/logs
+        echo '::set-env name=BUILD_LOGS_DIR::$(pwd)/logs'
+        echo '::set-env name=MAKE_OPTS::${MAKE_OPTS} BUILD_LOGS_DIR=${BUILD_LOGS_DIR}'
     - name: configure build
       run: make -f Makefile.autobuild ${MAKE_OPTS} config
     - name: OpenWrt-config to artifacts
