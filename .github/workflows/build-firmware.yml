@@ -94,6 +94,7 @@ jobs:
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "::set-env name=next_buildstep::${nextstep}"
     - name: openwrt ${{ env.next_buildstep }}
+      if: ${{ env.next_buildstep != null }}
       run: |
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
