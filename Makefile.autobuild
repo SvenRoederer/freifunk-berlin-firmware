@@ -15,7 +15,7 @@ BUILD_STEPS=config:download download:tools tools:toolchain toolchain:kmods kmods
 info:
 ifeq ($(IS_BUILDBOT),yes)
 	$(info IS_BUILDBOT is $(IS_BUILDBOT))
-	$(info This is a CI-build with options $(MAKE))
+	$(info This is a CI-build with options $(MAKEFLAGS))
 else
 	$(error This Makefile ist specialized to run on CI-builds. You might no want to use it for local builds.)
 endif
