@@ -57,6 +57,7 @@ jobs:
       run: cp openwrt/.config logs/openwrt.config
     - name: download openwrt packages
       run: make -f Makefile.autobuild ${MAKE_OPTS} download
+    - run: exit 10
     - name: build openwrt tools
       run: make -f Makefile.autobuild ${MAKE_OPTS} tools
     - name: build openwrt toolchain
