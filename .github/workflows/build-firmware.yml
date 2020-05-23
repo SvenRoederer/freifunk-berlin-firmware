@@ -48,11 +48,15 @@ jobs:
     - name: setup folders
       run: mkdir logs
     - name: configure build
-      run: make -f Makefile.autobuild ${MAKE_OPTS} config
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} config
+        echo "::set-env name=next_buildstep::download"
     - name: OpenWrt-config to artifacts
       run: cp openwrt/.config logs/openwrt.config
     - name: download openwrt packages
-      run: make -f Makefile.autobuild ${MAKE_OPTS} download
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        echo "::set-env name=next_buildstep::tools"
     - run: exit 10
     - name: build openwrt tools
       run: make -f Makefile.autobuild ${MAKE_OPTS} tools
