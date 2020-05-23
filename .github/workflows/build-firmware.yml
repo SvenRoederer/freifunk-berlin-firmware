@@ -14,11 +14,13 @@ jobs:
     strategy:
       matrix:
         target: [ath79-generic, ramips-mt7620]
+      fail-fast: false
 
     env:
       IS_BUILDBOT: yes
       MAKE_OPTS: -j2 TARGET=${{matrix.target}}
       BUILD_LOG_DIR: logs
+
 
     steps:
     - name: extend host storage
