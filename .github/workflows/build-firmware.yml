@@ -39,11 +39,13 @@ jobs:
     - uses: actions/checkout@v2
     - name: install dependencies
       run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python libssl-dev
-    - name: setup folders
-      run: mkdir logs
-    - name: OpenWrt ${{ matrix.target }}; ${{ env.next_buildstep }}
+    - name: setup build-environment
       run: |
-        make -f Makefile.autobuild ${MAKE_OPTS} config
+        mkdir logs
+        echo "::set-env name=next_buildstep::config"
+    - name: OpenWrt ${{ env.next_buildstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
         echo "::set-env name=next_buildstep::${nextstep}"
     - name: OpenWrt-config to artifacts
