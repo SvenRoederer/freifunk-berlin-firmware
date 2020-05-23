@@ -20,8 +20,11 @@ else
 $(info This is a CI-build with options $(MAKE))
 endif
 
+#MAKE=$(MAKE) -j$(shell nproc)
+
 download: .autobuild_stamp-download .FORCE
 .autobuild_stamp-download: $(OPENWRT_DIR)/.config
+	echo $(MAKE) -C $(OPENWRT_DIR) BUILD_LOG_DIR=$(FW_DIR)/logs download
 	$(MAKE) -C $(OPENWRT_DIR) BUILD_LOG_DIR=$(FW_DIR)/logs download
 	touch $@
 
