@@ -41,14 +41,14 @@ jobs:
       run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python libssl-dev
     - name: setup folders
       run: mkdir logs
-    - name: configure build
+    - name: OpenWrt ${{ env.nextstep }}
       run: |
         make -f Makefile.autobuild ${MAKE_OPTS} config
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
         echo "::set-env name=next_buildstep::${nextstep}"
     - name: OpenWrt-config to artifacts
       run: cp openwrt/.config logs/openwrt.config
-    - name: download openwrt packages
+    - name: openwrt ${{ env.nextstep }}
       run: |
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
