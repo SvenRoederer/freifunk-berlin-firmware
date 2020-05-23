@@ -18,7 +18,7 @@ jobs:
 
     env:
       IS_BUILDBOT: yes
-      MAKE_OPTS: -j2 TARGET=${{matrix.target}}
+      MAKE_OPTS: -j2 TARGET=${{matrix.target}} IS_BUILDBOT=${{ env.IS_BUILDBOT }}
       BUILD_LOG_DIR: logs
 
 
