@@ -47,7 +47,7 @@ jobs:
       run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python libssl-dev
     - name: setup folders
       run: mkdir logs
-    - name: OpenWrt ${{ env.nextstep }}
+    - name: OpenWrt ${{ matrix.target }}; ${{ env.nextstep }}
       run: |
         make -f Makefile.autobuild ${MAKE_OPTS} config
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
