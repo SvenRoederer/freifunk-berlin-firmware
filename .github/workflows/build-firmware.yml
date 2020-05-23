@@ -50,13 +50,15 @@ jobs:
     - name: configure build
       run: |
         make -f Makefile.autobuild ${MAKE_OPTS} config
-        echo "::set-env name=next_buildstep::download"
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
+        echo "::set-env name=next_buildstep::${nextstep}"
     - name: OpenWrt-config to artifacts
       run: cp openwrt/.config logs/openwrt.config
     - name: download openwrt packages
       run: |
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
-        echo "::set-env name=next_buildstep::tools"
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
+        echo "::set-env name=next_buildstep::${nextstep}"
     - run: exit 10
     - name: build openwrt tools
       run: make -f Makefile.autobuild ${MAKE_OPTS} tools
