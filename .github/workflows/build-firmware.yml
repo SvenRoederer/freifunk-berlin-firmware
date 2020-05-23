@@ -57,25 +57,54 @@ jobs:
     - name: openwrt ${{ env.nextstep }}
       run: |
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
-        nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
         echo "::set-env name=next_buildstep::${nextstep}"
     - run: exit 10
-    - name: build openwrt tools
-      run: make -f Makefile.autobuild ${MAKE_OPTS} tools
-    - name: build openwrt toolchain
-      run: make -f Makefile.autobuild ${MAKE_OPTS} toolchain
-    - name: build openwrt kmods
-      run: make -f Makefile.autobuild ${MAKE_OPTS} kmods
-    - name: build openwrt packages
-      run: make -f Makefile.autobuild ${MAKE_OPTS} packages
-    - name: build openwrt linux
-      run: make -f Makefile.autobuild ${MAKE_OPTS} linux
-    - name: build openwrt sdk
-      run: make -f Makefile.autobuild ${MAKE_OPTS} sdk
-    - name: build openwrt imagebuilder
-      run: make -f Makefile.autobuild ${MAKE_OPTS} imagebuilder
-    - name: build openwrt images
-      run: make -f Makefile.autobuild ${MAKE_OPTS} images
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
+    - name: openwrt ${{ env.nextstep }}
+      run: |
+        make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
+        nextstep=$(make -f Makefile.autobuild next-buildstep-for-${nextstep})
+        echo "::set-env name=next_buildstep::${nextstep}"
     - name: Archive build logs
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v1
