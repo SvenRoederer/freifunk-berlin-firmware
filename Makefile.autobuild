@@ -11,8 +11,8 @@ FW_TARGET_DIR=$(FW_DIR)/firmwares/$(MAINTARGET)-$(SUBTARGET)
 BUILD_DURATION=$(FW_DIR)/build-times.txt
 TIMECMD=/usr/bin/time --append -o $(BUILD_DURATION) --format "step $(1):\t%e real,\t%U user,\t%S sys"
 
-# current_step:next_step ...
-BUILD_STEPS=config:download download:tools tools:toolchain
+# current_step:next_step ... last_step:
+BUILD_STEPS=config:download download:tools tools:toolchain toolchain:
 
 download: .autobuild_stamp-download .FORCE
 .autobuild_stamp-download: $(OPENWRT_DIR)/.config
