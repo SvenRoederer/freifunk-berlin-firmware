@@ -22,21 +22,6 @@ jobs:
 
 
     steps:
-    - name: extend host storage
-      continue-on-error: true
-      run: |
-        df -h
-        ls -l /mnt
-        sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install mergerfs
-        mkdir /tmp/mergerfs_ram
-        sudo mount -t tmpfs -o size=4G none /tmp/mergerfs_ram
-        mkdir /tmp/mergerfs_disk
-        mv ${GITHUB_WORKSPACE} ${GITHUB_WORKSPACE}_orig
-        mkdir ${GITHUB_WORKSPACE}
-        sudo mount --bind ${GITHUB_WORKSPACE}_orig /tmp/mergerfs_disk
-        sudo mergerfs -o allow_other,use_ino /tmp/mergerfs_\* ${GITHUB_WORKSPACE}
-        sudo chown -R runner:docker ${GITHUB_WORKSPACE}
-        df -h
     - uses: actions/checkout@v2
     - name: install dependencies
       run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python libssl-dev
