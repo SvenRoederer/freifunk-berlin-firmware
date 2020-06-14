@@ -30,6 +30,7 @@ jobs:
         mkdir logs
         echo "::set-env name=MAKE_OPTS:: -j$(nproc) TARGET=${{matrix.target}} IS_BUILDBOT=${IS_BUILDBOT} "
         echo "::set-env name=next_buildstep::config"
+        df -h
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
