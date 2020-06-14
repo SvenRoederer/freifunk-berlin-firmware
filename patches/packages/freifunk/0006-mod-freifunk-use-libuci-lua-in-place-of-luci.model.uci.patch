@@ -1,0 +1,51 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sun, 14 Jun 2020 18:54:43 +0200
+Subject: mod-freifunk: use libuci-lua in place of luci.model.uci
+
+The LuCI-page currently fails with:
+
+/usr/lib/lua/luci/model/cbi/freifunk/profile.lua:12: attempt to concatenate local 'community' (a boolean value)
+stack traceback:
+	/usr/lib/lua/luci/model/cbi/freifunk/profile.lua:16: in function 'func'
+	/usr/lib/lua/luci/cbi.lua:66: in function 'load'
+	/usr/lib/lua/luci/dispatcher.lua:1348: in function '_cbi'
+	/usr/lib/lua/luci/dispatcher.lua:1019: in function 'dispatch'
+	/usr/lib/lua/luci/dispatcher.lua:980: in function 'dispatch'
+	/usr/lib/lua/luci/dispatcher.lua:479: in function </usr/lib/lua/luci/dispatcher.lua:478>
+
+This is caused by returning "false" when getting the "freifunk.community.name"
+via luci.model.uci.
+Upstream changed the luci-base package to route uci-requests through the RPCd.
+This change in turn requires setting up correct permissions for accessing the
+RPCd.
+Avoid this additional layer by using the libuci-lua which returns the correct
+result.
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+
+diff --git a/modules/luci-mod-freifunk/Makefile b/modules/luci-mod-freifunk/Makefile
+index 5b00ea572b6ca14f4824c4476ea7f5dc61ae1c12..801d37058ed626ee41f1234b5768cb2257236040 100644
+--- a/modules/luci-mod-freifunk/Makefile
++++ b/modules/luci-mod-freifunk/Makefile
+@@ -7,7 +7,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=LuCI Freifunk module
+-LUCI_DEPENDS:=+luci-compat +luci-mod-admin-full +luci-lib-json +luci-lib-ipkg +freifunk-firewall +freifunk-common
++LUCI_DEPENDS:=+luci-compat +luci-mod-admin-full +libuci-lua +luci-lib-json +luci-lib-ipkg +libuci-lua +freifunk-firewall +freifunk-common
+ 
+ include ../../freifunk.mk
+ 
+diff --git a/modules/luci-mod-freifunk/luasrc/model/cbi/freifunk/profile.lua b/modules/luci-mod-freifunk/luasrc/model/cbi/freifunk/profile.lua
+index de7caf4c181d54644f8c830c22b42ea67460af33..a58a07a88e4024bb08d84f70480b2282a88e7312 100644
+--- a/modules/luci-mod-freifunk/luasrc/model/cbi/freifunk/profile.lua
++++ b/modules/luci-mod-freifunk/luasrc/model/cbi/freifunk/profile.lua
+@@ -1,7 +1,7 @@
+ -- Copyright 2011-2012 Manuel Munz <freifunk at somakoma dot de>
+ -- Licensed to the public under the Apache License 2.0.
+ 
+-local uci = require "luci.model.uci".cursor()
++local uci = require "uci".cursor()
+ local ipkg = require "luci.model.ipkg"
+ local community = uci:get("freifunk", "community", "name")
+ 
