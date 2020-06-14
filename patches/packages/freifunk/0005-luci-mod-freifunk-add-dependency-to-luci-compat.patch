@@ -1,0 +1,46 @@
+From 61d4ee9bd9e5d8423f1ac000a3feab13a31982e4 Mon Sep 17 00:00:00 2001
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sun, 14 Jun 2020 16:02:22 +0200
+Subject: [PATCH] luci-mod-freifunk: add dependency to luci-compat
+
+this fixes the error seen in the admin-interface after login
+
+/usr/lib/lua/luci/dispatcher.lua:1342: module 'luci.cbi' not found:
+	no field package.preload['luci.cbi']
+	no file './luci/cbi.lua'
+	no file '/usr/share/lua/luci/cbi.lua'
+	no file '/usr/share/lua/luci/cbi/init.lua'
+	no file '/usr/lib/lua/luci/cbi.lua'
+	no file '/usr/lib/lua/luci/cbi/init.lua'
+	no file './luci/cbi.so'
+	no file '/usr/lib/lua/luci/cbi.so'
+	no file '/usr/lib/lua/loadall.so'
+	no file './luci.so'
+	no file '/usr/lib/lua/luci.so'
+	no file '/usr/lib/lua/loadall.so'
+
+The luci-compat packaged was added in LuCI when reworking to JS-based framework
+was done, to provide backward compatibility to the Lua-based framework (up to
+OpenWrt-18.06).
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+---
+ modules/luci-mod-freifunk/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/modules/luci-mod-freifunk/Makefile b/modules/luci-mod-freifunk/Makefile
+index a15426d61..f45a64ff8 100644
+--- a/modules/luci-mod-freifunk/Makefile
++++ b/modules/luci-mod-freifunk/Makefile
+@@ -7,7 +7,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=LuCI Freifunk module
+-LUCI_DEPENDS:=+luci-mod-admin-full +luci-lib-json +luci-lib-ipkg +freifunk-firewall +freifunk-common
++LUCI_DEPENDS:=+luci-compat +luci-mod-admin-full +luci-lib-json +luci-lib-ipkg +freifunk-firewall +freifunk-common
+ 
+ include ../../freifunk.mk
+ 
+-- 
+2.20.1
+
