@@ -30,7 +30,7 @@ uhttpd
 uhttpd-mod-ubus
 px5g-mbedtls
 libustream-mbedtls
-luci-mod-freifunk-ui
+luci-mod-freifunk
 luci-app-opkg
 # owm depends on olsr-mod-jsoninfo
 #luci-app-owm
