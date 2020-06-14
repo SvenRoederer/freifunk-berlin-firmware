@@ -8,10 +8,10 @@ before the special section of package luci-base.
 Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
 
 diff --git a/luci.mk b/luci.mk
-index 2920aebeca8d491b9af9e96a573a2d383c32586c..3dbf08443977494e198a9ca3a73a76aee7453285 100644
+index 37549f79188edbef553a30b50324ce0b8df9714a..2043ad4a62cedc4ee361b96633e9d85f0f3432cd 100644
 --- a/luci.mk
 +++ b/luci.mk
-@@ -192,30 +192,7 @@ define Package/$(PKG_NAME)/postinst
+@@ -196,30 +196,7 @@ define Package/$(PKG_NAME)/postinst
  endef
  endif
  
@@ -43,7 +43,7 @@ index 2920aebeca8d491b9af9e96a573a2d383c32586c..3dbf08443977494e198a9ca3a73a76ae
  define SrcDiet
  	$(FIND) $(1) -type f -name '*.lua' | while read src; do \
  		if LUA_PATH="$(STAGING_DIR_HOSTPKG)/lib/lua/5.1/?.lua" luasrcdiet --noopt-binequiv -o "$$$$src.o" "$$$$src"; \
-@@ -245,6 +222,30 @@ define SubstituteVersion
+@@ -249,6 +226,30 @@ define SubstituteVersion
  	done
  endef
  

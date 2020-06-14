@@ -14,10 +14,10 @@ on the first view.
 Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
 
 diff --git a/luci.mk b/luci.mk
-index d7a89d9ff1364b23e5e1a661096a2c89360557e8..2920aebeca8d491b9af9e96a573a2d383c32586c 100644
+index 5bc4647da8af10836af33e7c5b884b73b6e65caf..37549f79188edbef553a30b50324ce0b8df9714a 100644
 --- a/luci.mk
 +++ b/luci.mk
-@@ -56,8 +56,10 @@ LUCI_LC_ALIAS.pt_BR=pt-br
+@@ -60,8 +60,10 @@ LUCI_LC_ALIAS.pt_BR=pt-br
  LUCI_LC_ALIAS.zh_Hans=zh-cn
  LUCI_LC_ALIAS.zh_Hant=zh-tw
  
@@ -30,7 +30,7 @@ index d7a89d9ff1364b23e5e1a661096a2c89360557e8..2920aebeca8d491b9af9e96a573a2d38
  
  
  # 1: everything expect po subdir or only po subdir
-@@ -85,6 +87,14 @@ define findrev
+@@ -89,6 +91,14 @@ define findrev
    )
  endef
  
@@ -45,7 +45,7 @@ index d7a89d9ff1364b23e5e1a661096a2c89360557e8..2920aebeca8d491b9af9e96a573a2d38
  PKG_PO_VERSION?=$(if $(DUMP),x,$(strip $(call findrev)))
  PKG_SRC_VERSION?=$(if $(DUMP),x,$(strip $(call findrev,1)))
  
-@@ -102,13 +112,6 @@ PKG_GITBRANCH?=$(if $(DUMP),x,$(strip $(shell \
+@@ -106,13 +116,6 @@ PKG_GITBRANCH?=$(if $(DUMP),x,$(strip $(shell \
  	echo "$$variant" \
  )))
  
@@ -59,7 +59,7 @@ index d7a89d9ff1364b23e5e1a661096a2c89360557e8..2920aebeca8d491b9af9e96a573a2d38
  include $(INCLUDE_DIR)/package.mk
  
  define Package/$(PKG_NAME)
-@@ -128,30 +131,6 @@ ifneq ($(LUCI_DESCRIPTION),)
+@@ -132,30 +135,6 @@ ifneq ($(LUCI_DESCRIPTION),)
   endef
  endif
  
@@ -90,7 +90,7 @@ index d7a89d9ff1364b23e5e1a661096a2c89360557e8..2920aebeca8d491b9af9e96a573a2d38
  define Build/Prepare
  	for d in luasrc htdocs root src; do \
  	  if [ -d ./$$$$d ]; then \
-@@ -177,39 +156,6 @@ else
+@@ -181,39 +160,6 @@ else
   endef
  endif
  
@@ -130,7 +130,7 @@ index d7a89d9ff1364b23e5e1a661096a2c89360557e8..2920aebeca8d491b9af9e96a573a2d38
  define Package/$(PKG_NAME)/install
  	if [ -d $(PKG_BUILD_DIR)/luasrc ]; then \
  	  $(INSTALL_DIR) $(1)$(LUCI_LIBRARYDIR); \
-@@ -246,6 +192,59 @@ define Package/$(PKG_NAME)/postinst
+@@ -250,6 +196,59 @@ define Package/$(PKG_NAME)/postinst
  endef
  endif
  
