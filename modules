@@ -11,7 +11,7 @@ PACKAGES_FREIFUNK_REPO=https://github.com/freifunk/openwrt-packages.git
 PACKAGES_FREIFUNK_COMMIT=05760f09e294caee423613ab681ce10d48629a19
 
 PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
-PACKAGES_ROUTING_COMMIT=83a3fa91b0444f8c0d4eea35defabf55285c87e9
+PACKAGES_ROUTING_COMMIT=272cd4c998cfd799cd643e0491dbbc14ea7e3b51
 
 PACKAGES_PACKAGES_BERLIN_REPO=https://github.com/freifunk-berlin/firmware-packages.git
 PACKAGES_PACKAGES_BERLIN_COMMIT=c3c0f4b86b2f0812f8c3737ada35ee3cb02fe1fd
