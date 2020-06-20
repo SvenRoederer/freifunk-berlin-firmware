@@ -1,0 +1,46 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sun, 21 Jun 2020 00:31:30 +0200
+Subject: util.luadoc: update for ocdata, striptags wrapper
+
+diff --git a/libs/luci-lib-base/luasrc/util.luadoc b/libs/luci-lib-base/luasrc/util.luadoc
+index 6ab130008a428a08b4939e84cec95de55b8330e3..3168d9c22012a3fe19042c2cbcc5a37e13d0c2e2 100644
+--- a/libs/luci-lib-base/luasrc/util.luadoc
++++ b/libs/luci-lib-base/luasrc/util.luadoc
+@@ -67,6 +67,18 @@ Recursively dumps a table to stdout, useful for testing and debugging.
+ @return				Always nil
+ ]]
+ 
++---[[
++Create valid XML PCDATA from given string.
++
++This is just a compatibility wrapper for luci.xml.padata()
++
++@class				function
++@name				pcdata
++@param value		String value containing the data to escape
++@return				String value containing the escaped data
++@see				luci.xml.pcdata
++]]
++
+ ---[[
+ Decode an URL-encoded string - optionally decoding the "+" sign to space.
+ 
+@@ -88,6 +100,18 @@ URL-encode given string.
+ @see				urldecode
+ ]]
+ 
++---[[
++Strip HTML tags from given string.
++
++This is just a compatibility wrapper for luci.xml.striptags()
++
++@class				function
++@name				striptags
++@param value		String containing the HTML text
++@return				String with HTML tags stripped of
++@see				luci.xml.striptags
++]]
++
+ ---[[
+ Safely quote value for use in shell commands.
+ 
