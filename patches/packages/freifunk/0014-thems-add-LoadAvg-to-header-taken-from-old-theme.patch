@@ -1,0 +1,16 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sun, 21 Jun 2020 03:42:23 +0200
+Subject: thems: add LoadAvg to header (taken from old theme)
+
+diff --git a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm b/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
+index c6bb0877a3ed826b2a8b53860e18864647a64277..f23486a388da3dc9983a3fed72ccf42e8a454def 100644
+--- a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
++++ b/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
+@@ -41,6 +41,7 @@
+ 
+ 	<span class="hostname"><a href="/"><%=(boardinfo.hostname or "?")%></a></span>
+ 	<span class="distversion"><%=ver.distversion%></span>
++	<span><%:Load%>: <%="%.2f" % (loadinfo[1] / 65535.0)%> <%="%.2f" % (loadinfo[2] / 65535.0)%> <%="%.2f" % (loadinfo[3] / 65535.0)%></span>
+ 	<span id="indicators"></span>
+ </div>
+ 
