@@ -1,0 +1,2286 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sun, 21 Jun 2020 02:55:22 +0200
+Subject: remove broken theme luci-theme-freifunk-generic
+
+diff --git a/themes/luci-theme-freifunk-generic/Makefile b/themes/luci-theme-freifunk-generic/Makefile
+deleted file mode 100644
+index 639560437157d650cd53d16cac655f6095dce2cf..0000000000000000000000000000000000000000
+--- a/themes/luci-theme-freifunk-generic/Makefile
++++ /dev/null
+@@ -1,14 +0,0 @@
+-#
+-# Copyright (C) 2008-2014 The LuCI Team <luci@lists.subsignal.org>
+-#
+-# This is free software, licensed under the Apache License, Version 2.0 .
+-#
+-
+-include $(TOPDIR)/rules.mk
+-
+-LUCI_TITLE:=Freifunk Generic Theme
+-LUCI_DEPENDS:=
+-
+-include ../../freifunk.mk
+-
+-# call BuildPackage - OpenWrt buildroot signature
+diff --git a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/cascade.css b/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/cascade.css
+deleted file mode 100644
+index 590eb3d979227499bd19b0b58e3764f152352005..0000000000000000000000000000000000000000
+--- a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/cascade.css
++++ /dev/null
+@@ -1,1792 +0,0 @@
+-@charset "utf-8";
+-
+-@media all {
+-
+-html {
+-	min-height: 100%;
+-	height: auto;
+-}
+-
+-body {
+-	color: #ccc;
+-	background: #e5eef5 linear-gradient(#fff 0%, #e5eef5 100%) no-repeat;
+-	font-family: Verdana, Arial, sans-serif;
+-	font-size: 100%;
+-	line-height: 100%;
+-	padding-bottom: 1.5em;
+-}
+-
+-html, body {
+-	height: 99%;
+-}
+-
+-* {
+-	margin: 0;
+-	padding: 0;
+-	box-sizing: border-box;
+-}
+-
+-.table { display: table; width: 100%; position: relative; }
+-.tr { display: table-row; }
+-.thead { display: table-header-group; }
+-.tbody { display: table-row-group; }
+-.tfoot { display: table-footer-group; }
+-.td, .th { display: table-cell; }
+-.th { font-weight: bold; }
+-
+-.table[width="33%"], .th[width="33%"], .td[width="33%"] { width: 33%; }
+-.table[width="100%"], .th[width="100%"], .td[width="100%"] { width: 100%; }
+-
+-.col-1 { flex: 1 1 30px !important; -webkit-flex: 1 1 30px !important; }
+-.col-2 { flex: 2 2 60px !important; -webkit-flex: 2 2 60px !important; }
+-.col-3 { flex: 3 3 90px !important; -webkit-flex: 3 3 90px !important; }
+-.col-4 { flex: 4 4 120px !important; -webkit-flex: 4 4 120px !important; }
+-.col-5 { flex: 5 5 150px !important; -webkit-flex: 5 5 150px !important; }
+-.col-6 { flex: 6 6 180px !important; -webkit-flex: 6 6 180px !important; }
+-.col-7 { flex: 7 7 210px !important; -webkit-flex: 7 7 210px !important; }
+-.col-8 { flex: 8 8 240px !important; -webkit-flex: 8 8 240px !important; }
+-.col-9 { flex: 9 9 270px !important; -webkit-flex: 9 9 270px !important; }
+-.col-10 { flex: 10 10 300px !important; -webkit-flex: 10 10 300px !important; }
+-
+-.tr.placeholder {
+-	height: 3.5em;
+-}
+-
+-.tr.placeholder > .td {
+-	position: absolute;
+-	left: 1px;
+-	right: 1px;
+-	bottom: 1px;
+-	text-align: center;
+-	line-height: 3em;
+-}
+-
+-abbr,
+-acronym {
+-	font-style: normal;
+-	font-variant: normal;
+-}
+-
+-abbr[title],
+-acronym[title] {
+-	border-bottom: 1px dotted;
+-	cursor: help;
+-}
+-
+-a:link abbr[title],
+-a:visited abbr[title],
+-a:link acronym[title],
+-a:visited acronym[title] {
+-	cursor: pointer;
+-}
+-
+-code {
+-	font-family: monospace;
+-	white-space: pre;
+-}
+-
+-h2, h3, h4, legend {
+-	font-size: 150%;
+-	font-family: Trebuchet MS, Verdana, sans-serif;
+-	font-weight: bold;
+-	margin: .25em 0 .5em 0;
+-	border-bottom: 1px solid;
+-	padding-bottom: 4px;
+-	display: block;
+-	width: 100%;
+-}
+-
+-h3, legend {
+-	font-size: 125%;
+-}
+-
+-h4 {
+-	font-size: 112%;
+-}
+-
+-.cbi-section-node + h4 {
+-	margin-top: 1em;
+-}
+-
+-fieldset { border: none; }
+-
+-fieldset > legend { float: left; }
+-fieldset > legend + * { clear: both; }
+-
+-#maincontent ul {
+-	margin-left: 2em;
+-}
+-
+-.warning {
+-	color: red;
+-	background-color: white;
+-	font-weight: bold;
+-	text-decoration: blink;
+-}
+-
+-.clear {
+-	clear: both;
+-}
+-
+-a img {
+-	border: 0;
+-}
+-
+-.skiplink,
+-.navigation,
+-.hidden {
+-	position: absolute;
+-	left: -1000px;
+-	top: -1000px;
+-	width: 0px;
+-	height: 0px;
+-	overflow: hidden;
+-	display: inline;
+-}
+-
+-.error {
+-	color: #f00;
+-	background-color: white;
+-}
+-
+-.alert-message {
+-	font-weight: normal;
+-	padding: .5em;
+-	border-radius: 3px;
+-	color: #000;
+-}
+-
+-.alert-message, .cbi-tooltip.error {
+-	background: #fee;
+-	color: #a22;
+-}
+-
+-.alert-message.notice, .cbi-tooltip.notice {
+-	background: linear-gradient(#ccc 0%, #eee 100%);
+-	color: #4a6b7c;
+-}
+-
+-.alert-message.warning, .cbi-tooltip.warning {
+-	background: linear-gradient(#dda 0%, #dd8 100%);
+-	color: #c00;
+-}
+-
+-.alert-message > * {
+-	margin: .5em;
+-}
+-
+-.alert-message > h4 {
+-	font-weight: bold;
+-}
+-
+-
+-.ifacebadge, .ifacebox {
+-	display: inline-flex;
+-	align-content: center;
+-	border: 1px solid #ccc;
+-	border-radius: 3px;
+-	padding: 2px;
+-	background: #fff;
+-	margin: .25em .5em;
+-}
+-
+-.ifacebox-head {
+-	background: #eee;
+-}
+-
+-.ifacebox-head.active {
+-	background: #90c0e0;
+-}
+-
+-.ifacebadge, .zonebadge {
+-	align-items: center;
+-}
+-
+-.ifacebadge > * {
+-	align-self: flex-start;
+-}
+-
+-.ifacebadge > img,
+-.ifacebadge > em {
+-	margin-right: 5px;
+-	display: inline-block;
+-	height: 16px;
+-}
+-
+-.ifacebadge-active {
+-	border-color: #000000;
+-	font-weight: bold;
+-}
+-
+-.ifacebox {
+-	flex-direction: column;
+-	margin: 0;
+-	padding: 0;
+-	min-width: 100px;
+-	text-align: center;
+-}
+-
+-.ifacebox > * {
+-	padding: 2px;
+-}
+-
+-.td > .ifacebadge,
+-.td > .zonebadge {
+-	margin: 0;
+-	vertical-align: top;
+-}
+-
+-.network-status-table {
+-	display: flex;
+-	flex-wrap: wrap;
+-}
+-
+-.network-status-table .ifacebox {
+-	margin: .5em;
+-	font-size: 90%;
+-	flex-grow: 1;
+-}
+-
+-.network-status-table .ifacebox-body {
+-	display: flex;
+-	flex-direction: column;
+-	flex: 1 0;
+-}
+-
+-.network-status-table .ifacebox-body > span {
+-	flex: 10;
+-}
+-
+-.network-status-table .ifacebox-body > div {
+-	display: flex;
+-	flex-wrap: wrap;
+-}
+-
+-.ifacebadge.large,
+-.network-status-table .ifacebox-body .ifacebadge {
+-	flex: 1;
+-	margin: .5em .25em .25em .25em;
+-	padding: .5em;
+-	min-width: 220px;
+-	white-space: nowrap;
+-}
+-
+-
+-.zonebadge {
+-	padding: 2px;
+-	display: inline-block;
+-	white-space: nowrap;
+-	border-radius: 3px;
+-}
+-
+-.zonebadge > em,
+-.zonebadge > strong {
+-	margin: 3px;
+-}
+-
+-.zonebadge input {
+-	width: 6em;
+-	height: 1.5em;
+-}
+-
+-.zonebadge .ifacebadge,
+-.cbi-dropdown .ifacebadge {
+-	margin: 1px;
+-}
+-
+-.zonebadge .ifacebadge img,
+-.zonebadge .ifacebadge em,
+-.cbi-dropdown .ifacebadge img,
+-.cbi-dropdown .ifacebadge em {
+-	margin: 0 1px;
+-}
+-
+-.zonebadge-empty {
+-	border: 1px dashed #AAAAAA;
+-	color: #AAAAAA;
+-	font-style: italic;
+-	font-size: smaller;
+-}
+-
+-
+-
+-#header {
+-	height: auto;
+-	background: #FFF url(header.jpg) repeat-x left bottom;
+-	color: #ccc;
+-	font-weight: bold;
+-	text-align:right;
+-}
+-
+-.header_left {
+-	padding-bottom: 10px;
+-}
+-
+-.header_left img {
+-	padding: 10px 10px 0px 10px;
+-}
+-
+-.header_banner {
+-	overflow:hidden;
+-	padding-bottom: 6px;
+-	text-align:left;
+-}
+-
+-.header_banner img{
+-	padding: 0px;
+-}
+-
+-.header_left {
+-	text-align:left;
+-	max-width: 50%;
+-	float:left;
+-}
+-
+-.header_left a {
+-	color: #dc0067;
+-	font: bold 36px Helvetica, Verdana, Arial, sans-serif;
+-	text-decoration: none;
+-}
+-
+-#header h1,
+-.header_right {
+-	max-width: 45%;
+-	text-align: right;
+-	font-size: 70%;
+-	font-weight: normal;
+-	line-height: 160%;
+-	float:right;
+-	padding: 10px 10px 0 0;
+-}
+-
+-ul.dropdowns {
+-	float: left;
+-	margin: 0;
+-	padding: 0;
+-	width: auto;
+-	list-style: none;
+-}
+-
+-html>body ul.dropdowns {
+-	position: relative;
+-}
+-
+-ul.dropdowns li,
+-ul.dropdowns ul {
+-	margin: 0;
+-	padding: 0;
+-	list-style: none;
+-}
+-
+-ul.dropdowns li {
+-	float: left;
+-	position: relative;
+-	white-space: nowrap;
+-}
+-
+-ul.dropdowns li ul {
+-	position: absolute;
+-	z-index: 1100;
+-	top: auto;
+-	min-width: 10em;
+-}
+-
+-ul.dropdowns li li {
+-	float: none;
+-	position: relative;
+-}
+-
+-ul.dropdowns li a {
+-	display: block;
+-}
+-
+-ul.dropdowns ul li ul {
+-	top: 0;
+-}
+-
+-ul.dropdowns li ul,
+-ul.dropdowns li.over ul ul,
+-ul.dropdowns li.focus ul ul,
+-ul.dropdowns li:hover ul ul,
+-ul.dropdowns li.over ul ul ul,
+-ul.dropdowns li.focus ul ul ul,
+-ul.dropdowns li:hover ul ul ul,
+-ul.dropdowns li.over ul ul ul ul,
+-ul.dropdowns li.focus ul ul ul ul,
+-ul.dropdowns li:hover ul ul ul ul {
+-	left: -3000px;
+-}
+-
+-ul.dropdowns li.over ul,
+-ul.dropdowns li.focus ul,
+-ul.dropdowns li:hover ul {
+-	left: 0;
+-}
+-
+-ul.dropdowns ul li.over ul,
+-ul.dropdowns ul li.focus ul,
+-ul.dropdowns ul li:hover ul,
+-ul.dropdowns ul ul li.over ul,
+-ul.dropdowns ul ul li.focus ul,
+-ul.dropdowns ul ul li:hover ul,
+-ul.dropdowns ul ul ul li.over ul,
+-ul.dropdowns ul ul ul li.focus ul,
+-ul.dropdowns ul ul ul li:hover ul {
+-	left: 100%;
+-}
+-
+-#xhr_poll_status {
+-	cursor: pointer;
+-}
+-
+-#xhr_poll_status #xhr_poll_status_off {
+-	font-weight: bold;
+-	color: #FF0000;
+-}
+-
+-#xhr_poll_status #xhr_poll_status_on {
+-	font-weight: bold;
+-	color: #00FF00;
+-}
+-
+-#menubar {
+-	position: relative;
+-	width: 100%;
+-	background: #FFF;
+-	color: #004a9c;
+-	border-bottom: 1px dotted #5A5A5A;
+-}
+-#menubar .warning {
+-	color: red;
+-	background-color: #FFF;
+-}
+-
+-#menubar ul.dropdowns {
+-	min-height: 1.8em;
+-	background: #FFF;
+-	color: #004a9c;
+-}
+-
+-#menubar ul.dropdowns li ul {
+-	background: #FFF;
+-	color: #004a9c;
+-	border-width: 0 1px 1px 1px;
+-	border-style: dotted;
+-	border-color: #5a5a5a;
+-}
+-
+-#menubar ul.dropdowns ul li ul {
+-	border-width: 1px;
+-}
+-
+-html #menubar a:link,
+-html #menubar a:visited {
+-	position: relative;
+-	display: block;
+-	padding: 0.5em;
+-	background: #FFF;
+-	color: #004a9c;
+-	text-decoration: none;
+-	font-size: 80%;
+-	font-weight: normal;
+-}
+-
+-html #menubar a:link:hover,
+-html #menubar a:visited:hover,
+-html #menubar a:link:active,
+-html #menubar a:visited:active,
+-#menubar a:link:focus,
+-#menubar a:visited:focus {
+-	background: #F2F2F2;
+-	color: #e60076;
+-}
+-
+-html #menubar a:link.active,
+-html #menubar a:visited.active,
+-html #menubar a:link.preactive,
+-html #menubar a:visited.preactive {
+-	background: #FFF;
+-	color: #e60076;
+-}
+-
+-html #menubar a:link.warning,
+-html #menubar a:visited.warning {
+-	background: #FFF;
+-	color: red;
+-	font-weight: bold;
+-	text-decoration: blink;
+-}
+-
+-#menubar ul.dropdowns li.over>a,
+-#menubar ul.dropdowns li.focus>a,
+-#menubar ul.dropdowns li:hover>a {
+-}
+-
+-.lang_de #submenu_mini_system { min-width: 13.3em; }
+-* html .lang_de #submenu_mini_system { width: 13.3em; }
+-
+-.lang_pt-br #submenu_mini_network { min-width: 14em; }
+-* html .lang_pt-br #submenu_mini_network { width: 14em; }
+-
+-.lang_pt-br #submenu_mini_system { min-width: 11.5em; }
+-* html .lang_pt-br #submenu_mini_system { width: 11.5em; }
+-
+-.lang_ru #submenu_mini_system { min-width: 18em; }
+-* html .lang_ru #submenu_mini_system { width: 18em; }
+-
+-.lang_pt-br #submenu_admin_index { min-width: 11em; }
+-* html .lang_pt-br #submenu_admin_index { width: 11em; }
+-
+-.lang_ru #submenu_admin_index { min-width: 15.5em; }
+-* html .lang_ru #submenu_admin_index { width: 15.5em; }
+-
+-.lang_ru #submenu_admin_status { min-width: 10.5em; }
+-* html .lang_ru #submenu_admin_status { width: 10.5em; }
+-
+-.lang_de #submenu_admin_system { min-width: 13.3em; }
+-* html .lang_de #submenu_admin_system { width: 13.3em; }
+-
+-.lang_fr #submenu_admin_system { min-width: 14.5em; }
+-* html .lang_fr #submenu_admin_system { width: 14.5em; }
+-
+-.lang_pt-br #submenu_admin_system { min-width: 11.5em; }
+-* html .lang_pt-br #submenu_admin_system { width: 11.5em; }
+-
+-.lang_ru #submenu_admin_system { min-width: 18em; }
+-* html .lang_ru #submenu_admin_system { width: 18em; }
+-
+-#submenu_admin_services_chillispot { min-width: 15.5em; }
+-* html #submenu_admin_services_chillispot { width: 15.5em; }
+-
+-#submenu_admin_services_coovachilli { min-width: 15em; }
+-* html #submenu_admin_services_coovachilli { width: 15em; }
+-
+-.lang_ru #submenu_admin_network_routes { min-width: 15.3em; }
+-* html .lang_ru #submenu_admin_network_routes { width: 15.3em; }
+-
+-#submenu_admin_network_firewall { min-width: 14em; }
+-* html #submenu_admin_network_firewall { width: 14em; }
+-
+-.lang_de #submenu_admin_network_firewall { min-width: 16.5em; }
+-* html .lang_de #submenu_admin_network_firewall { width: 16.5em; }
+-
+-.lang_pt-br #submenu_admin_network_firewall { min-width: 15em; }
+-* html .lang_pt-br #submenu_admin_network_firewall { width: 15em; }
+-
+-#modemenu {
+-/*	width: auto;*/
+-	background: #000;
+-	color: #fff;
+-	list-style: none;
+-	margin-right: 1px;
+-}
+-
+-#modemenu li {
+-	float: right;
+-	list-style: none;
+-}
+-
+-#savemenu {
+-	float: right;
+-	margin-right: 2em;
+-}
+-
+-#applyreboot-section {
+-	line-height: 300%;
+-}
+-
+-.lang_de #submenu_admin_uci {
+-	width: 12em;
+-}
+-
+-.lang_ru #submenu_admin_uci {
+-	width: 11.5em;
+-}
+-
+-textarea#syslog {
+-	width: 98%;
+-	min-height: 500px;
+-	border: 3px solid #ccc;
+-	padding: 5px;
+-	font-family: monospace;
+-}
+-
+-
+-#maincontent {
+-	clear: both;
+-	width: 90%;
+-	margin: 0 auto;
+-	padding: 0.5em;
+-	color: #000;
+-	font-size: 80%;
+-}
+-
+-#maincontent p {
+-	margin-bottom: 1em;
+-}
+-
+-.cbi-section {
+-	margin-bottom: 1.5em;
+-	color: #000;
+-}
+-
+-.cbi-section-descr {
+-	margin-bottom: 0.5em;
+-	font-size: 95%;
+-}
+-
+-.cbi-title-ref {
+-	color: inherit;
+-	text-decoration: none;
+-	padding-right: 18px;
+-	background: url('../resources/cbi/link.gif') no-repeat scroll right center;
+-	background-color: inherit;
+-}
+-
+-ul.cbi-apply {
+-	font-size: 90%;
+-}
+-
+-ul.cbi-tabmenu {
+-	list-style-type: none;
+-	display: flex;
+-	margin: 0 0 .5em 0 !important;
+-	padding: 0 0 0 5px;
+-	border-bottom: 1px solid #bbb;
+-}
+-
+-ul.cbi-tabmenu li {
+-	display: inline-flex;
+-	margin: 0 5px -1px 0;
+-	flex: 0 1 auto;
+-	border: 1px solid #bbb;
+-	border-bottom: none;
+-	border-radius: 3px 3px 0 0;
+-	background: linear-gradient(#ddd 90%, #aaa 100%);
+-	color: #888;
+-	overflow: hidden;
+-	text-overflow: ellipsis;
+-	word-wrap: break-word;
+-}
+-
+-ul.cbi-tabmenu li a,
+-ul.cbi-tabmenu li a:hover {
+-	text-decoration: none;
+-	color: inherit;
+-	padding: 5px;
+-	flex: 1;
+-	width: 100%;
+-	height: 100%;
+-}
+-
+-ul.cbi-tabmenu li.cbi-tab-highlighted {
+-	color: #000;
+-	background: #fea;
+-}
+-
+-ul.cbi-tabmenu li.cbi-tab {
+-	color: #000;
+-	background: #fff;
+-}
+-
+-ul.cbi-tabmenu + .cbi-section-node {
+-	margin-top: -.5em;
+-}
+-
+-[data-tab-title] {
+-	height: 0;
+-	opacity: 0;
+-	overflow: hidden;
+-}
+-
+-[data-tab-active="true"] {
+-	opacity: 1;
+-	height: auto;
+-	overflow: visible;
+-	transition: opacity .25s ease-in;
+-}
+-
+-div.cbi-tab-descr {
+-	background-image: url(/luci-static/resources/cbi/help.gif);
+-	background-position: 0.25em 50%;
+-	background-repeat: no-repeat;
+-	border-bottom: 1px solid #ccc;
+-	margin: 0.25em 0.25em 2em;
+-	padding: 0.5em 0.5em 0.5em 2em;
+-}
+-
+-input[type=submit],
+-input[type=reset],
+-input[type=image],
+-input[type=button] {
+-	cursor: pointer;
+-}
+-
+-select,
+-input,
+-textarea {
+-	background: #fff;
+-	color: #000;
+-	border: 1px solid #cccccc;
+-}
+-
+-input[type=image] {
+-	border: none;
+-}
+-
+-input:focus,
+-input:hover,
+-select:focus,
+-select:hover,
+-textarea:focus,
+-textarea:hover {
+-	background-color: #fff;
+-	color: #000;
+-}
+-
+-select,
+-input[type=text],
+-input[type=password] {
+-	width: 20em;
+-	font-size: inherit;
+-	line-height: 13pt;
+-	height: 14pt;
+-}
+-
+-select[multiple] {
+-	height: auto;
+-}
+-
+-input[type=radio],
+-input[type=checkbox],
+-[data-dynlist] > input + img,
+-input.cbi-input-password + img {
+-	vertical-align: middle;
+-}
+-
+-.td select,
+-.td .cbi-dropdown,
+-.td input[type=text] {
+-	width: 100%;
+-}
+-
+-.td [data-dynlist] > input,
+-.td input.cbi-input-password {
+-	width: calc(100% - 20px);
+-}
+-
+-img.cbi-image-button {
+-	cursor: pointer;
+-	margin: 0 2px;
+-	vertical-align: middle;
+-}
+-
+-.btn, .cbi-button {
+-	padding: 0 .5em;
+-	border-radius: 3px;
+-	border: 1px solid #aaa;
+-	text-decoration: none;
+-	color: #000;
+-	display: inline-block;
+-	font-size: inherit;
+-	-webkit-appearance: none;
+-	background: #fff;
+-	text-align: center;
+-	font-weight: bold;
+-	line-height: 13pt;
+-	height: 14pt;
+-}
+-
+-.btn:hover, .cbi-button:hover {
+-	box-shadow: 0 0 3px #59d;
+-}
+-
+-.btn[disabled],
+-.btn[disabled]:hover,
+-.cbi-button[disabled],
+-.cbi-button[disabled]:hover {
+-	opacity: .6;
+-	cursor: default;
+-	pointer-events: none;
+-}
+-
+-.cbi-button-positive,
+-.cbi-button-fieldadd,
+-.cbi-button-add,
+-.cbi-button-save {
+-	border-color: #7b7;
+-	color: #7b7;
+-}
+-
+-.cbi-button-neutral,
+-.cbi-button-reset,
+-.cbi-button-download,
+-.cbi-button-find,
+-.cbi-button-link,
+-.cbi-button-up,
+-.cbi-button-down {
+-	border-color: #444;
+-	color: #444;
+-}
+-
+-.cbi-button-action,
+-.cbi-button-apply,
+-.cbi-button-reload,
+-.cbi-button-edit {
+-	border-color: #59d;
+-	color: #59d;
+-}
+-
+-.cbi-button-negative,
+-.cbi-section-remove .cbi-button,
+-.cbi-button-remove {
+-	border-color: #b77;
+-	color: #b77;
+-}
+-
+-.cbi-button-action.important,
+-.cbi-page-actions .cbi-button-apply,
+-.cbi-section-actions .cbi-button-edit {
+-	color: #fff;
+-	background: #59d;
+-}
+-
+-.cbi-button-positive.important,
+-.cbi-page-actions .cbi-button-save {
+-	color: #fff;
+-	background: #7b7;
+-}
+-
+-.cbi-page-actions .cbi-button-apply + .cbi-button-save {
+-	background: #fff;
+-	color: #7b7;
+-}
+-
+-.cbi-input-invalid {
+-	background-image: url('../resources/cbi/reset.gif');
+-	background-repeat: no-repeat;
+-	background-position: right;
+-	color: #FF0000 !important;
+-	border-color: #FF0000;
+-}
+-
+-.cbi-input-invalid {
+-	background-image: url('../resources/cbi/reset.gif');
+-	background-repeat: no-repeat;
+-	background-position: right;
+-	color: #FF0000 !important;
+-	border-color: #FF0000;
+-}
+-
+-div.cbi-section-remove input {
+-	border-bottom: none;
+-}
+-
+-textarea {
+-	margin-left: -1px;
+-	margin-bottom: 0.5em;
+-}
+-
+-.table .td, .table .th {
+-	color: #000000;
+-	padding: .25em;
+-}
+-
+-.table.smalltext {
+-	background: #f5f5f5;
+-	color: #000;
+-	border: 1px solid #666;
+-	font-size: 90%;
+-	width: 80%;
+-	margin-left: auto;
+-	margin-right: auto;
+-	border-collapse: collapse;
+-}
+-
+-.table.smalltext .tr:hover .td {
+-	background-color: #bbddee;
+-	color: #000;
+-}
+-
+-.table.smalltext .tr .th {
+-	padding: 0 0.25em;
+-	border-left: 1px dotted #666;
+-	text-align: left;
+-}
+-
+-.table.smalltext .tr .td {
+-	padding: 0.2em;
+-	border-top: 1px dotted #666;
+-	border-left: 1px dotted #666;
+-}
+-
+-.cbi-section-node .tr:not(.placeholder):nth-child(even) {
+-	background: #e5eef5;
+-}
+-
+-.table.cbi-section-table .cbi-section-table-cell {
+-	padding: 3px;
+-	white-space: nowrap;
+-}
+-
+-.table .tr > .th:empty {
+-	display: none;
+-}
+-
+-.table.cbi-section-table .tr > *,
+-.table.cbi-section-table .tr[data-title]::before {
+-	border-top: 1px dotted #bbb;
+-	display: table-cell;
+-}
+-
+-.table.cbi-section-table .tr.table-titles > *,
+-.table.cbi-section-table .tr.cbi-section-table-titles > *,
+-.table.cbi-section-table .tr.cbi-section-table-desc > *,
+-.table.cbi-section-table .tr.table-titles::before,
+-.table.cbi-section-table .tr.cbi-section-table-titles::before,
+-.table.cbi-section-table .tr.cbi-section-table-desc::before {
+-	border-top: none;
+-}
+-
+-.table.cbi-section-table .tr:hover::before,
+-.table.cbi-section-table .tr:hover > * {
+-	background: #eee;
+-}
+-
+-.table.cbi-section-table .tr:nth-child(even):hover::before,
+-.table.cbi-section-table .tr:nth-child(even):hover > * {
+-	background: #bde;
+-}
+-
+-
+-div.cbi-value {
+-	clear: left;
+-	vertical-align: middle;
+-	padding-left: 0.25em;
+-	border-bottom: 1px dotted #bbb;
+-}
+-
+-div.cbi-value:hover {
+-	background: #f8f8f8;
+-	color: #000;
+-}
+-
+-.cbi-value-title {
+-	float: left;
+-	width: 40%;
+-	line-height: 1.8em;
+-}
+-
+-.cbi-value-field {
+-	width: 58%;
+-	margin-left: 40%;
+-	padding: 0.25em 0;
+-}
+-
+-.td.cbi-value-field {
+-	width: auto;
+-	margin-left: 0;
+-	align-self: center;
+-}
+-
+-.cbi-value-description {
+-	background-image: url(/luci-static/resources/cbi/help.gif);
+-	background-position: .25em .25em;
+-	background-repeat: no-repeat;
+-	margin: .25em 0 0 0;
+-	padding: .25em .25em .25em 1.75em;
+-}
+-
+-.cbi-section-create {
+-	padding: 0 0 .25em 0;
+-	margin: -3px;
+-	display: inline-flex;
+-	align-items: center;
+-}
+-
+-.cbi-section-create > * {
+-	margin: 3px;
+-	flex: 1 1 auto;
+-}
+-
+-.cbi-section-create > * > input {
+-	width: 100%;
+-}
+-
+-.cbi-section-remove > .cbi-button {
+-	margin-bottom: -1px;
+-	border-radius: 3px 3px 0 0;
+-}
+-
+-.cbi-section-node + .cbi-section-create {
+-	padding-top: 0;
+-}
+-
+-div.cbi-map-descr {
+-	margin-bottom: 1em;
+-}
+-
+-div.cbi-optionals {
+-	padding: 0.25em;
+-	border-bottom: 1px dotted #bbb;
+-}
+-
+-
+-
+-.cbi-section-node {
+-	clear: both;
+-	padding-bottom: 0;
+-	position: relative;
+-	border: 1px dotted #555;
+-	background: #fff;
+-	margin-bottom: 5px;
+-}
+-
+-.cbi-section-node-tabbed {
+-	border-top: none;
+-}
+-
+-.cbi-section-node .cbi-optionals:last-child,
+-.cbi-section-node .cbi-value:last-child {
+-	border-bottom: none;
+-}
+-
+-.table.cbi-section-table {
+-	width: 100%;
+-	font-size: 95%;
+-	border: 1px dotted #444;
+-	background: #fff;
+-	margin: 0 0 .5em 0;
+-}
+-
+-.cbi-section-node > .table.cbi-section-table {
+-	border: none;
+-	margin: 0;
+-}
+-
+-@keyframes flash {
+-	0% { opacity: 1; }
+-	50% { opacity: .5; }
+-	100% { opacity: 1; }
+-}
+-
+-.tr.cbi-section-table-row.flash {
+-	animation: flash .35s;
+-}
+-
+-.tr.cbi-section-table-descr .th {
+-	font-weight: normal;
+-	font-size: 90%;
+-	vertical-align: top;
+-}
+-
+-.td.cbi-section-table-optionals {
+-	text-align: left !important;
+-	padding-top: 1em;
+-}
+-
+-.th.cbi-section-actions,
+-.td.cbi-section-actions {
+-	display: flex;
+-	justify-content: flex-end;
+-	flex-direction: row;
+-	flex: 1 1 150px;
+-	margin: auto 0 auto auto;
+-}
+-
+-.td.cbi-section-actions > form {
+-	display: flex;
+-}
+-
+-.td.cbi-section-actions > *,
+-.td.cbi-section-actions > form > * {
+-	flex: 1 1 4em;
+-	margin: 1px;
+-}
+-
+-.cbi-page-actions {
+-	display: flex;
+-	justify-content: flex-end;
+-	margin: -3px;
+-	padding: 0 .25em .25em .25em;
+-}
+-
+-.cbi-page-actions > form {
+-	display: flex;
+-}
+-
+-.cbi-page-actions > * {
+-	flex: 0 1 auto;
+-	margin: 3px;
+-}
+-
+-.cbi-page-actions > form > * {
+-	flex: 1;
+-	margin: 0 3px 0 0;
+-}
+-
+-.cbi-page-actions > .cbi-button-link,
+-.cbi-page-actions > form[method="get"]:first-child {
+-	margin-right: auto;
+-}
+-
+-
+-.th[data-type="button"], .td[data-type="button"],
+-.th[data-type="fvalue"], .td[data-type="fvalue"] {
+-	flex: 1 1 2em;
+-	text-align: center;
+-}
+-
+-#cbi-network-switch_vlan .th,
+-#cbi-network-switch_vlan .td {
+-	flex-basis: 12%;
+-}
+-
+-#cbi-wireless-overview .td:first-child {
+-	align-self: center;
+-}
+-
+-.td[data-title]::before {
+-	content: attr(data-title) ":\20";
+-	font-weight: bold;
+-	text-align: left;
+-	display: none;
+-	padding: 1px;
+-	white-space: nowrap;
+-}
+-
+-.tr.placeholder .td[data-title]::before {
+-	display: none;
+-}
+-
+-.tr[data-title]::before,
+-.tr.cbi-section-table-titles.named::before {
+-	content: attr(data-title) "\20";
+-	font-weight: bold;
+-	text-align: left;
+-	display: inline-block;
+-	align-self: center;
+-	flex: 1 1 5%;
+-	padding: .25em;
+-	white-space: normal;
+-	word-wrap: break-word;
+-}
+-
+-.cbi-value-helpicon img {
+-	vertical-align: bottom;
+-}
+-
+-div.cbi-error {
+-	font-size: 95%;
+-	font-weight: bold;
+-	color: #f00;
+-	background-color: #fff;
+-}
+-
+-td.cbi-value-error {
+-	border-color: red;
+-}
+-
+-.cbi-value-error input,
+-.cbi-value-error select {
+-	color: red;
+-	background-color: #fcc;
+-}
+-
+-.cbi-section-error {
+-	color: red;
+-	background-color: white;
+-	font-size: 95%;
+-	border: 1px dotted red;
+-	margin: 3px;
+-	padding: 3px;
+-}
+-
+-
+-.cbi-dropdown {
+-	border: 1px solid #ccc;
+-	display: inline-flex;
+-	cursor: pointer;
+-	background: #fff;
+-	position: relative;
+-	padding: 0;
+-	color: #000;
+-	min-width: 20em;
+-	max-width: 100%;
+-}
+-
+-.cbi-dropdown:focus {
+-	outline: 2px solid #4b6e9b;
+-}
+-
+-.cbi-dropdown > ul {
+-	margin: 0 !important;
+-	padding: 0;
+-	list-style: none;
+-	overflow-x: hidden;
+-	overflow-y: auto;
+-	display: flex;
+-	width: 100%;
+-}
+-
+-.cbi-dropdown > ul.preview {
+-	display: none;
+-}
+-
+-.cbi-dropdown > .open {
+-	background: #eee;
+-	border: 2px outset #eee;
+-	flex-basis: 15px;
+-}
+-
+-.cbi-dropdown > .open,
+-.cbi-dropdown > .more {
+-	flex-grow: 0;
+-	flex-shrink: 0;
+-	display: flex;
+-	flex-direction: column;
+-	justify-content: center;
+-	text-align: center;
+-	line-height: 2em;
+-	padding: 0 .25em;
+-}
+-
+-.cbi-dropdown > .more,
+-.cbi-dropdown > ul > li[placeholder] {
+-	color: #777;
+-	font-weight: bold;
+-	text-shadow: 1px 1px 0px #fff;
+-	display: none;
+-}
+-
+-.cbi-dropdown > ul > li {
+-	display: none;
+-	padding: .25em;
+-	white-space: nowrap;
+-	overflow: hidden;
+-	text-overflow: ellipsis;
+-	flex-shrink: 1;
+-	flex-grow: 1;
+-	align-items: center;
+-	align-self: center;
+-	min-height: 20px;
+-}
+-
+-.cbi-dropdown > ul > li .hide-open { display: initial; }
+-.cbi-dropdown > ul > li .hide-close { display: none; }
+-
+-.cbi-dropdown > ul > li[display]:not([display="0"]) {
+-	border-left: 1px solid #ccc;
+-}
+-
+-.cbi-dropdown[empty] > ul {
+-	max-width: 1px;
+-}
+-
+-.cbi-dropdown > ul > li > form {
+-	display: none;
+-	margin: 0;
+-	padding: 0;
+-	pointer-events: none;
+-}
+-
+-.cbi-dropdown > ul > li img {
+-	vertical-align: middle;
+-	margin-right: .25em;
+-}
+-
+-.cbi-dropdown > ul > li > form > input[type="checkbox"] {
+-	margin: 0;
+-}
+-
+-.cbi-dropdown > ul > li input[type="text"] {
+-	height: 20px;
+-}
+-
+-.cbi-dropdown[open] {
+-	position: relative;
+-}
+-
+-.cbi-dropdown[open] > ul.dropdown {
+-	display: block;
+-	background: #f6f6f5;
+-	border: 1px solid #918e8c;
+-	box-shadow: 0 0 4px #918e8c;
+-	position: absolute;
+-	z-index: 1000;
+-	max-width: none;
+-	min-width: 100%;
+-	width: auto;
+-}
+-
+-.cbi-dropdown > ul > li[display],
+-.cbi-dropdown[open] > ul.preview,
+-.cbi-dropdown[open] > ul.dropdown > li,
+-.cbi-dropdown[multiple] > ul > li > label,
+-.cbi-dropdown[multiple][open] > ul.dropdown > li,
+-.cbi-dropdown[multiple][more] > .more,
+-.cbi-dropdown[multiple][empty] > .more {
+-	flex-grow: 1;
+-	display: flex;
+-	align-items: center;
+-}
+-
+-.cbi-dropdown[empty] > ul > li,
+-.cbi-dropdown[optional][open] > ul.dropdown > li[placeholder],
+-.cbi-dropdown[multiple][open] > ul.dropdown > li > form {
+-	display: block;
+-}
+-
+-.cbi-dropdown[open] > ul.dropdown > li .hide-open { display: none; }
+-.cbi-dropdown[open] > ul.dropdown > li .hide-close { display: initial; }
+-
+-.cbi-dropdown[open] > ul.dropdown > li {
+-	border-bottom: 1px solid #ccc;
+-}
+-
+-.cbi-dropdown[open] > ul.dropdown > li[selected] {
+-	background: #b0d0f0;
+-}
+-
+-.cbi-dropdown[open] > ul.dropdown > li.focus {
+-	background: linear-gradient(90deg, #a3c2e8 0%, #84aad9 100%);
+-}
+-
+-.cbi-dropdown[open] > ul.dropdown > li:last-child {
+-	margin-bottom: 0;
+-	border-bottom: none;
+-}
+-
+-.cbi-dropdown[disabled] {
+-	pointer-events: none;
+-	opacity: .6;
+-}
+-
+-
+-.cbi-tooltip-container {
+-	cursor: help;
+-}
+-
+-.cbi-tooltip {
+-	position: absolute;
+-	z-index: 1000;
+-	left: -1000px;
+-	border-radius: 3px;
+-	background: #fff;
+-	padding: 2px 5px;
+-	white-space: pre;
+-	opacity: 0;
+-	transition: opacity .25s ease-out;
+-	pointer-events: none;
+-	box-shadow: 0 0 2px #444;
+-}
+-
+-.cbi-tooltip-container:hover .cbi-tooltip {
+-	left: auto;
+-	opacity: 1;
+-	transition: opacity .25s ease-in;
+-}
+-
+-.zonebadge .cbi-tooltip {
+-	padding: 1px;
+-	background: inherit;
+-	margin: -1.6em 0 0 -5px;
+-}
+-
+-
+-.zone-forwards {
+-	display: flex;
+-	flex-wrap: wrap;
+-}
+-
+-.zone-forwards > * {
+-	flex: 1 1 45%;
+-	padding: 1px;
+-}
+-
+-.zone-forwards > span {
+-	flex-basis: 10%;
+-	text-align: center;
+-}
+-
+-.zone-forwards .zone-src,
+-.zone-forwards .zone-dest {
+-	display: flex;
+-	flex-direction: column;
+-}
+-
+-
+-.left, .left::before {
+-	text-align: left !important;
+-}
+-
+-.right, .right::before {
+-	text-align: right !important;
+-}
+-
+-.center, .center::before {
+-	text-align: center !important;
+-}
+-
+-.td.bottom {
+-	align-self: flex-end;
+-}
+-
+-.td.top {
+-	align-self: flex-start;
+-}
+-
+-.td.middle {
+-	align-self: center;
+-}
+-
+-
+-.footer, .push {
+-	height: 2em;
+-}
+-
+-.footer {
+-	width: 99%;
+-	padding: 0.3em;
+-}
+-
+-
+-.wrapper {
+-	min-height: 100%;
+-	height: auto !important;
+-	height: 100%;
+-	margin: 0 auto -2em;
+-}
+-
+-.luci a:link,
+-.luci a:visited,
+-.exectime {
+-	color: #666;
+-	text-decoration: none;
+-	font-size: 70%;
+-}
+-
+-.inline {
+-	display: inline;
+-}
+-
+-.error500 {
+-	white-space: normal;
+-	border: 1px dotted #f00;
+-	background-color: #fff;
+-	color: #000;
+-	padding: 0.5em;
+-}
+-
+-.uci-change-list {
+-        font-family: monospace;
+-}
+-
+-.uci-change-list ins,
+-.uci-change-legend-label ins {
+-        text-decoration: none;
+-        border: 1px solid #00FF00;
+-        background-color: #CCFFCC;
+-        display: block;
+-        padding: 2px;
+-}
+-
+-.uci-change-list del,
+-.uci-change-legend-label del {
+-        text-decoration: none;
+-        border: 1px solid #FF0000;
+-        background-color: #FFCCCC;
+-        display: block;
+-        font-style: normal;
+-        padding: 2px;
+-}
+-
+-.uci-change-list var,
+-.uci-change-legend-label var {
+-        text-decoration: none;
+-        border: 1px solid #CCCCCC;
+-        background-color: #EEEEEE;
+-        display: block;
+-        font-style: normal;
+-        padding: 2px;
+-}
+-
+-.uci-change-list var ins,
+-.uci-change-list var del {
+-        /*display: inline;*/
+-        border: none;
+-        white-space: pre;
+-        font-style: normal;
+-        padding: 0px;
+-}
+-
+-.uci-change-legend {
+-        padding: 5px;
+-}
+-
+-.uci-change-legend-label {
+-        width: 150px;
+-        float: left;
+-        font-size: 80%;
+-}
+-
+-.uci-change-legend-label>ins,
+-.uci-change-legend-label>del,
+-.uci-change-legend-label>var {
+-        float: left;
+-        margin-right: 4px;
+-        width: 10px;
+-        height: 10px;
+-        display: block;
+-}
+-
+-.uci-change-legend-label var ins,
+-.uci-change-legend-label var del {
+-        line-height: 6px;
+-        border: none;
+-}
+-
+-}
+-
+-@media screen and (max-width: 992px) {
+-	body {
+-		-webkit-text-size-adjust: 100%;
+-	}
+-
+-	#maincontent {
+-		width: 100%;
+-	}
+-
+-	.table {
+-		display: flex;
+-		flex-direction: column;
+-		width: 100%;
+-	}
+-
+-	.tr {
+-		display: flex;
+-		flex-direction: row;
+-		flex-wrap: wrap;
+-		align-items: flex-end;
+-	}
+-
+-	.th, .td {
+-		flex: 2 2 25%;
+-		align-self: flex-start;
+-		overflow: hidden;
+-		text-overflow: ellipsis;
+-		word-wrap: break-word;
+-		display: inline-block;
+-	}
+-
+-	.td select {
+-		word-wrap: normal;
+-	}
+-
+-	.td[data-type="button"],
+-	.td[data-type="fvalue"] {
+-		flex: 1 1 12.5%;
+-		text-align: left;
+-	}
+-
+-	.td.cbi-value-field {
+-		align-self: flex-start;
+-	}
+-
+-	.td.cbi-value-field .cbi-button {
+-		width: 100%;
+-	}
+-
+-	.table.cbi-section-table {
+-		border: none;
+-		background: none;
+-		margin: 0;
+-	}
+-
+-	.tr.table-titles,
+-	.cbi-section-table-titles,
+-	.cbi-section-table-descr {
+-		display: none;
+-	}
+-
+-	.table.cbi-section-table .tr > *,
+-	.table.cbi-section-table .tr[data-title]::before {
+-		border-top: none;
+-	}
+-
+-	.cbi-section-table-row {
+-		display: flex;
+-		flex-direction: row;
+-		flex-wrap: wrap;
+-		border: 1px dotted #444;
+-		margin: 0 0 .5em 0;
+-		background: #fff;
+-	}
+-
+-	.cbi-section-table-row:hover {
+-		border: 1px solid #4a6b7c;
+-	}
+-
+-	.table.cbi-section-table .tr:hover > *,
+-	.table.cbi-section-table .tr:nth-child(2n):hover > * {
+-		background: none;
+-	}
+-
+-	.cbi-section-table + .cbi-section-create {
+-		padding-top: 0;
+-	}
+-
+-	.tr[data-title]::before {
+-		display: block;
+-		flex: 1 1 100%;
+-		background: #eef;
+-	}
+-
+-	.td[data-title]::before {
+-		display: block;
+-	}
+-
+-	.td.cbi-section-actions {
+-		flex-basis: 100%;
+-		margin: auto 0 0 auto;
+-	}
+-
+-	.td.cbi-section-actions > *,
+-	.td.cbi-section-actions > form > * {
+-		flex: 0 1 100%;
+-		max-width: 150px;
+-	}
+-
+-	.hide-sm,
+-	.hide-xs {
+-		display: none;
+-	}
+-}
+-
+-@media screen and (max-width: 480px) {
+-	body {
+-		font-size: 12pt;
+-	}
+-
+-	input, textarea, select {
+-		font-size: 12pt !important;
+-		line-height: 1.4em;
+-	}
+-
+-	select, input[type="text"], input[type="password"] {
+-		width: 100%;
+-		height: 1.4em;
+-	}
+-
+-	[data-dynlist] > input,
+-	input.cbi-input-password {
+-		width: calc(100% - 20px);
+-	}
+-
+-	.cbi-dropdown {
+-		min-width: 100%;
+-	}
+-
+-	.btn, .cbi-button {
+-		font-size: 9pt !important;
+-		line-height: 11pt;
+-	}
+-
+-	#maincontent {
+-		padding: .25em;
+-	}
+-
+-	#tabmenu {
+-		margin: -.25em -.25em 1em -.25em;
+-	}
+-
+-	.th, .td {
+-		flex: 2 2 50%;
+-	}
+-
+-	.td.cbi-value-field {
+-		flex-basis: 100%;
+-	}
+-
+-	.td.cbi-value-field[data-type="dvalue"] {
+-		flex-basis: 50%;
+-	}
+-
+-	.td.cbi-value-field[data-type="button"],
+-	.td.cbi-value-field[data-type="fvalue"] {
+-		flex-basis: 25%;
+-		text-align: left;
+-	}
+-
+-	.cbi-section {
+-		padding: .25em;
+-	}
+-
+-	.cbi-value {
+-		padding: 0 .25em;
+-	}
+-
+-	.cbi-value-title {
+-		float: none;
+-		font-weight: bold;
+-	}
+-
+-	.cbi-value-field {
+-		width: 100%;
+-		margin: 0;
+-	}
+-
+-	.cbi-value-description {
+-		margin-top: 5px;
+-		display: block;
+-	}
+-
+-	.cbi-section-create {
+-		margin-bottom: 1em;
+-	}
+-
+-	.cbi-optionals {
+-		display: flex;
+-	}
+-
+-	.cbi-page-actions {
+-		flex-wrap: wrap;
+-	}
+-
+-	.cbi-page-actions > .cbi-button-link {
+-		flex-basis: 100%;
+-		margin-right: 2px;
+-	}
+-
+-	.cbi-optionals > *,
+-	.cbi-page-actions > * {
+-		flex: 1 1 auto;
+-		margin: 2px;
+-		height: auto;
+-	}
+-
+-	ul.cbi-tabmenu {
+-		padding: 0 3px;
+-	}
+-
+-	ul.cbi-tabmenu li {
+-		font-size: 90%;
+-		margin: 0 1px -1px 0;
+-	}
+-
+-	.hide-xs {
+-		display: none;
+-	}
+-
+-	#cbi-network .td[id] > strong {
+-		display: block;
+-	}
+-
+-	#cbi-network-switch_vlan .td.cbi-section-actions {
+-		flex-basis: 100%;
+-	}
+-
+-	.network-status-table .ifacebox {
+-		margin: 0 0 .5em 0;
+-	}
+-}
+diff --git a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/header.jpg b/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/header.jpg
+deleted file mode 100644
+index 2fde5a21254674636804e41c7e655640ed869184..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 316
+zcmex=<NpH&0WUXCHwH#VMg|WcWcYuZ!I^=TnT3UgnH5N|va+(V^Kh^O0Y5i4CyyY%
+zkdPq1prEjrjJU9fl&GMfgrbC$tgO7eys)^Eijtg)jGVk2$Ph-LR(3XaJ`N5(IT1k-
+zIg-Ku0}O&33`q=(%#4BzOoEKef{g!<Fo-iSGB7is05*0GpoFXdBTy+TvJ4|LyP!y5
+z*py2^X%V0Y(EvzP5L5IP0}nGJ&_ZTG2788^2~bU3pWO?7s+49_uxvNp)BOJ?0M?-_
+AqW}N^
+
+diff --git a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/logo.jpg b/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/logo.jpg
+deleted file mode 100644
+index ea06ce77f44ba6a310b338f7b2532c5958830937..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 4722
+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
+R>hKb&{rUg?$LPHN`5&dNoc;g+
+
+diff --git a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/mobile.css b/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/mobile.css
+deleted file mode 100644
+index 37d77b4f4398957e7c9c647aa6794fd4abedada9..0000000000000000000000000000000000000000
+--- a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/mobile.css
++++ /dev/null
+@@ -1,59 +0,0 @@
+-#header{
+-	padding-left:0px !important;
+-	padding-bottom:24px;
+-}
+-
+-.header_left{
+-	max-width: 100%;
+-}
+-
+-#mainlogo {
+-	max-width: 90%;
+-}
+-
+-#content {
+-	margin-left:0px !important; 
+-}
+-
+-#maincontent{
+-	font-size:1.2em;
+-	line-height:1.5em;
+-}
+-
+-input[type=submit],
+-.cbi-button,
+-.cbi-button-reset,
+-.cbi-button-save{
+-	display:inline !important;
+-	float:none !important;
+-	padding:10px 30px !important;
+-	margin: 10px 10px 10px 0 !important;
+-}
+-
+-.cbi-input-text,
+-.cbi-input-select,
+-.cbi-input-user,
+-.cbi-input-password{
+-	display:block !important;
+-	margin: 0 !important;
+-	padding:0 !important;
+-}
+-
+-.cbi-value-field{
+-	margin:0 !important;
+-	margin-bottom: 1em !important;
+-	width:100%  !important;	
+-}
+-
+-.cbi-section legend{
+-	white-space:normal !important;
+-}
+-
+-.cbi-value-title{
+-	font-weight:bold;
+-	float:none !important;
+-}
+-
+-img {
+-	max-width:100%;
+-}
+diff --git a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/smallscreen.css b/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/smallscreen.css
+deleted file mode 100644
+index 660cd8df4dd52667e44098fca333855505b4180a..0000000000000000000000000000000000000000
+--- a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/smallscreen.css
++++ /dev/null
+@@ -1,3 +0,0 @@
+-.header_right {
+-	display:none;
+-}
+diff --git a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/footer.htm b/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/footer.htm
+deleted file mode 100644
+index 4c38821bbd0733d132a09edaa7e9c45aee51bab5..0000000000000000000000000000000000000000
+--- a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/footer.htm
++++ /dev/null
+@@ -1,30 +0,0 @@
+-<%#
+- Copyright 2008 Steven Barth <steven@midlink.org>
+- Copyright 2008 Jo-Philipp Wich <jow@openwrt.org>
+- Licensed to the public under the Apache License 2.0.
+--%>
+-
+-<%
+-	local ver = require "luci.version"
+-
+-	local xtime
+-	if exectime then
+-		xtime = (string.format("%.2fs", os.clock() - exectime))
+-	end
+-%>
+-
+-</div>
+-<div class="clear"></div>
+-<div class="push"></div>
+-</div>
+-
+-<div class="footer">
+-<p class="luci"><a href="https://github.com/openwrt/luci">Powered by <%= ver.luciname %> (<%= ver.luciversion %>)</a></p>
+-<% if xtime then %>
+-<p class="exectime">Script execution time: <%=xtime%></p>
+-<% end %>
+-</div>
+-
+-</body>
+-</html>
+-
+diff --git a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm b/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
+deleted file mode 100644
+index fa749325f6180c9a24ad7a3602b14d8b1400aeeb..0000000000000000000000000000000000000000
+--- a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
++++ /dev/null
+@@ -1,224 +0,0 @@
+-<%#
+- Copyright 2008 Steven Barth <steven@midlink.org>
+- Copyright 2008-2011 Jo-Philipp Wich <jow@openwrt.org>
+- Licensed to the public under the Apache License 2.0.
+--%>
+-
+-<%
+-	local fs   = require "nixio.fs"
+-	local sys  = require "luci.sys"
+-	local util = require "luci.util"
+-	local http = require "luci.http"
+-	local disp = require "luci.dispatcher"
+-	local version = require "luci.version"
+-
+-	local sysinfo = util.ubus("system", "info") or { }
+-	local loadinfo = sysinfo.load or { 0, 0, 0 }
+-	local boardinfo = util.ubus("system", "board") or { }
+-
+-	local request  = disp.context.path
+-	local category = request[1]
+-	local cattree  = category and disp.node(category)
+-
+-	local tree = disp.node()
+-	local node = disp.context.dispatched
+-
+-	local categories = disp.node_childs(tree)
+-
+-	local c = tree
+-	local i, r
+-
+-	-- tag all nodes leading to this page
+-	for i, r in ipairs(request) do
+-		if c.nodes and c.nodes[r] then
+-			c = c.nodes[r]
+-			c._menu_selected = true
+-		end
+-	end
+-
+-	local uci  = require "luci.model.uci".cursor()
+-	local ff = uci:get("freifunk", "community", "name") or ""
+-	local co = "profile_" .. ff
+-	local community = uci:get_first(co, "community", "name") or "Freifunk"
+-	local hp = uci:get_first(co, "community", "homepage") or "http://www.freifunk.net"
+-	local logo = "/luci-static/freifunk-generic/logo.jpg"
+-	local banner = false
+-	local show_comm = true
+-
+-	local file
+-	for file in fs.glob("/www/luci-static/resources/custom_logo.*") do
+-		logo = string.gsub(file, "/www", "")
+-		break
+-	end
+-
+-	for file in fs.glob("/www/luci-static/resources/custom_logo_only.*") do
+-		logo = string.gsub(file, "/www", "")
+-		show_comm = false
+-		break
+-	end
+-
+-	for file in fs.glob("/www/luci-static/resources/custom_header.*") do
+-		logo = string.gsub(file, "/www", "")
+-		show_comm = false
+-		banner = true
+-	end
+--%>
+-
+-<?xml version="1.0" encoding="utf-8"?>
+-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%=luci.i18n.context.lang%>" lang="<%=luci.i18n.context.lang%>">
+-<head>
+-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+-<meta http-equiv="Content-Script-Type" content="text/javascript" />
+-<link rel="stylesheet" type="text/css" media="screen" href="<%=media%>/cascade.css" />
+-<link rel="stylesheet" media="only screen and (max-device-width: 854px)" href="<%=media%>/mobile.css" type="text/css" />
+-<link rel="stylesheet" media="only screen and (max-width: 854px)" href="<%=media%>/smallscreen.css" type="text/css" />
+-<link rel="stylesheet" media="handheld" href="<%=media%>/mobile.css" type="text/css" />
+-<% if node and node.css then %><link rel="stylesheet" type="text/css" media="screen" href="<%=resource%>/<%=node.css%>" />
+-<% end -%>
+-<% if css then %><style title="text/css">
+-<%= css %>
+-</style>
+-<% end -%>
+-<meta name="viewport" content="initial-scale=1.0" />
+-<script type="text/javascript" src="<%=url('admin/translations', luci.i18n.context.lang)%><%# ?v=PKG_VERSION %>"></script>
+-<script type="text/javascript" src="<%=resource%>/cbi.js"></script>
+-<script type="text/javascript" src="<%=resource%>/xhr.js"></script>
+-
+-<title><%=striptags( (boardinfo.hostname or "?") .. ( (node and node.title) and ' - ' .. translate(tostring(node.title)) or '')) %> - LuCI</title>
+-</head>
+-
+-<body class="lang_<%=luci.i18n.context.lang%>" data-page="<%= table.concat(disp.context.requestpath, "-") %>">
+-
+-<div class="wrapper">
+-
+-<!--[if lt IE 7]>
+-<div class="warning"><div style="background-color: #cccccc;padding: 2px 10px 2px 10px">
+-<%: Your Internet Explorer is too old to display this page correctly. Please upgrade it to at least version 7 or use another browser like Firefox, Opera or Safari.%>
+-</div></div>
+-<![endif]-->
+-
+-<%- if luci.sys.process.info("uid") == 0 and luci.sys.user.getuser("root") and not luci.sys.user.getpasswd("root") then -%>
+-	<div class="warning">
+-		<strong><%:No password set!%></strong><br />
+-		<%:There is no password set on this router. Please configure a root password to protect the web interface and enable SSH.%>
+-	</div>
+-<%- end -%>
+-
+-<p class="skiplink">
+-<span id="skiplink1"><a href="#navigation"><%:Skip to navigation%></a></span>
+-<span id="skiplink2"><a href="#content"><%:Skip to content%></a></span>
+-</p>
+-
+-<div id="header">
+-	<%if banner then%>
+-		<div class="header_banner">
+-			<a href="<%=hp%>"><img src="<%=logo%>" alt="Header" /></a>
+-		</div>
+-	<%else%>
+-		<div class="header_left">
+-			<a href="<%=hp%>"><img src="<%=logo%>" id="mainlogo" alt="Logo" /></a>
+-			<%if show_comm then%>
+-				<a href="<%=hp%>"><%=community%></a>
+-				<br/>
+-			<%end%>
+-		</div>
+-		<div class="header_right">
+-			<%=version.distversion%><br />
+-			<%:Load%>: <%="%.2f" % (loadinfo[1] / 65535.0)%> <%="%.2f" % (loadinfo[2] / 65535.0)%> <%="%.2f" % (loadinfo[3] / 65535.0)%><br />
+-			<%:Hostname%>: <%=boardinfo.hostname or "?"%><br />
+-			<span id="xhr_poll_status" style="display:none" onclick="XHR.running() ? XHR.halt() : XHR.run()">
+-				<%:Auto Refresh%>:
+-				<span id="xhr_poll_status_on"><%:on%></span>
+-				<span id="xhr_poll_status_off" style="display:none"><%:off%></span>
+-			</span>
+-		</div>
+-		<div class="clear"></div>
+-
+-	<%end%>
+-</div>
+-
+-<%-
+-	local function submenu(prefix, node)
+-		local childs = disp.node_childs(node)
+-		if #childs > 0 then
+-%>
+-	<ul id="submenu_<%=string.gsub(string.gsub(prefix, "/", "_"), "^_(.-)_$", "%1")%>">
+-		<%-
+-			for i, r in ipairs(childs) do
+-				local nnode = node.nodes[r]
+-				local href  = controller .. prefix .. r .. "/" ..
+-					(nnode.query and http.build_querystring(nnode.query) or "")
+-		%>
+-			<li>
+-				<a<%=ifattr(nnode._menu_selected, "class", "active")%> href="<%=luci.util.pcdata(href)%>"><%=translate(nnode.title)%></a>
+-				<%- submenu(prefix .. r .. "/", nnode) %>
+-			</li>
+-		<%-
+-			end
+-		%>
+-	</ul>
+-<%
+-		end
+-	end
+-%>
+-
+-<div id="menubar">
+-<h2 class="navigation"><a id="navigation" name="navigation"><%:Navigation%></a></h2>
+-<ul id="mainmenu" class="dropdowns">
+-	<%
+-		local childs = disp.node_childs(cattree)
+-		if #childs > 0 then
+-			for i, r in ipairs(childs) do
+-				local nnode = cattree.nodes[r]
+-				local href  = controller .. "/" .. category .. "/" .. r ..
+-					(nnode.query and http.build_querystring(k.query) or "")
+-	%>
+-		<li>
+-			<a<%=ifattr(nnode._menu_selected, "class", "preactive")%> href="<%=href%>"><%=translate(nnode.title)%></a>
+-			<%- submenu("/" .. category .. "/" .. r .. "/", nnode) %>
+-		</li>
+-	<%
+-			end
+-		end
+-	%>
+-	<li></li>
+-</ul>
+-
+-<% if #categories > 1 then %>
+-	<ul id="modemenu">
+-	<% for i, r in ipairs(categories) do %>
+-		<li><a<%=ifattr(request[1] == r, "class", "active")%> href="<%=controller%>/<%=r%>/"><%=striptags(translate(tree.nodes[r].title))%></a></li>
+-	<% end %>
+-	</ul>
+-<% end %>
+-
+-<%
+-if tree.nodes[category] and tree.nodes[category].ucidata then
+-	local ucic = 0
+-	for i, j in pairs(require("luci.model.uci").cursor():changes()) do
+-		for k, l in pairs(j) do
+-			for m, n in pairs(l) do
+-				ucic = ucic + 1;
+-			end
+-		end
+-	end
+--%>
+-	<div id="savemenu">
+-		<% if ucic > 0 then %>
+-			<a class="uci_change_indicator warning" href="<%=controller%>/<%=category%>/uci/changes/?redir=<%=http.urlencode(http.formvalue('redir') or table.concat(disp.context.request, "/"))%>"><%:Unsaved Changes%>: <%=ucic%></a>
+-		<% end -%>
+-	</div>
+-<% end %>
+-
+-<div class="clear"></div>
+-</div>
+-<div id="maincontent">
+-<% if category ~= "freifunk" and category ~= "splash" then %>
+-<noscript>
+-	<div class="errorbox">
+-		<strong><%:JavaScript required!%></strong><br />
+-		<%:You must enable JavaScript in your browser or LuCI will not work properly.%>
+-	</div>
+-</noscript>
+-<% end %>
+diff --git a/themes/luci-theme-freifunk-generic/root/etc/uci-defaults/30_luci-theme-freifunk-generic b/themes/luci-theme-freifunk-generic/root/etc/uci-defaults/30_luci-theme-freifunk-generic
+deleted file mode 100644
+index 017e7f7bad87543a374b336d50ee388e8a548416..0000000000000000000000000000000000000000
+--- a/themes/luci-theme-freifunk-generic/root/etc/uci-defaults/30_luci-theme-freifunk-generic
++++ /dev/null
+@@ -1,5 +0,0 @@
+-uci batch <<-EOF
+-	set luci.themes.Freifunk_Generic=/luci-static/freifunk-generic
+-	set luci.main.mediaurlbase=/luci-static/freifunk-generic
+-        commit luci
+-EOF
