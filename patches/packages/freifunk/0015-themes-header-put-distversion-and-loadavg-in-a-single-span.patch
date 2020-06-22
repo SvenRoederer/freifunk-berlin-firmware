@@ -1,0 +1,20 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sun, 21 Jun 2020 04:48:46 +0200
+Subject: themes: header: put distversion and loadavg in a single span
+
+is only a hack, but improves layout
+diff --git a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm b/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
+index 9dfaa9c8361fec858a61c896db207fb6448d6e55..1240bd6e3b67a44b0064143bf232c26000d307f7 100644
+--- a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
++++ b/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
+@@ -42,8 +42,8 @@
+ 	<h2 class="navigation"><a id="navigation" name="navigation"><%:Navigation%></a></h2>
+ 
+ 	<span class="hostname"><a href="/"><%=(boardinfo.hostname or "?")%></a></span>
+-	<span class="distversion"><%=ver.distversion%></span>
+-	<span><%:Load%>: <%="%.2f" % (loadinfo[1] / 65535.0)%> <%="%.2f" % (loadinfo[2] / 65535.0)%> <%="%.2f" % (loadinfo[3] / 65535.0)%></span>
++	<span class="distversion"><%=ver.distversion%><br />
++	<%:Load%>: <%="%.2f" % (loadinfo[1] / 65535.0)%> <%="%.2f" % (loadinfo[2] / 65535.0)%> <%="%.2f" % (loadinfo[3] / 65535.0)%></span>
+ 	<span id="indicators"></span>
+ </div>
+ 
