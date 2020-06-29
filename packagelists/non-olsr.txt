@@ -36,7 +36,6 @@ luci-app-opkg
 #luci-app-owm
 #luci-app-owm-ant
 #luci-app-owm-cmd
-#luci-app-owm-gui
 luci-theme-bootstrap
 # GUI addon
 luci-i18n-base-de

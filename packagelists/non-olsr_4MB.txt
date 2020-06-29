@@ -1,0 +1,42 @@
+-ppp
+-ppp-mod-pppoe
+-wpad-basic
+wpad-mini
+
+# Defaults
+freifunk-berlin-dhcp-defaults
+freifunk-berlin-firewall-defaults
+freifunk-berlin-freifunk-defaults
+freifunk-berlin-migration
+freifunk-berlin-network-defaults
+freifunk-berlin-system-defaults
+community-profiles
+
+# Common
+mtr
+ip
+#iperf
+#tmux
+#vnstat
+#ethtool
+dnsmasq
+#qos-scripts
+#firewall
+iwinfo
+libiwinfo-lua
+#tcpdump
+
+# GUI-basics
+#px5g-mbedtls
+libustream-mbedtls
+# owm depends on olsr-mod-jsoninfo
+#luci-app-owm
+
+# BATMAN
+#kmod-batman-adv
+#alfred
+#-batctl-default
+#batctl-tiny
+
+# Uplink
+freifunk-berlin-uplink-notunnel-files
