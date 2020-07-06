@@ -101,10 +101,9 @@ patch: stamp-clean-patched .stamp-patched
 	#echo patches-current: $(CURR_CHKSUM)
 	#echo patches-stored : $(STOR_CHKSUM)
 # create status-file with current checksum of patches if not present
-	[ -f $@ ] || echo $(CURR_CHKSUM) >$@
 # check that current checksum matches previously stored checksum or reapply patches
 # and update .stamp file
-	[ "$(CURR_CHKSUM)" = "$(shell cat $@)" ] || { \
+	[ ! "$(CURR_CHKSUM)" = "$(shell cat $@)" ] || [ ! -f $@ ] && { \
 	   echo "patches changed"; \
 	   GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh; \
 	   echo $(CURR_CHKSUM) >$@; \
