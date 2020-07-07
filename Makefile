@@ -96,7 +96,7 @@ endef
 # patch openwrt and feeds working copy
 patch: stamp-clean-patched .stamp-patched
 .stamp-patched: .stamp-pre-patch $(wildcard $(GLUON_PATCHESDIR)/openwrt/*) $(wildcard $(GLUON_PATCHESDIR)/packages/*/*) .FORCE
-	$(eval CURR_CHKSUM=$(call PATCH_CHKSUM))
+	#$(eval CURR_CHKSUM=$(call PATCH_CHKSUM))
 	#$(eval STOR_CHKSUM=$(shell cat $@))
 	#echo patches-current: $(CURR_CHKSUM)
 	#echo patches-stored : $(STOR_CHKSUM)
