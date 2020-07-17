@@ -1,4 +1,4 @@
-This branch is based on master and has some experimental features added
+This branch is based on the master branch of this Freifunk Berlin fork and has some experimental features added.
 Maintainer: SAm0815
 
 # Freifunk Berlin Firmware
