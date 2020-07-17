@@ -1,4 +1,4 @@
-This branch is based on master and has some experimental features added
+This branch is based on the master branch of this Freifunk Berlin fork and gets the changes of OpenWrt added automatically.
 Maintainer: SAm0815
 
 # Freifunk Berlin Firmware
