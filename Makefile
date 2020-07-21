@@ -100,11 +100,11 @@ patch: stamp-clean-patched .stamp-patched
 # create status-file with current checksum of patches if not present
 # check that current checksum matches previously stored checksum or reapply patches
 # and update .stamp file
-	[ ! -f $@ ] || [ ! "$(CURR_CHKSUM)" = "$(shell [ -f $@ ] && cat $@)" ] && { \
+	if [[ ! -f $@ || ! "$(CURR_CHKSUM)" = "$(shell [ -f $@ ] && cat $@)" ]]; then \
 	   echo "patches changed"; \
 	   GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh; \
 	   echo $(CURR_CHKSUM) >$@; \
-	}
+	fi
 
 .stamp-build_rev: .FORCE
 ifneq (,$(wildcard .stamp-build_rev))
