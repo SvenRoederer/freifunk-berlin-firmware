@@ -102,7 +102,7 @@ patch: stamp-clean-patched .stamp-patched
 # and update .stamp file
 	if [[ ! -f $@ || ! "$(CURR_CHKSUM)" = "$(shell [ -f $@ ] && cat $@)" ]]; then \
 	   echo "patches changed"; \
-	   GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh; \
+	   GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh || exit 2; \
 	   echo $(CURR_CHKSUM) >$@; \
 	fi
 
