@@ -95,16 +95,20 @@ endef
 
 # patch openwrt and feeds working copy
 patch: stamp-clean-patched .stamp-patched
-.stamp-patched: .stamp-pre-patch $(wildcard $(GLUON_PATCHESDIR)/openwrt/*) $(wildcard $(GLUON_PATCHESDIR)/packages/*/*) .FORCE
+.stamp-patch-chksum: $(wildcard $(GLUON_PATCHESDIR)/openwrt/*) $(wildcard $(GLUON_PATCHESDIR)/packages/*/*) .FORCE
 	$(eval CURR_CHKSUM=$(call PATCH_CHKSUM))
 # create status-file with current checksum of patches if not present
 # check that current checksum matches previously stored checksum or reapply patches
 # and update .stamp file
 	if [[ ! -f $@ || ! "$(CURR_CHKSUM)" = "$(shell [ -f $@ ] && cat $@)" ]]; then \
 	   echo "patches changed"; \
-	   GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh || exit 2; \
 	   echo $(CURR_CHKSUM) >$@; \
 	fi
+
+.stamp-patched: .stamp-pre-patch .stamp-patch-chksum
+	echo rgular patch
+	GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
+	touch $@
 
 .stamp-build_rev: .FORCE
 ifneq (,$(wildcard .stamp-build_rev))
