@@ -201,11 +201,11 @@ index 0000000000000000000000000000000000000000..db15e46e35beebd7c9a1ee7eda7ce746
 +	done
 +endef
 diff --git a/luci.mk b/luci.mk
-index 78eec6106df8e775682ca9e397dc5fba64564851..b2bafa728a040dad78ff2126b5893adc986f1b70 100644
+index 59433ab8850d19640276331b476628c9b981fe9d..d7ab68320d891437d36e24fab619017470967ded 100644
 --- a/luci.mk
 +++ b/luci.mk
-@@ -12,113 +12,11 @@ LUCI_DEFAULTS:=$(notdir $(wildcard ${CURDIR}/root/etc/uci-defaults/*))
- LUCI_PKGARCH?=$(if $(realpath src/Makefile),,all)
+@@ -14,113 +14,11 @@ LUCI_SECTION?=luci
+ LUCI_CATEGORY?=LuCI
  
  PKG_BUILD_DEPENDS += $(LUCI_BUILD_DEPENDS)
 -
@@ -320,8 +320,8 @@ index 78eec6106df8e775682ca9e397dc5fba64564851..b2bafa728a040dad78ff2126b5893adc
 +include $(THIS_DIR)/luci-common.mk
  
  define Package/$(PKG_NAME)
-   SECTION:=luci
-@@ -137,19 +35,6 @@ ifneq ($(LUCI_DESCRIPTION),)
+   SECTION:=$(LUCI_SECTION)
+@@ -139,19 +37,6 @@ ifneq ($(LUCI_DESCRIPTION),)
   endef
  endif
  
@@ -341,7 +341,7 @@ index 78eec6106df8e775682ca9e397dc5fba64564851..b2bafa728a040dad78ff2126b5893adc
  ifneq ($(wildcard ${CURDIR}/src/Makefile),)
   MAKE_PATH := src/
   MAKE_VARS += FPIC="$(FPIC)" LUCI_VERSION="$(PKG_SRC_VERSION)" LUCI_GITBRANCH="$(PKG_GITBRANCH)"
-@@ -162,71 +47,6 @@ else
+@@ -164,71 +49,6 @@ else
   endef
  endif
  

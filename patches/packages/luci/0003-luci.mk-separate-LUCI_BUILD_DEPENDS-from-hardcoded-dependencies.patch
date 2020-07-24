@@ -3,19 +3,19 @@ Date: Sat, 2 May 2020 01:18:19 +0200
 Subject: luci.mk: separate $(LUCI_BUILD_DEPENDS) from hardcoded dependencies
 
 diff --git a/luci.mk b/luci.mk
-index 2043ad4a62cedc4ee361b96633e9d85f0f3432cd..78eec6106df8e775682ca9e397dc5fba64564851 100644
+index be11cf99e05ad571cafeff13869b4c87139f4f3f..59433ab8850d19640276331b476628c9b981fe9d 100644
 --- a/luci.mk
 +++ b/luci.mk
-@@ -11,6 +11,8 @@ LUCI_LANGUAGES:=$(sort $(filter-out templates,$(notdir $(wildcard ${CURDIR}/po/*
- LUCI_DEFAULTS:=$(notdir $(wildcard ${CURDIR}/root/etc/uci-defaults/*))
- LUCI_PKGARCH?=$(if $(realpath src/Makefile),,all)
+@@ -13,6 +13,8 @@ LUCI_PKGARCH?=$(if $(realpath src/Makefile),,all)
+ LUCI_SECTION?=luci
+ LUCI_CATEGORY?=LuCI
  
 +PKG_BUILD_DEPENDS += $(LUCI_BUILD_DEPENDS)
 +
  # Language code titles
  LUCI_LANG.ar=العربية (Arabic)
  LUCI_LANG.bg=български (Bulgarian)
-@@ -94,7 +96,7 @@ endef
+@@ -96,7 +98,7 @@ endef
  PKG_NAME?=$(LUCI_NAME)
  PKG_RELEASE?=1
  PKG_INSTALL:=$(if $(realpath src/Makefile),1)
