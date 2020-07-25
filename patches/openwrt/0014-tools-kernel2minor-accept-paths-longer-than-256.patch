@@ -1,0 +1,35 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 25 Jul 2020 14:26:32 +0200
+Subject: tools/kernel2minor: accept paths longer than 256
+
+fixes build-error:
+kernel2minor -k /home/runner/work/freifunk-berlin-firmware/freifunk-berlin-firmware/openwrt/build_dir/target-mips_24kc_musl/linux-ath79_mikrotik/tmp/freifunk-berlin-sam0815-next-nightly-02fd7ea-ath79-mikrotik-mikrotik_routerboard-922uags-5hpacd-squashfs-sysupgrade.bin -r /home/runner/work/freifunk-berlin-firmware/freifunk-berlin-firmware/openwrt/build_dir/target-mips_24kc_musl/linux-ath79_mikrotik/tmp/freifunk-berlin-sam0815-next-nightly-02fd7ea-ath79-mikrotik-mikrotik_routerboard-922uags-5hpacd-squashfs-sysupgrade.bin.new -s 2048 -e -c
+Successfully writed 15 blocks and 2027520 bytes
+Each block contain 64 chanks + 0 bytes tail hole.
+Each chunk(2112 bytes) consists: data part(2048 bytes) + oob part(64 bytes).
+mv /home/runner/work/freifunk-berlin-firmware/freifunk-berlin-firmware/openwrt/build_dir/target-mips_24kc_musl/linux-ath79_mikrotik/tmp/freifunk-berlin-sam0815-next-nightly-02fd7ea-ath79-mikrotik-mikrotik_routerboard-922uags-5hpacd-squashfs-sysupgrade.bin.new /home/runner/work/freifunk-berlin-firmware/freifunk-berlin-firmware/openwrt/build_dir/target-mips_24kc_musl/linux-ath79_mikrotik/tmp/freifunk-berlin-sam0815-next-nightly-02fd7ea-ath79-mikrotik-mikrotik_routerboard-922uags-5hpacd-squashfs-sysupgrade.bin
+mv: cannot stat '/home/runner/work/freifunk-berlin-firmware/freifunk-berlin-firmware/openwrt/build_dir/target-mips_24kc_musl/linux-ath79_mikrotik/tmp/freifunk-berlin-sam0815-next-nightly-02fd7ea-ath79-mikrotik-mikrotik_routerboard-922uags-5hpacd-squashfs-sysupgrade.bin.new': No such file or directory
+
+diff --git a/tools/kernel2minor/patches/001-pathlen.patch b/tools/kernel2minor/patches/001-pathlen.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..4611f76d69f219957ca49da1af7e3485b03bbe42
+--- /dev/null
++++ b/tools/kernel2minor/patches/001-pathlen.patch
+@@ -0,0 +1,17 @@
++Gemeinsame Unterverzeichnisse: kernel2minor-0.25/integration und kernel2minor-0.25-path/integration.
++diff -u kernel2minor-0.25/kernel2minor.c kernel2minor-0.25-path/kernel2minor.c
++--- kernel2minor-0.25/kernel2minor.c	2018-07-09 09:51:01.000000000 +0200
+++++ kernel2minor-0.25-path/kernel2minor.c	2020-07-25 14:22:36.794169453 +0200
++@@ -42,8 +42,8 @@
++ #define ECC_BLOCK_SIZE 256
++ 
++ char *info_block_buf = NULL;
++-char kernel_file[255];
++-char res_file[255];
+++char kernel_file[511];
+++char res_file[511];
++ struct stat kernel_file_stats;
++ nand_ecclayout_t ecc_layout;
++ //имя платформы. параметр -p. для инфо блока.
++Gemeinsame Unterverzeichnisse: kernel2minor-0.25/tests und kernel2minor-0.25-path/tests.
++Gemeinsame Unterverzeichnisse: kernel2minor-0.25/yaffs2 und kernel2minor-0.25-path/yaffs2.
