@@ -1,0 +1,438 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 22 Jun 2020 23:05:51 +0200
+Subject: ath79: add support for MikroTik RouterBOARD 921GS-5HPacD-15s
+
+The MikroTik RouterBOARD 921GS-5HPacD-15s (mANTBox 15s) is an outdoor
+antenna for 5 GHz with an built-in router. This ports the board from
+ar71xx.
+
+See https://mikrotik.com/product/RB921GS-5HPacD-15S for more info.
+
+Specifications:
+ - SoC: Qualcomm Atheros QCA9558 (720 MHz)
+ - RAM: 128 MB
+ - Storage: 128 MB NAND
+ - Wireless: external QCA9822 802.11a/ac 2x2:2
+ - Ethernet: 1x 1000/100/10 Mbps, integrated, via AR8031 PHY, passive PoE in
+ - SFP: 1x host
+
+Working:
+ - NAND storage detection
+ - Ethernet
+
+Untested:
+ - Wireless
+ - 1x user LED
+ - Reset button
+ - Sysupgrade (untested)
+ - SFP cage (probably not working)
+
+Installation (untested):
+ - Boot initramfs image via TFTP and then flash sysupgrade image
+
+As the embedded RB921-pcb is a stripped down version of the RB922 this patch
+adds a common dtsi for this series and includes this to the final dts-files.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/target/linux/ath79/dts/qca9558_mikrotik_routerboard-921gs-5hpacd-15s.dts b/target/linux/ath79/dts/qca9558_mikrotik_routerboard-921gs-5hpacd-15s.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..d5e4daba9cb8d21725fa976f005e87778bb27616
+--- /dev/null
++++ b/target/linux/ath79/dts/qca9558_mikrotik_routerboard-921gs-5hpacd-15s.dts
+@@ -0,0 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/dts-v1/;
++
++#include "qca9558_mikrotik_routerboard-92x.dtsi"
++
++/ {
++	compatible = "mikrotik,routerboard-921gs-5hpacd-15s", "qca,qca9558";
++	model = "MikroTik RouterBOARD 921GS-5HPacD-15s";
++};
+diff --git a/target/linux/ath79/dts/qca9558_mikrotik_routerboard-922uags-5hpacd.dts b/target/linux/ath79/dts/qca9558_mikrotik_routerboard-922uags-5hpacd.dts
+index a3f42f87bfe53ddff9ab5ee94d0a2b4dc5ba8422..0039526e336a12324b909a2233bd51d5861006ba 100644
+--- a/target/linux/ath79/dts/qca9558_mikrotik_routerboard-922uags-5hpacd.dts
++++ b/target/linux/ath79/dts/qca9558_mikrotik_routerboard-922uags-5hpacd.dts
+@@ -1,163 +1,18 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+ /dts-v1/;
+ 
+-#include <dt-bindings/gpio/gpio.h>
+-#include <dt-bindings/input/input.h>
+-
+-#include "qca955x.dtsi"
++#include "qca9558_mikrotik_routerboard-92x.dtsi"
+ 
+ / {
+ 	compatible = "mikrotik,routerboard-922uags-5hpacd", "qca,qca9558";
+ 	model = "MikroTik RouterBOARD 922UAGS-5HPacD";
+ 
+-	aliases {
+-		led-boot = &led_user;
+-		led-failsafe = &led_user;
+-		led-upgrade = &led_user;
+-		serial0 = &uart;
+-	};
+-
+-	leds {
+-		compatible = "gpio-leds";
+-
+-		led_user: user {
+-			label = "mikrotik:green:user";
+-			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
+-		};
+-	};
+-
+-	ath10k-leds {
+-		compatible = "gpio-leds";
+-
+-		wlan5g {
+-			label = "mikrotik:green:wlan5g";
+-			gpios = <&ath10k 0 GPIO_ACTIVE_LOW>;
+-			linux,default-trigger = "phy0tpt";
+-		};
+-	};
+-
+-	keys {
+-		compatible = "gpio-keys";
+-
+-		reset {
+-			label = "reset";
+-			linux,code = <KEY_RESTART>;
+-			gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
+-			debounce-interval = <60>;
+-		};
+-	};
+-
+ 	gpio-export {
+-		compatible = "gpio-export";
+-
+ 		gpio_usb_power {
+ 			gpio-export,name = "mikrotik:power:usb";
+ 			gpio-export,output = <0>;
+ 			gpios = <&gpio 13 GPIO_ACTIVE_HIGH>;
+ 		};
+-
+-		gpio_nand_power {
+-			gpio-export,name = "mikrotik:power:nand";
+-			gpio-export,output = <0>;
+-			gpios = <&gpio 23 GPIO_ACTIVE_LOW>;
+-		};
+-	};
+-};
+-
+-&mdio0 {
+-	status = "okay";
+-
+-	phy4: ethernet-phy@4 {
+-		reg = <4>;
+-	};
+-};
+-
+-&eth0 {
+-	status = "okay";
+-
+-	phy-handle = <&phy4>;
+-	pll-data = <0x8f000000 0xa0000101 0xa0001313>;
+-
+-	gmac-config {
+-		device = <&gmac>;
+-		rgmii-enabled = <1>;
+-	};
+-};
+-
+-&spi {
+-	status = "okay";
+-
+-	flash@0 {
+-		compatible = "jedec,spi-nor";
+-		reg = <0>;
+-		spi-max-frequency = <25000000>;
+-
+-		partitions {
+-			compatible = "mikrotik,routerboot-partitions";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-
+-			partition@0 {
+-				label = "routerboot";
+-				reg = <0x0 0x0>;
+-				read-only;
+-			};
+-
+-			hard_config: hard_config {
+-				read-only;
+-			};
+-
+-			bios {
+-				read-only;
+-			};
+-
+-			soft_config {
+-			};
+-		};
+-	};
+-};
+-
+-&nand {
+-	status = "okay";
+-
+-	nand-ecc-mode = "soft";
+-	qca,nand-swap-dma;
+-	qca,nand-scan-fixup;
+-
+-	partitions {
+-		compatible = "fixed-partitions";
+-		#size-cells = <1>;
+-
+-		partition@0 {
+-			label = "booter";
+-			reg = <0x0000000 0x0040000>;
+-			read-only;
+-		};
+-
+-		partition@40000 {
+-			label = "kernel";
+-			reg = <0x0040000 0x03c0000>;
+-		};
+-
+-		partition@400000 {
+-			label = "ubi";
+-			reg = <0x0400000 0x7c00000>;
+-		};
+-	};
+-};
+-
+-&uart {
+-	status = "okay";
+-};
+-
+-&pcie0 {
+-	status = "okay";
+-
+-	ath10k: wifi@0,0 {
+-		compatible = "qcom,ath10k";
+-		reg = <0 0 0 0 0>;
+-		#gpio-cells = <2>;
+-		gpio-controller;
+ 	};
+ };
+ 
+diff --git a/target/linux/ath79/dts/qca9558_mikrotik_routerboard-92x.dtsi b/target/linux/ath79/dts/qca9558_mikrotik_routerboard-92x.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..effc4069d7699a93b8c08736f3f02c536c6b29db
+--- /dev/null
++++ b/target/linux/ath79/dts/qca9558_mikrotik_routerboard-92x.dtsi
+@@ -0,0 +1,152 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++#include "qca955x.dtsi"
++
++/ {
++	aliases {
++		led-boot = &led_user;
++		led-failsafe = &led_user;
++		led-upgrade = &led_user;
++		serial0 = &uart;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led_user: user {
++			label = "mikrotik:green:user";
++			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	ath10k-leds {
++		compatible = "gpio-leds";
++
++		wlan5g {
++			label = "mikrotik:green:wlan5g";
++			gpios = <&ath10k 0 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "phy0tpt";
++		};
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		reset {
++			label = "reset";
++			linux,code = <KEY_RESTART>;
++			gpios = <&gpio 20 GPIO_ACTIVE_LOW>;
++			debounce-interval = <60>;
++		};
++	};
++
++	gpio-export {
++		compatible = "gpio-export";
++
++		gpio_nand_power {
++			gpio-export,name = "mikrotik:power:nand";
++			gpio-export,output = <0>;
++			gpios = <&gpio 23 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&mdio0 {
++	status = "okay";
++
++	phy4: ethernet-phy@4 {
++		reg = <4>;
++	};
++};
++
++&eth0 {
++	status = "okay";
++
++	phy-handle = <&phy4>;
++	pll-data = <0x8f000000 0xa0000101 0xa0001313>;
++
++	gmac-config {
++		device = <&gmac>;
++		rgmii-enabled = <1>;
++	};
++};
++
++&spi {
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <25000000>;
++
++		partitions {
++			compatible = "mikrotik,routerboot-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "routerboot";
++				reg = <0x0 0x0>;
++				read-only;
++			};
++
++			hard_config: hard_config {
++				read-only;
++			};
++
++			bios {
++				read-only;
++			};
++
++			soft_config {
++			};
++		};
++	};
++};
++
++&nand {
++	status = "okay";
++
++	nand-ecc-mode = "soft";
++	qca,nand-swap-dma;
++	qca,nand-scan-fixup;
++
++	partitions {
++		compatible = "fixed-partitions";
++		#size-cells = <1>;
++
++		partition@0 {
++			label = "booter";
++			reg = <0x0000000 0x0040000>;
++			read-only;
++		};
++
++		partition@40000 {
++			label = "kernel";
++			reg = <0x0040000 0x03c0000>;
++		};
++
++		partition@400000 {
++			label = "ubi";
++			reg = <0x0400000 0x7c00000>;
++		};
++	};
++};
++
++&uart {
++	status = "okay";
++};
++
++&pcie0 {
++	status = "okay";
++
++	ath10k: wifi@0,0 {
++		compatible = "qcom,ath10k";
++		reg = <0 0 0 0 0>;
++		#gpio-cells = <2>;
++		gpio-controller;
++	};
++};
+diff --git a/target/linux/ath79/image/mikrotik.mk b/target/linux/ath79/image/mikrotik.mk
+index b0bd05a81c2e5e3af82c183a73ba062fdc393b93..d950b80846f405cb0ea18820582a3319fb7f0503 100644
+--- a/target/linux/ath79/image/mikrotik.mk
++++ b/target/linux/ath79/image/mikrotik.mk
+@@ -11,6 +11,18 @@ define Device/mikrotik_routerboard-493g
+ endef
+ TARGET_DEVICES += mikrotik_routerboard-493g
+ 
++define Device/mikrotik_routerboard-921gs-5hpacd-15s
++  $(Device/mikrotik)
++  SOC := qca9558
++  DEVICE_MODEL := RouterBOARD 921GS-5HPacD-15s
++  IMAGE/sysupgrade.bin = append-kernel | kernel2minor -s 2048 -e -c | \
++	sysupgrade-tar kernel=$$$$@ | append-metadata
++  DEVICE_PACKAGES += kmod-ath10k-ct ath10k-firmware-qca988x-ct \
++	nand-utils
++  SUPPORTED_DEVICES += rb-921gs-5hpacd-r2
++endef
++TARGET_DEVICES += mikrotik_routerboard-921gs-5hpacd-15s
++
+ define Device/mikrotik_routerboard-922uags-5hpacd
+   $(Device/mikrotik)
+   SOC := qca9558
+diff --git a/target/linux/ath79/mikrotik/base-files/etc/board.d/02_network b/target/linux/ath79/mikrotik/base-files/etc/board.d/02_network
+index 5d87e88beba19299952633b0990dd260c1b28727..1d954a9923e7b1c0162214a941ca80ed91823f2d 100755
+--- a/target/linux/ath79/mikrotik/base-files/etc/board.d/02_network
++++ b/target/linux/ath79/mikrotik/base-files/etc/board.d/02_network
+@@ -15,6 +15,7 @@ ath79_setup_interfaces()
+ 		ucidef_add_switch "switch1" \
+ 			"0@eth1" "1:lan:4" "2:lan:1" "3:lan:2" "4:lan:3"
+ 		;;
++	mikrotik,routerboard-921gs-5hpacd-15s|\
+ 	mikrotik,routerboard-922uags-5hpacd|\
+ 	mikrotik,routerboard-wap-g-5hact2hnd)
+ 		ucidef_set_interface_lan "eth0"
+diff --git a/target/linux/ath79/mikrotik/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ath79/mikrotik/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index 531c21678f460825dbfd08e7b2ece7c7345b8deb..03d71ecf4fb37d1b79661b59f975452632426925 100644
+--- a/target/linux/ath79/mikrotik/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ath79/mikrotik/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -18,6 +18,7 @@ case "$FIRMWARE" in
+ 	;;
+ "ath10k/cal-pci-0000:01:00.0.bin")
+ 	case $board in
++	mikrotik,routerboard-921gs-5hpacd-15s|\
+ 	mikrotik,routerboard-922uags-5hpacd)
+ 		caldata_sysfsload_from_file $wlan_data 0x5000 0x844
+ 		;;
+diff --git a/target/linux/ath79/mikrotik/base-files/lib/upgrade/platform.sh b/target/linux/ath79/mikrotik/base-files/lib/upgrade/platform.sh
+index 8d11cfc0ce64740eb789669c20eb5487ec466d9b..3297b0abafe9eea3be8c4bdf84e64fe9beb3295e 100644
+--- a/target/linux/ath79/mikrotik/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ath79/mikrotik/base-files/lib/upgrade/platform.sh
+@@ -32,6 +32,7 @@ platform_do_upgrade() {
+ 
+ 	case "$board" in
+ 	mikrotik,routerboard-493g|\
++	mikrotik,routerboard-921gs-5hpacd-15s|\
+ 	mikrotik,routerboard-922uags-5hpacd)
+ 		platform_do_upgrade_mikrotik_nand "$1"
+ 		;;
