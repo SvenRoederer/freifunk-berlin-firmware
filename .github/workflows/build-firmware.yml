@@ -12,8 +12,8 @@ jobs:
     strategy:
       matrix:
         target: 
-          - ar71xx-generic
-          - ar71xx-tiny
+          - ath79-generic
+          - ath79-tiny
           - x86-generic
       fail-fast: false
 
