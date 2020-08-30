@@ -46,12 +46,12 @@ tplink_wbs210-v2
 tplink_wbs510-v1
 tplink_wbs510-v2
 ubnt_airrouter
-ubnt_bullet-m-xw:tiny
+ubnt_bullet-m-xw
 ubnt_bullet-m-ar7240:tiny
 ubnt_bullet-m-ar7241:tiny
-ubnt_nanostation-loco-m-xw:tiny
+ubnt_nanostation-loco-m-xw
 ubnt_nanostation-loco-m:tiny
-ubnt_nanostation-m-xw:tiny
+ubnt_nanostation-m-xw
 ubnt_nanostation-m:tiny
 ubnt_picostation-m:tiny
 ubnt_rocket-m:tiny
