@@ -137,3 +137,12 @@ jobs:
         path: openwrt/bin/
     - run: df -h
       if: ${{ !cancelled() }}
+    - name: upload
+      if: github.event_name == 'push'
+      env:
+        SSH_KEY: ${{ secrets.OPENWRT_BUILDUPLOAD_PRIVATE }}
+      run: |
+        eval "$(ssh-agent -s)"
+        ssh-add - <<< "${SSH_KEY}"
+        scp -o StrictHostKeyChecking=no -p ${{ secrets.OPENWRT_BUILDUPLOAD_PORT }} tmp_build-tools/* openwrt-upload@dazzle.geroedel.de:upload/
+        
