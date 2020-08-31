@@ -144,5 +144,5 @@ jobs:
       run: |
         eval "$(ssh-agent -s)"
         ssh-add - <<< "${SSH_KEY}"
-        scp -o StrictHostKeyChecking=no -p ${{ secrets.OPENWRT_BUILDUPLOAD_PORT }} tmp_build-tools/* openwrt-upload@dazzle.geroedel.de:upload/
+        scp -o StrictHostKeyChecking=no -P ${{ secrets.OPENWRT_BUILDUPLOAD_PORT }} tmp_build-tools/* openwrt-upload@dazzle.geroedel.de:upload/
         
