@@ -32,6 +32,7 @@ jobs:
         echo "::set-env name=MAKE_OPTS:: -j$(nproc) TARGET=${{matrix.target}} IS_BUILDBOT=${IS_BUILDBOT} "
         echo "::set-env name=next_buildstep::config"
         df -h
+        echo "building branch: " ${GITHUB_REF##*/}
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
