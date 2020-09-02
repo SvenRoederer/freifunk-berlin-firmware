@@ -1,0 +1,24 @@
+From: Hannu Nyman <hannu.nyman@iki.fi>
+Date: Sun, 16 Aug 2020 22:19:37 +0300
+Subject: themes: remove deprecated reference to enabling SSH
+
+Remove the reference to setting a password being linked to SSH capability.
+(SSH has been initially enabled since year 2015.)
+
+Signed-off-by: Hannu Nyman <hannu.nyman@iki.fi>
+
+cherry-picked from https://github.com/openwrt/luci/commit/258e74c1c3e465e0c5561a0efbda0d4d2724eda3
+
+diff --git a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm b/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
+index 1240bd6e3b67a44b0064143bf232c26000d307f7..4e9303c747cb63b0c670eb8889e712b8e3ce9dc0 100644
+--- a/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
++++ b/themes/luci-theme-freifunk-generic/luasrc/view/themes/freifunk-generic/header.htm
+@@ -56,7 +56,7 @@
+ 		<%- if luci.sys.process.info("uid") == 0 and luci.sys.user.getuser("root") and not luci.sys.user.getpasswd("root") and category ~= "failsafe" and path ~= "admin-system-admin-password" then -%>
+ 		<div class="alert-message warning">
+ 			<h4><%:No password set!%></h4>
+-			<p><%:There is no password set on this router. Please configure a root password to protect the web interface and enable SSH.%></p>
++			<p><%:There is no password set on this router. Please configure a root password to protect the web interface.%></p>
+ 			<% if disp.lookup("admin/system/admin") then %>
+ 				<div class="right"><a class="btn" href="<%=url("admin/system/admin")%>"><%:Go to password configuration...%></a></div>
+ 			<% end %>
