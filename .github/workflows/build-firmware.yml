@@ -35,7 +35,11 @@ jobs:
         echo "building branch (short):" ${GITHUB_REF##*/}
         echo "building branch (prefix stripped):" ${GITHUB_REF#"refs/heads/"}
         echo "building branch (replaced):" 
-        echo ${GITHUB_REF} | sed -e 's#^refs/heads/##; s#/#_#;'
+        echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;'
+        # this sets env BRANCHNAME_normalized by removing the 1st two elements from $GITHUB_REF
+        # These elements are usually "refs/heads/"
+        # in addition replace all / by _
+        echo "::set-env name=BRANCHNAME_normalized::${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;'"
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
