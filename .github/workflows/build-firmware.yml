@@ -39,7 +39,9 @@ jobs:
         # this sets env BRANCHNAME_normalized by removing the 1st two elements from $GITHUB_REF
         # These elements are usually "refs/heads/"
         # in addition replace all / by _
-        echo "::set-env name=BRANCHNAME_normalized::${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;'"
+        var=$(echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;')
+        echo helper-var: ${var}
+        echo "::set-env name=BRANCHNAME_normalized::${var}"
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         echo "debug ${{ env.BRANCHNAME_normalized }}"
