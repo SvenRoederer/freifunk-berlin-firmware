@@ -34,6 +34,7 @@ jobs:
         echo "building branch (full): " ${GITHUB_REF}
         echo "building branch (short):" ${GITHUB_REF##*/}
         echo "building branch (prefix stripped):" ${GITHUB_REF#"refs/heads/"}
+        echo "building branch (replaced):" ${GITHUB_REF} | sed -e 's#^refs/heads/##; s#/#_#;'
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
