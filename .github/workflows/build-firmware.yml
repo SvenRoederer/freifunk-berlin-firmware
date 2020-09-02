@@ -34,7 +34,7 @@ jobs:
         df -h
         echo "building branch (full): " ${GITHUB_REF}
         echo "building branch (short):" ${GITHUB_REF##*/}
-        echo "building branch (prefix stripped):" ${GITHUB_REF#"refs/head/"}
+        echo "building branch (prefix stripped):" ${GITHUB_REF#"refs/heads/"}
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
