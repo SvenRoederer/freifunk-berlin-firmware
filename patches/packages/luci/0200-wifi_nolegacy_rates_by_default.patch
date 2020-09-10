@@ -16,7 +16,7 @@ diff -ur openwrt.orig/feeds/luci/modules/luci-mod-network/htdocs/luci-static/res
 +					o.default = o.disabled;
  
  					o = ss.taboption('advanced', form.Value, 'distance', _('Distance Optimization'), _('Distance to farthest network member in meters.'));
- 					o.datatype = 'range(0,114750)';
+ 					o.datatype = 'or(range(0,114750),"auto")';
 -- 
 2.20.1
 
