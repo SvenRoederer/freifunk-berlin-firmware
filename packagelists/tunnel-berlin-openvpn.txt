@@ -34,7 +34,7 @@ tcpdump
 uhttpd
 uhttpd-mod-ubus
 px5g-mbedtls
-libustream-mbedtls
+-libustream-wolfssl
 luci-app-ffwizard-berlin
 luci-mod-freifunk-ui
 luci-app-olsr
