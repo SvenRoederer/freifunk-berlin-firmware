@@ -3,15 +3,15 @@ Date: Fri, 6 Sep 2019 08:29:50 +0000
 Subject: hostapd_nolegacy_by_default
 
 diff --git a/package/network/services/hostapd/files/hostapd.sh b/package/network/services/hostapd/files/hostapd.sh
-index fe5b407bc15b47e4ddc894843490e260b40a1c51..839c6788ef1236237688489df8c93ddbb3031534 100644
+index 637f298ad9142a1725879192f4cfbae58a83b947..2c0137d7e2a8d9b69c51faca8ccdaf8366021a6d 100644
 --- a/package/network/services/hostapd/files/hostapd.sh
 +++ b/package/network/services/hostapd/files/hostapd.sh
-@@ -117,7 +117,7 @@ hostapd_prepare_device_config() {
+@@ -120,7 +120,7 @@ hostapd_prepare_device_config() {
  	set_default country_ie 1
  	set_default spectrum_mgmt_required 0
  	set_default doth 1
 -	set_default legacy_rates 1
 +	set_default legacy_rates 0
+ 	set_default airtime_mode 0
  
  	[ "$hwmode" = "b" ] && legacy_rates=1
- 
