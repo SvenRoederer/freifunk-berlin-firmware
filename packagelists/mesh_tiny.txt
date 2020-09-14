@@ -1,9 +1,13 @@
 -kmod-usb-core
 -kmod-usb2
 -kmod-usb-ledtrig-usbport
+-kmod-usb-ehci
 -kmod-usb-ohci
--kmod-ppp
+-kmod-usb-chipidea
+-kmod-usb-chipidea2
+-kmod-usb-phy-nop
 -kmod-usb-serial
+-kmod-ppp
 -ppp
 -ppp-mod-pppoe
 -wpad
