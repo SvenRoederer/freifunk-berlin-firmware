@@ -32,11 +32,6 @@ jobs:
         echo "::set-env name=MAKE_OPTS:: -j$(nproc) TARGET=${{matrix.target}} IS_BUILDBOT=${IS_BUILDBOT} "
         echo "::set-env name=next_buildstep::config"
         df -h
-        echo "building branch (full): " ${GITHUB_REF}
-        echo "building branch (short):" ${GITHUB_REF##*/}
-        echo "building branch (prefix stripped):" ${GITHUB_REF#"refs/heads/"}
-        echo "building branch (replaced):" 
-        echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;'
         # this sets env BRANCHNAME_normalized by removing the 1st two elements from $GITHUB_REF
         # These elements are usually "refs/heads/"
         # in addition replace all / by _
@@ -45,7 +40,6 @@ jobs:
         echo "::set-env name=BRANCHNAME_normalized::${var}"
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
-        echo "debug ${{ env.BRANCHNAME_normalized }}"
         echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
