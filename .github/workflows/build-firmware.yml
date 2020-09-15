@@ -36,11 +36,6 @@ jobs:
         mkdir logs
         echo "MAKE_OPTS= -j$(nproc) TARGET=${{matrix.target}} IS_BUILDBOT=${IS_BUILDBOT} " >>$GITHUB_ENV
         echo "next_buildstep=config" >>$GITHUB_ENV
-        echo "building branch (full): " ${GITHUB_REF}
-        echo "building branch (short):" ${GITHUB_REF##*/}
-        echo "building branch (prefix stripped):" ${GITHUB_REF#"refs/heads/"}
-        echo "building branch (replaced):" 
-        echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;'
         # this sets env BRANCHNAME_normalized by removing the 1st two elements from $GITHUB_REF
         # These elements are usually "refs/heads/"
         # in addition replace all / by _
