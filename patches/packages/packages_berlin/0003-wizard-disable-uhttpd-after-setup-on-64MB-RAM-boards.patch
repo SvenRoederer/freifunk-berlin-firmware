@@ -1,0 +1,27 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Tue, 22 Sep 2020 19:57:28 +0200
+Subject: wizard: disable uhttpd after setup on < 64MB RAM boards
+
+Having no webserver runnig improves system stability on low RAM boards.
+RAM savings will be given by:
+* no uhttpd running
+* no Lua interpreter
+* no LuCI cache in /tmp
+* disable rpcd (which is not needed anymore)
+
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
+index b8c827ed29f2bd88e3a91745d0a698184790fc74..70fe0526a5c369bb8230e8e5448ca966b9287095 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
+@@ -110,6 +110,11 @@ function commit()
+   sys.init.enable("olsrd6")
+   -- openvpn gets started by wan hotplug script
+   sys.init.disable("openvpn")
++  -- disable webserver and consequently LuCI on system with less then 32MB RAM
++  if nixio.sysinfo()['totalram'] < 32 * 1024 * 1024 then
++    sys.init.disable("uhttpd")
++    sys.init.disable("rpcd")
++  end
+ 
+   if (sharenet == "1") then
+     sys.init.enable("qos")
