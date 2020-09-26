@@ -1,0 +1,32 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 2 May 2020 14:43:09 +0200
+Subject: have every package alling the BuildPackage macro
+
+diff --git a/freifunk-berlin-generic.mk b/freifunk-berlin-generic.mk
+index a7febf7ddc17446a804c14fa28127ef6ad5821ce..ef1f4ee447d3cdf0d0ae097b1fe7a2b50d6fda7d 100644
+--- a/freifunk-berlin-generic.mk
++++ b/freifunk-berlin-generic.mk
+@@ -72,5 +72,3 @@ else
+  endef
+ endif
+ 
+-$(eval $(call BuildPackage,$(PKG_NAME)))
+-#$(foreach pkg,$(LUCI_BUILD_PACKAGES),$(eval $(call BuildPackage,$(pkg))))
+diff --git a/utils/luci-app-ffwizard-berlin/Makefile b/utils/luci-app-ffwizard-berlin/Makefile
+index bf2c9cb01da55145aeb4d8de1c6cd4a5fe5ec168..91d80d22dd0415afc18cee326c833ef1258c6aef 100644
+--- a/utils/luci-app-ffwizard-berlin/Makefile
++++ b/utils/luci-app-ffwizard-berlin/Makefile
+@@ -11,3 +11,4 @@ include ../../freifunk-berlin-generic.mk
+ #  URL:=http://berlin.freifunk.net
+ 
+ # call BuildPackage - OpenWrt buildroot signature
++$(eval $(call BuildPackage,$(PKG_NAME)))
+diff --git a/utils/luci-mod-freifunk-ui/Makefile b/utils/luci-mod-freifunk-ui/Makefile
+index cf56bde94eebf446617a08ae5bda2cacd6d580db..79cb36c1cd967a1f0ded07dea3233424da91c36a 100644
+--- a/utils/luci-mod-freifunk-ui/Makefile
++++ b/utils/luci-mod-freifunk-ui/Makefile
+@@ -15,3 +15,4 @@ PKG_RELEASE:=3
+ include ../../freifunk-berlin-generic.mk
+ 
+ # call BuildPackage - OpenWrt buildroot signature
++$(eval $(call BuildPackage,$(PKG_NAME)))
