@@ -13,8 +13,9 @@
 -wpad
 -wpad-basic-wolfssl
 hostapd-mini
-opkg
+-opkg
 -usign
+-openwrt-keyring
 
 # additional excluded packages to save Flash-space
 -kmod-ipt-core
@@ -35,7 +36,6 @@ opkg
 -ca-bundle
 -uclient-fetch
 -uboot-envtools
--openwrt-keyring
 -procd
 -getrandom
 -urngd
