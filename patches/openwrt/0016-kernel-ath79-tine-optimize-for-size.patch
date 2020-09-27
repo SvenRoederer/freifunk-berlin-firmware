@@ -1,0 +1,19 @@
+From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
+Date: Sun, 27 Sep 2020 03:05:42 +0200
+Subject: kernel: ath79-tine: optimize for size
+
+diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
+index dada97dccba968ca278dd66eda064c4028b0cea5..af95860ebab53076e8f627736018289b49ef9bab 100644
+--- a/target/linux/ath79/tiny/config-default
++++ b/target/linux/ath79/tiny/config-default
+@@ -12,8 +12,8 @@ CONFIG_PHYLINK=y
+ # CONFIG_PHY_AR7200_USB is not set
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+-# CONFIG_HAVE_DEBUG_KMEMLEAK is not set
+-# CONFIG_HAVE_DEBUG_STACKOVERFLOW is not set
++# CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
++CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ # CONFIG_HAVE_KVM is not set
+ # CONFIG_DEBUG_FS is not set
+ # CONFIG_DEBUG_KERNEL is not set
