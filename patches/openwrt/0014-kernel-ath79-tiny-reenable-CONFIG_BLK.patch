@@ -1,0 +1,16 @@
+From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
+Date: Sun, 27 Sep 2020 02:19:06 +0200
+Subject: kernel: ath79-tiny: reenable CONFIG_BLK
+
+diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
+index 0c197958660bd1a96cae6c4c27d7f97f634acb5b..5dcdf30af4720d324cc2bb6bbdaa888bdebb60d5 100644
+--- a/target/linux/ath79/tiny/config-default
++++ b/target/linux/ath79/tiny/config-default
+@@ -19,7 +19,6 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ # CONFIG_HAVE_KVM is not set
+ # CONFIG_NVMEM is not set
+ # CONFIG_AIO is not set
+-# CONFIG_BLK_DEV is not set
+ # CONFIG_DEBUG_FS is not set
+ # CONFIG_DEBUG_KERNEL is not set
+ # CONFIG_ISDN is not set
