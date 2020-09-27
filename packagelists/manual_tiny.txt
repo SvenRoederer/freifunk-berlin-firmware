@@ -12,7 +12,7 @@
 -ppp-mod-pppoe
 -wpad
 -wpad-basic-wolfssl
-wpad-mini
+hostapd-mini
 -opkg
 -usign
 
