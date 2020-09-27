@@ -13,7 +13,7 @@
 -wpad
 -wpad-basic-wolfssl
 wpad-mini
-opkg
+-opkg
 -usign
 
 # Defaults
