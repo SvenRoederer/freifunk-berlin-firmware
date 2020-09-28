@@ -1,0 +1,257 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 28 Sep 2020 04:01:07 +0200
+Subject: kernel: revert to 4.19 as default
+
+The switch to DSA Networking is reported to be unstable
+(https://github.com/freifunk-berlin/firmware/issues/834#issuecomment-695185222)
+Do this on all targets that still support 4.19.
+
+diff --git a/target/linux/apm821xx/Makefile b/target/linux/apm821xx/Makefile
+index c7e27d3214c44ae3ee9ed2a60b5e13918c294a22..800f9c38aeec42722bc5da5b9fe66a2dc46b67f9 100644
+--- a/target/linux/apm821xx/Makefile
++++ b/target/linux/apm821xx/Makefile
+@@ -11,7 +11,7 @@ CPU_TYPE:=464fp
+ FEATURES:=fpu dt gpio
+ SUBTARGETS:=nand sata
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ 
+ define Target/Description
+ 	Build images for AppliedMicro APM821xx based boards.
+diff --git a/target/linux/armvirt/Makefile b/target/linux/armvirt/Makefile
+index 4a8c6b092c91c3eafec3ba9fcd415b8d6b68685b..dbf1b761a29577cb43fdc0496fba22b8866e11f8 100644
+--- a/target/linux/armvirt/Makefile
++++ b/target/linux/armvirt/Makefile
+@@ -11,7 +11,7 @@ BOARDNAME:=QEMU ARM Virtual Machine
+ FEATURES:=fpu pci rtc usb
+ FEATURES+=cpiogz ext4 ramdisk squashfs targz
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ 
+ include $(INCLUDE_DIR)/target.mk
+ 
+diff --git a/target/linux/ath79/Makefile b/target/linux/ath79/Makefile
+index a955602ba9904a9fe8b86a47b481d3c700b3b7aa..9b203cf48e4f517fc05b975bdbdc710df910436b 100644
+--- a/target/linux/ath79/Makefile
++++ b/target/linux/ath79/Makefile
+@@ -8,7 +8,7 @@ SUBTARGETS:=generic mikrotik nand tiny
+ 
+ FEATURES:=ramdisk
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ include $(INCLUDE_DIR)/target.mk
+diff --git a/target/linux/bcm47xx/Makefile b/target/linux/bcm47xx/Makefile
+index bd0032a0e376e8d45eb6e42e00ee273a108a2411..c5b5e69edad3c4cba401a057833d575b92c7ed89 100644
+--- a/target/linux/bcm47xx/Makefile
++++ b/target/linux/bcm47xx/Makefile
+@@ -12,7 +12,7 @@ BOARDNAME:=Broadcom BCM47xx/53xx (MIPS)
+ FEATURES:=squashfs usb
+ SUBTARGETS:=generic mips74k legacy
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ define Target/Description
+diff --git a/target/linux/bcm53xx/Makefile b/target/linux/bcm53xx/Makefile
+index 35f8513801ed2a13ae2b410d64c77d4581caff6c..628d422b533dd5254e560c214fe25a0dda7bfaa5 100644
+--- a/target/linux/bcm53xx/Makefile
++++ b/target/linux/bcm53xx/Makefile
+@@ -13,7 +13,7 @@ FEATURES:=squashfs nand usb pci pcie gpio
+ CPU_TYPE:=cortex-a9
+ SUBTARGETS:=generic
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ define Target/Description
+diff --git a/target/linux/gemini/Makefile b/target/linux/gemini/Makefile
+index 0835adc41d7c569946f4df91a4a736debcf389e2..14e786f8bb69fecd81aab71a0249b2c5f3d3cd25 100644
+--- a/target/linux/gemini/Makefile
++++ b/target/linux/gemini/Makefile
+@@ -12,7 +12,7 @@ BOARDNAME:=Cortina Systems CS351x
+ FEATURES:=squashfs pci rtc usb dt gpio display ext4 rootfs-part boot-part
+ CPU_TYPE:=fa526
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ 
+ define Target/Description
+ 	Build firmware images for the StorLink/Cortina Gemini CS351x ARM FA526 CPU
+diff --git a/target/linux/imx6/Makefile b/target/linux/imx6/Makefile
+index 2a18c44117164323a97572837a07410f0bfe319e..1d83916a9818bd29418015097d0a44a1e43af2dc 100644
+--- a/target/linux/imx6/Makefile
++++ b/target/linux/imx6/Makefile
+@@ -13,7 +13,7 @@ FEATURES:=audio display fpu gpio pcie rtc usb usbgadget squashfs targz nand ubif
+ CPU_TYPE:=cortex-a9
+ CPU_SUBTYPE:=neon
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ include $(INCLUDE_DIR)/target.mk
+diff --git a/target/linux/ipq40xx/Makefile b/target/linux/ipq40xx/Makefile
+index 4d9b2debcaedf540fdac63d3062b0e8241f68adc..bd0292bb2bf665e960025c12ef7285dfa102b396 100644
+--- a/target/linux/ipq40xx/Makefile
++++ b/target/linux/ipq40xx/Makefile
+@@ -8,7 +8,7 @@ CPU_TYPE:=cortex-a7
+ CPU_SUBTYPE:=neon-vfpv4
+ SUBTARGETS:=generic
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ KERNELNAME:=zImage Image dtbs
+diff --git a/target/linux/ipq806x/Makefile b/target/linux/ipq806x/Makefile
+index 69d3aa1e569d79a9436bf14035063986cc12c5e4..3f9e86062c33e74d4325c99f13fae8ed74efe714 100644
+--- a/target/linux/ipq806x/Makefile
++++ b/target/linux/ipq806x/Makefile
+@@ -10,7 +10,7 @@ CPU_TYPE:=cortex-a15
+ CPU_SUBTYPE:=neon-vfpv4
+ SUBTARGETS:=generic
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ 
+ KERNELNAME:=zImage Image dtbs
+ 
+diff --git a/target/linux/lantiq/Makefile b/target/linux/lantiq/Makefile
+index ee305e7ce28f650220de50b9e43db1112b59bc6b..b2b10c57bb56d0745e812f06b6ae2ec996e53660 100644
+--- a/target/linux/lantiq/Makefile
++++ b/target/linux/lantiq/Makefile
+@@ -11,7 +11,8 @@ BOARDNAME:=Lantiq
+ FEATURES:=squashfs
+ SUBTARGETS:=xrx200 xway xway_legacy falcon ase
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
++KERNEL_TESTING_PATCHVER:=5.4
+ 
+ define Target/Description
+ 	Build firmware images for Lantiq SoC
+diff --git a/target/linux/malta/Makefile b/target/linux/malta/Makefile
+index 3f2c92c766ad11d6a38571664aa6127eaf105049..b80260d72e4be02fef83f1a6704132a5fcee965a 100644
+--- a/target/linux/malta/Makefile
++++ b/target/linux/malta/Makefile
+@@ -13,7 +13,7 @@ SUBTARGETS:=le be le64 be64
+ INITRAMFS_EXTRA_FILES:=
+ FEATURES:=cpiogz ext4 ramdisk squashfs targz
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ 
+ include $(INCLUDE_DIR)/target.mk
+ 
+diff --git a/target/linux/mediatek/Makefile b/target/linux/mediatek/Makefile
+index c8ab5e01e6d45f91901418f28e0274bc5f574bda..b0e020bce0d113a4138ae2b19c9eaaa704e3c4d0 100644
+--- a/target/linux/mediatek/Makefile
++++ b/target/linux/mediatek/Makefile
+@@ -8,7 +8,7 @@ BOARDNAME:=MediaTek Ralink ARM
+ SUBTARGETS:=mt7622 mt7623 mt7629
+ FEATURES:=squashfs nand ramdisk fpu
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ include $(INCLUDE_DIR)/target.mk
+diff --git a/target/linux/mpc85xx/Makefile b/target/linux/mpc85xx/Makefile
+index 94384a8866a12f7d2ab684f490262bb5558fc996..b69a28c491a77228de6eae4af981893b512d4609 100644
+--- a/target/linux/mpc85xx/Makefile
++++ b/target/linux/mpc85xx/Makefile
+@@ -13,7 +13,8 @@ CPU_TYPE:=8540
+ FEATURES:=squashfs ramdisk
+ SUBTARGETS:=p1010 p1020 p2020
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
++KERNEL_TESTING_PATCHVER:=5.4
+ 
+ KERNELNAME:=zImage
+ 
+diff --git a/target/linux/mvebu/Makefile b/target/linux/mvebu/Makefile
+index b9a6a79fe548b1d806fe5275e1f9da99d50b43f5..b954a88f6d9e5dd11ea2dffacc0955424bc817ba 100644
+--- a/target/linux/mvebu/Makefile
++++ b/target/linux/mvebu/Makefile
+@@ -11,7 +11,7 @@ BOARDNAME:=Marvell EBU Armada
+ FEATURES:=fpu usb pci pcie gpio nand squashfs ramdisk boot-part rootfs-part
+ SUBTARGETS:=cortexa9 cortexa53 cortexa72
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ include $(INCLUDE_DIR)/target.mk
+diff --git a/target/linux/octeon/Makefile b/target/linux/octeon/Makefile
+index bd8dc80d078fccc07852bbc79eb33f3133253f65..d0f72bdc29eab868d69ef44f88792143a4328cca 100644
+--- a/target/linux/octeon/Makefile
++++ b/target/linux/octeon/Makefile
+@@ -12,7 +12,7 @@ BOARDNAME:=Cavium Networks Octeon
+ FEATURES:=squashfs ramdisk pci usb
+ CPU_TYPE:=octeonplus
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ define Target/Description
+diff --git a/target/linux/omap/Makefile b/target/linux/omap/Makefile
+index a674bfb2ca5fa91bb9410fe045fbc741742789ca..285677a60e78a7e2e78a7601221b014df75ff780 100644
+--- a/target/linux/omap/Makefile
++++ b/target/linux/omap/Makefile
+@@ -14,7 +14,7 @@ FEATURES:=usb usbgadget ext4 targz fpu audio display nand squashfs
+ CPU_TYPE:=cortex-a8
+ CPU_SUBTYPE:=vfpv3
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ 
+ KERNELNAME:=zImage dtbs
+ 
+diff --git a/target/linux/sunxi/Makefile b/target/linux/sunxi/Makefile
+index 1b1c30628faeb442f215524a2db70b98f19a7f43..418646d76c06159da7119ca66400d181f77769e6 100644
+--- a/target/linux/sunxi/Makefile
++++ b/target/linux/sunxi/Makefile
+@@ -13,7 +13,7 @@ BOARDNAME:=Allwinner A1x/A20/A3x/H3/H5/R40
+ FEATURES:=fpu usb ext4 display rtc squashfs
+ SUBTARGETS:=cortexa8 cortexa7 cortexa53
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ KERNELNAME:=zImage dtbs
+ 
+diff --git a/target/linux/x86/Makefile b/target/linux/x86/Makefile
+index f6b037b8862e54f4c38ad949b2bb1d0234f8a5cb..942405a44557e36d151425de5d787efe62e73e2a 100644
+--- a/target/linux/x86/Makefile
++++ b/target/linux/x86/Makefile
+@@ -12,7 +12,7 @@ BOARDNAME:=x86
+ FEATURES:=squashfs ext4 vdi vmdk pcmcia targz fpu boot-part rootfs-part
+ SUBTARGETS:=generic legacy geode 64
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ KERNEL_TESTING_PATCHVER:=5.4
+ 
+ KERNELNAME:=bzImage
+diff --git a/target/linux/zynq/Makefile b/target/linux/zynq/Makefile
+index 3119187c37c8b471782d2598d336edd7a01c5f1e..58853f2e0b6b55a767f2c148b923e43073871199 100644
+--- a/target/linux/zynq/Makefile
++++ b/target/linux/zynq/Makefile
+@@ -19,7 +19,7 @@ define Target/Description
+ 	Build firmware image for Zynq 7000 SoC devices.
+ endef
+ 
+-KERNEL_PATCHVER:=5.4
++KERNEL_PATCHVER:=4.19
+ 
+ include $(INCLUDE_DIR)/target.mk
+ 
