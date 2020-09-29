@@ -56,7 +56,6 @@ dnsmasq
 -iptables
 -ip6tables
 iwinfo
-libiwinfo-lua
 
 # OLSR
 olsrd
