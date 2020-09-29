@@ -39,7 +39,6 @@ dnsmasq
 -iptables
 -ip6tables
 iwinfo
-libiwinfo-lua
 -libustream-wolfssl
 -libwolfssl
 
