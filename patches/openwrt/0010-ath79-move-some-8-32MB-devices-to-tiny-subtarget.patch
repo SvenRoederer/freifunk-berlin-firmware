@@ -3,12 +3,13 @@ Date: Tue, 15 Sep 2020 01:32:15 +0200
 Subject: ath79: move some 8/32MB devices to tiny subtarget
 
 * start with ubnt nsm (xm)
+* some tplink 8/32 (WR1043v1; WR842v1/v2; WR710)
 
 diff --git a/target/linux/ath79/image/Makefile b/target/linux/ath79/image/Makefile
-index a555cfc6d50c20c4db54f38824c921b861d0b7cb..8ee43b827d5d05c0cea72600b344b524d0798189 100644
+index 4b4a67fd4d54d0f345477b4d3d221ebb8ff198e2..cac44823beb79f8e6e6dc4c566b914219c8536e7 100644
 --- a/target/linux/ath79/image/Makefile
 +++ b/target/linux/ath79/image/Makefile
-@@ -78,6 +78,7 @@ endif
+@@ -73,6 +73,7 @@ endif
  ifeq ($(SUBTARGET),tiny)
  include tiny-netgear.mk
  include tiny-tp-link.mk
@@ -36,6 +37,104 @@ index 0b7b0e1935aee95f2bd108aec5e5aef6e764c969..07dd622f3003297cdb2639950cf8b0a0
    DEFAULT := n
  endef
  
+diff --git a/target/linux/ath79/image/tiny-tp-link.mk b/target/linux/ath79/image/tiny-tp-link.mk
+index c918c6baa682e78b2b1c204fb9a55dc0a5aef1e7..d5b36de577aadecdeec599ae708acc6a52b678b4 100644
+--- a/target/linux/ath79/image/tiny-tp-link.mk
++++ b/target/linux/ath79/image/tiny-tp-link.mk
+@@ -223,6 +223,17 @@ define Device/tplink_tl-wa901nd-v5
+ endef
+ TARGET_DEVICES += tplink_tl-wa901nd-v5
+ 
++define Device/tplink_tl-wr1043nd-v1
++  $(Device/tplink-8m)
++  SOC := ar9132
++  DEVICE_MODEL := TL-WR1043N/ND
++  DEVICE_VARIANT := v1
++  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport
++  TPLINK_HWID := 0x10430001
++  SUPPORTED_DEVICES += tl-wr1043nd
++endef
++TARGET_DEVICES += tplink_tl-wr1043nd-v1
++
+ define Device/tplink_tl-wr703n
+   $(Device/tplink-4mlzma)
+   SOC := ar9331
+@@ -243,6 +254,29 @@ define Device/tplink_tl-wr740n-v1
+ endef
+ TARGET_DEVICES += tplink_tl-wr740n-v1
+ 
++define Device/tplink_tl-wr710n-v1
++  $(Device/tplink-8mlzma)
++  SOC := ar9331
++  DEVICE_MODEL := TL-WR710N
++  DEVICE_VARIANT := v1
++  DEVICE_PACKAGES := kmod-usb-chipidea2 kmod-usb-ledtrig-usbport
++  TPLINK_HWID := 0x07100001
++  SUPPORTED_DEVICES += tl-wr710n
++endef
++TARGET_DEVICES += tplink_tl-wr710n-v1
++
++define Device/tplink_tl-wr710n-v2.1
++  $(Device/tplink-8mlzma)
++  SOC := ar9331
++  DEVICE_MODEL := TL-WR710N
++  DEVICE_VARIANT := v2.1
++  DEVICE_PACKAGES := kmod-usb-chipidea2 kmod-usb-ledtrig-usbport
++  TPLINK_HWID := 0x07100002
++  TPLINK_HWREV := 0x2
++  SUPPORTED_DEVICES += tl-wr710n
++endef
++TARGET_DEVICES += tplink_tl-wr710n-v2.1
++
+ define Device/tplink_tl-wr740n-v3
+   $(Device/tplink-4m)
+   SOC := ar7240
+@@ -327,6 +361,16 @@ define Device/tplink_tl-wr802n-v2
+ endef
+ TARGET_DEVICES += tplink_tl-wr802n-v2
+ 
++define Device/tplink_tl-wr810n-v2
++  $(Device/tplink-8mlzma)
++  SOC := qca9533
++  DEVICE_MODEL := TL-WR810N
++  DEVICE_VARIANT := v2
++  TPLINK_HWID := 0x8100002
++  SUPPORTED_DEVICES += tl-wr810n-v2
++endef
++TARGET_DEVICES += tplink_tl-wr810n-v2
++
+ define Device/tplink_tl-wr841-v5
+   $(Device/tplink-4m)
+   SOC := ar7240
+@@ -403,6 +447,28 @@ define Device/tplink_tl-wr841-v12
+ endef
+ TARGET_DEVICES += tplink_tl-wr841-v12
+ 
++define Device/tplink_tl-wr842n-v1
++  $(Device/tplink-8m)
++  SOC := ar7241
++  DEVICE_MODEL := TL-WR842N/ND
++  DEVICE_VARIANT := v1
++  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport
++  TPLINK_HWID := 0x8420001
++  SUPPORTED_DEVICES += tl-mr3420
++endef
++TARGET_DEVICES += tplink_tl-wr842n-v1
++
++define Device/tplink_tl-wr842n-v2
++  $(Device/tplink-8mlzma)
++  SOC := ar9341
++  DEVICE_MODEL := TL-WR842N/ND
++  DEVICE_VARIANT := v2
++  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport
++  TPLINK_HWID := 0x8420002
++  SUPPORTED_DEVICES += tl-wr842n-v2
++endef
++TARGET_DEVICES += tplink_tl-wr842n-v2
++
+ define Device/tplink_tl-wr940n-v3
+   $(Device/tplink-4mlzma)
+   SOC := tp9343
 diff --git a/target/linux/ath79/image/tiny-ubnt.mk b/target/linux/ath79/image/tiny-ubnt.mk
 new file mode 100644
 index 0000000000000000000000000000000000000000..a8c5a2cf68d8851afcd66fe1857f1c549c5dec90
@@ -174,11 +273,55 @@ index 0000000000000000000000000000000000000000..a8c5a2cf68d8851afcd66fe1857f1c54
 +  SUPPORTED_DEVICES += rocket-m
 +endef
 +TARGET_DEVICES += ubnt_rocket-m
+diff --git a/target/linux/ath79/tiny/base-files/etc/board.d/01_leds b/target/linux/ath79/tiny/base-files/etc/board.d/01_leds
+index bc0b15bba5a18e1a2a586542e8e1e0364ca6aa22..a94f0786e306623ecb62fb3c1999fea166e5bea0 100755
+--- a/target/linux/ath79/tiny/base-files/etc/board.d/01_leds
++++ b/target/linux/ath79/tiny/base-files/etc/board.d/01_leds
+@@ -99,6 +99,13 @@ tplink,tl-wr941-v4)
+ 	ucidef_set_led_switch "lan3" "LAN3" "tp-link:green:lan3" "switch0" "0x08"
+ 	ucidef_set_led_switch "lan4" "LAN4" "tp-link:green:lan4" "switch0" "0x10"
+ 	;;
++tplink,tl-wr842n-v2)
++	ucidef_set_led_netdev "wan" "WAN" "tp-link:green:wan" "eth1"
++	ucidef_set_led_switch "lan1" "LAN1" "tp-link:green:lan1" "switch0" "0x04"
++	ucidef_set_led_switch "lan2" "LAN2" "tp-link:green:lan2" "switch0" "0x08"
++	ucidef_set_led_switch "lan3" "LAN3" "tp-link:green:lan3" "switch0" "0x10"
++	ucidef_set_led_switch "lan4" "LAN4" "tp-link:green:lan4" "switch0" "0x02"
++	;;
+ tplink,tl-wr940n-v3|\
+ tplink,tl-wr940n-v4|\
+ tplink,tl-wr941nd-v6)
 diff --git a/target/linux/ath79/tiny/base-files/etc/board.d/02_network b/target/linux/ath79/tiny/base-files/etc/board.d/02_network
-index cbcdbe9a895c7d8e9f0a9413a936cc4a24099aa9..fd1a599a1402c744ed3b340082b453f2949b86a6 100755
+index cbcdbe9a895c7d8e9f0a9413a936cc4a24099aa9..45a4a7b589667603343d631c970c8fc24bd62346 100755
 --- a/target/linux/ath79/tiny/base-files/etc/board.d/02_network
 +++ b/target/linux/ath79/tiny/base-files/etc/board.d/02_network
-@@ -83,6 +83,9 @@ ath79_setup_interfaces()
+@@ -59,6 +59,7 @@ ath79_setup_interfaces()
+ 	tplink,tl-wr841-v10|\
+ 	tplink,tl-wr841-v11|\
+ 	tplink,tl-wr841-v12|\
++	tplink,tl-wr842n-v1|\
+ 	tplink,tl-wr940n-v3|\
+ 	tplink,tl-wr940n-v4|\
+ 	tplink,tl-wr940n-v6|\
+@@ -71,11 +72,16 @@ ath79_setup_interfaces()
+ 	tplink,tl-wr740n-v4|\
+ 	tplink,tl-wr740n-v5|\
+ 	tplink,tl-wr741nd-v4|\
+-	tplink,tl-wr841-v8)
++	tplink,tl-wr841-v8|\
++	tplink,tl-wr842n-v2)
+ 		ucidef_set_interface_wan "eth1"
+ 		ucidef_add_switch "switch0" \
+ 			"0@eth0" "1:lan:4" "2:lan:1" "3:lan:2" "4:lan:3"
+ 		;;
++	tplink,tl-wr1043nd-v1)
++		ucidef_add_switch "switch0" \
++			"1:lan" "2:lan" "3:lan" "4:lan" "0:wan" "5@eth0"
++		;;
+ 	tplink,tl-wr941-v2)
+ 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "wan"
+ 		;;
+@@ -83,6 +89,9 @@ ath79_setup_interfaces()
  		ucidef_add_switch "switch0" \
  			"0@eth0" "2:lan:1" "3:lan:2" "4:lan:3" "5:lan:4" "1:wan"
  		;;
@@ -215,10 +358,18 @@ index 0000000000000000000000000000000000000000..91eeee7937c0f7fcfe0138e211666211
 +
 +exit 0
 diff --git a/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom b/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
-index 6ae2dc5f94817e83051fb97cede68c00f71f48c5..f562f2c18973598d6d3e72a0138a8dd9492ea0f8 100644
+index 6ae2dc5f94817e83051fb97cede68c00f71f48c5..c02b7d42232b2155a9597a09e6d05e8128025b8b 100644
 --- a/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
 +++ b/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
-@@ -39,6 +39,12 @@ case "$FIRMWARE" in
+@@ -33,12 +33,19 @@ case "$FIRMWARE" in
+ 	tplink,tl-wr740n-v3|\
+ 	tplink,tl-wr741-v1|\
+ 	tplink,tl-wr743nd-v1|\
+-	tplink,tl-wr841-v7)
++	tplink,tl-wr841-v7|\
++	tplink,tl-wr842n-v1|\)
+ 		caldata_extract "art" 0x1000 0x1000
+ 		;;
  	pqi,air-pen)
  		caldata_extract "art" 0x1000 0x7d2
  		;;
