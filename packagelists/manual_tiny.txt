@@ -16,6 +16,30 @@ wpad-mini
 -opkg
 -usign
 
+# additional excluded packages to save Flash-space
+-kmod-ipt-core
+-kmod-ipt-offload
+-kmod-nf-conntrack
+-kmod-nf-flow
+-kmod-nf-ipt
+-kmod-nf-reject
+-kmod-crypto-crc32c
+-kmod-crypto-hash
+-kmod-lib-crc16
+-kmod-lib-crc32c
+-libustream
+-libustream-wolfssl
+-libustream-wolfssl20200215
+-libwolfssl24
+-ca-bundle
+-uclient-fetch
+-uboot-envtools
+-openwrt-keyring
+-procd
+-getrandom
+-urngd
+-fwtool
+
 # Defaults
 freifunk-berlin-dhcp-defaults
 freifunk-berlin-freifunk-defaults
