@@ -7,12 +7,6 @@
 -kmod-usb-phy-nop
 -kmod-usb-ledtrig-usbport
 -kmod-usb-serial
--kmod-ipt-core
--kmod-ipt-offload
--kmod-nf-conntrack
--kmod-nf-flow
--kmod-nf-ipt
--kmod-nf-reject
 -kmod-ppp
 -ppp
 -ppp-mod-pppoe
@@ -21,6 +15,31 @@
 hostapd-mini
 opkg
 -usign
+
+# additional excluded packages to save Flash-space
+-kmod-ipt-core
+-kmod-ipt-offload
+-kmod-nf-conntrack
+-kmod-nf-flow
+-kmod-nf-ipt
+-kmod-nf-reject
+-kmod-crypto-crc32c
+-kmod-crypto-hash
+-kmod-lib-crc16
+-kmod-lib-crc32c
+-libustream
+-libustream-wolfssl
+-libustream-wolfssl20200215
+-libwolfssl24
+-libwolfssl
+-ca-bundle
+-uclient-fetch
+-uboot-envtools
+-openwrt-keyring
+-procd
+-getrandom
+-urngd
+-fwtool
 
 # Defaults
 freifunk-berlin-dhcp-defaults
@@ -34,13 +53,10 @@ luci-app-owm-cmd
 
 # Common
 dnsmasq
--ca-bundle
 -firewall
 -iptables
 -ip6tables
 iwinfo
--libustream-wolfssl
--libwolfssl
 
 # OLSR
 olsrd
