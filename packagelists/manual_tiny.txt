@@ -1,3 +1,57 @@
-# "Tiny"-devices have to less hardware-capabilities for this package-collection
-# probably the "mesh" image is an alternative
-#
+-kmod-usb-core
+-kmod-usb2
+-kmod-usb-ehci
+-kmod-usb-ohci
+-kmod-usb-chipidea
+-kmod-usb-chipidea2
+-kmod-usb-phy-nop
+-kmod-usb-ledtrig-usbport
+-kmod-usb-serial
+-kmod-ipt-core
+-kmod-ipt-offload
+-kmod-nf-conntrack
+-kmod-nf-flow
+-kmod-nf-ipt
+-kmod-nf-reject
+-kmod-ppp
+-ppp
+-ppp-mod-pppoe
+-wpad
+-wpad-basic-wolfssl
+hostapd-mini
+opkg
+-usign
+
+# Defaults
+freifunk-berlin-dhcp-defaults
+freifunk-berlin-freifunk-defaults
+freifunk-berlin-migration
+freifunk-berlin-network-defaults
+freifunk-berlin-olsrd-defaults
+freifunk-berlin-system-defaults
+community-profiles
+luci-app-owm-cmd
+
+# Common
+dnsmasq
+-ca-bundle
+-firewall
+-iptables
+-ip6tables
+iwinfo
+libiwinfo-lua
+-libustream-wolfssl
+-libwolfssl
+
+# OLSR
+olsrd
+#olsrd-mod-arprefresh
+olsrd-mod-dyn-gw
+olsrd-mod-jsoninfo
+olsrd-mod-nameservice
+olsrd-mod-watchdog
+kmod-ipip
+
+# BATMAN
+kmod-batman-adv
+batctl-tiny
