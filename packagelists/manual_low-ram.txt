@@ -12,61 +12,61 @@
 -ppp-mod-pppoe
 -wpad
 -wpad-basic-wolfssl
-wpad-mini
--opkg
--usign
-
-# additional excluded packages to save Flash-space
--kmod-ipt-core
--kmod-ipt-offload
--kmod-nf-conntrack
--kmod-nf-flow
--kmod-nf-ipt
--kmod-nf-reject
--kmod-crypto-crc32c
--kmod-crypto-hash
--kmod-lib-crc16
--kmod-lib-crc32c
--libustream
--libustream-wolfssl
--libustream-wolfssl20200215
--libwolfssl24
--ca-bundle
--uclient-fetch
--uboot-envtools
--openwrt-keyring
--procd
--getrandom
--urngd
--fwtool
+wpad-basic
+zram-swap
 
 # Defaults
 freifunk-berlin-dhcp-defaults
 freifunk-berlin-freifunk-defaults
-freifunk-berlin-migration
 freifunk-berlin-network-defaults
 freifunk-berlin-olsrd-defaults
 freifunk-berlin-system-defaults
+freifunk-berlin-uhttpd-defaults
 community-profiles
-luci-app-owm-cmd
 
 # Common
 dnsmasq
--firewall
--iptables
--ip6tables
 iwinfo
 libiwinfo-lua
 
+# Utils
+tcpdump
+mtr
+ip
+iperf
+tmux
+#vnstat
+#ethtool
+iwinfo
+libiwinfo-lua
+
+# GUI
+uhttpd
+uhttpd-mod-ubus
+luci-mod-freifunk
+luci-mod-admin-full
+luci-app-olsr
+luci-app-olsr-services
+luci-app-opkg
+luci-app-owm
+luci-app-owm-ant
+luci-app-owm-cmd
+luci-theme-bootstrap
+# GUI addon
+luci-i18n-base-de
+luci-i18n-base-en
+luci-i18n-olsr-de
+luci-i18n-olsr-en
+
 # OLSR
 olsrd
-#olsrd-mod-arprefresh
+olsrd-mod-arprefresh
 olsrd-mod-dyn-gw
 olsrd-mod-jsoninfo
 olsrd-mod-nameservice
-olsrd-mod-watchdog
 kmod-ipip
 
 # BATMAN
 kmod-batman-adv
+alfred
 batctl-tiny

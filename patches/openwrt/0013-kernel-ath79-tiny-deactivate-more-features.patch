@@ -1,0 +1,28 @@
+From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
+Date: Sun, 27 Sep 2020 01:29:38 +0200
+Subject: kernel: ath79-tiny deactivate more features
+
+not needed for tiny hardware
+
+diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
+index c42f44b004bf3b3626fc7634b6b5df4d1547275b..0c197958660bd1a96cae6c4c27d7f97f634acb5b 100644
+--- a/target/linux/ath79/tiny/config-default
++++ b/target/linux/ath79/tiny/config-default
+@@ -13,3 +13,17 @@ CONFIG_PHYLINK=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ # CONFIG_USB_SUPPORT is not set
++# CONFIG_HAVE_DEBUG_KMEMLEAK is not set
++# CONFIG_HAVE_DEBUG_STACKOVERFLOW is not set
++# CONFIG_HAVE_IDE is not set
++# CONFIG_HAVE_KVM is not set
++# CONFIG_NVMEM is not set
++# CONFIG_AIO is not set
++# CONFIG_BLK_DEV is not set
++# CONFIG_DEBUG_FS is not set
++# CONFIG_DEBUG_KERNEL is not set
++# CONFIG_ISDN is not set
++# CONFIG_SND_DRIVERS is not set
++# CONFIG_STAGING is not set
++# CONFIG_VIRTIO_MENU is not set
++
