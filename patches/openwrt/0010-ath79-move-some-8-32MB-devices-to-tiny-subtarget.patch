@@ -358,30 +358,23 @@ index 0000000000000000000000000000000000000000..91eeee7937c0f7fcfe0138e211666211
 +
 +exit 0
 diff --git a/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom b/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
-index 6ae2dc5f94817e83051fb97cede68c00f71f48c5..c02b7d42232b2155a9597a09e6d05e8128025b8b 100644
+index 6ae2dc5f94817e83051fb97cede68c00f71f48c5..8ebff6133274be23e71107368f1085c2512ca7bc 100644
 --- a/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
 +++ b/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
-@@ -33,12 +33,19 @@ case "$FIRMWARE" in
+@@ -33,7 +33,12 @@ case "$FIRMWARE" in
  	tplink,tl-wr740n-v3|\
  	tplink,tl-wr741-v1|\
  	tplink,tl-wr743nd-v1|\
 -	tplink,tl-wr841-v7)
 +	tplink,tl-wr841-v7|\
-+	tplink,tl-wr842n-v1|\)
- 		caldata_extract "art" 0x1000 0x1000
- 		;;
- 	pqi,air-pen)
- 		caldata_extract "art" 0x1000 0x7d2
- 		;;
++	tplink,tl-wr842n-v1|\
 +	ubnt,nanostation-m|\
 +	ubnt,picostation-m|\
 +	ubnt,powerbridge-m|\
 +	ubnt,rocket-m)
-+		caldata_extract "art" 0x1000 0x1000
-+		;;
- 	*)
- 		caldata_die "board $board is not supported yet"
+ 		caldata_extract "art" 0x1000 0x1000
  		;;
+ 	pqi,air-pen)
 diff --git a/target/linux/ath79/tiny/target.mk b/target/linux/ath79/tiny/target.mk
 index 2ee71ea92137f7d730b63149131489f41722a76c..f4a5a9a3b6c9e840123c5e36e5edabe21f33f073 100644
 --- a/target/linux/ath79/tiny/target.mk
