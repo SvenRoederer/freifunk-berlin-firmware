@@ -9,10 +9,10 @@ Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
 
 diff --git a/luci-common.mk b/luci-common.mk
 new file mode 100644
-index 0000000000000000000000000000000000000000..db15e46e35beebd7c9a1ee7eda7ce746261ef105
+index 0000000000000000000000000000000000000000..927c3f4278a21a0d3da40928558da818c97a364d
 --- /dev/null
 +++ b/luci-common.mk
-@@ -0,0 +1,187 @@
+@@ -0,0 +1,188 @@
 +#
 +# Copyright (C) 2008-2015 The LuCI Team <luci@lists.subsignal.org>
 +#
@@ -40,6 +40,7 @@ index 0000000000000000000000000000000000000000..db15e46e35beebd7c9a1ee7eda7ce746
 +LUCI_LANG.mr=Marāṭhī (Marathi)
 +LUCI_LANG.ms=Bahasa Melayu (Malay)
 +LUCI_LANG.nb_NO=Norsk (Norwegian)
++LUCI_LANG.nl=Nederlands (Dutch)
 +LUCI_LANG.pl=Polski (Polish)
 +LUCI_LANG.pt_BR=Português do Brasil (Brazilian Portuguese)
 +LUCI_LANG.pt=Português (Portuguese)
@@ -201,10 +202,10 @@ index 0000000000000000000000000000000000000000..db15e46e35beebd7c9a1ee7eda7ce746
 +	done
 +endef
 diff --git a/luci.mk b/luci.mk
-index 59433ab8850d19640276331b476628c9b981fe9d..d7ab68320d891437d36e24fab619017470967ded 100644
+index 32c9fa3e4ba068695ab5a8dd93aec6cdbf8242ca..d7ab68320d891437d36e24fab619017470967ded 100644
 --- a/luci.mk
 +++ b/luci.mk
-@@ -14,113 +14,11 @@ LUCI_SECTION?=luci
+@@ -14,114 +14,11 @@ LUCI_SECTION?=luci
  LUCI_CATEGORY?=LuCI
  
  PKG_BUILD_DEPENDS += $(LUCI_BUILD_DEPENDS)
@@ -230,6 +231,7 @@ index 59433ab8850d19640276331b476628c9b981fe9d..d7ab68320d891437d36e24fab6190174
 -LUCI_LANG.mr=Marāṭhī (Marathi)
 -LUCI_LANG.ms=Bahasa Melayu (Malay)
 -LUCI_LANG.nb_NO=Norsk (Norwegian)
+-LUCI_LANG.nl=Nederlands (Dutch)
 -LUCI_LANG.pl=Polski (Polish)
 -LUCI_LANG.pt_BR=Português do Brasil (Brazilian Portuguese)
 -LUCI_LANG.pt=Português (Portuguese)
@@ -321,7 +323,7 @@ index 59433ab8850d19640276331b476628c9b981fe9d..d7ab68320d891437d36e24fab6190174
  
  define Package/$(PKG_NAME)
    SECTION:=$(LUCI_SECTION)
-@@ -139,19 +37,6 @@ ifneq ($(LUCI_DESCRIPTION),)
+@@ -140,19 +37,6 @@ ifneq ($(LUCI_DESCRIPTION),)
   endef
  endif
  
@@ -341,7 +343,7 @@ index 59433ab8850d19640276331b476628c9b981fe9d..d7ab68320d891437d36e24fab6190174
  ifneq ($(wildcard ${CURDIR}/src/Makefile),)
   MAKE_PATH := src/
   MAKE_VARS += FPIC="$(FPIC)" LUCI_VERSION="$(PKG_SRC_VERSION)" LUCI_GITBRANCH="$(PKG_GITBRANCH)"
-@@ -164,71 +49,6 @@ else
+@@ -165,71 +49,6 @@ else
   endef
  endif
  
