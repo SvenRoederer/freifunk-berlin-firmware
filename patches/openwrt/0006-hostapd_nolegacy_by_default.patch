@@ -3,7 +3,7 @@ Date: Fri, 6 Sep 2019 08:29:50 +0000
 Subject: hostapd_nolegacy_by_default
 
 diff --git a/package/network/services/hostapd/files/hostapd.sh b/package/network/services/hostapd/files/hostapd.sh
-index 637f298ad9142a1725879192f4cfbae58a83b947..2c0137d7e2a8d9b69c51faca8ccdaf8366021a6d 100644
+index 3290358ed21ea571ac7b7683f6900b749064b1b9..1667f737361715936c6d4dbbf737091ee2f1d1bb 100644
 --- a/package/network/services/hostapd/files/hostapd.sh
 +++ b/package/network/services/hostapd/files/hostapd.sh
 @@ -120,7 +120,7 @@ hostapd_prepare_device_config() {
