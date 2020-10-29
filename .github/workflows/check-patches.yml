@@ -10,9 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Refresh patches
-        run: make refresh-patches GLUON_SITEDIR="contrib/ci/minimal-site"
+        run: make update-patches
       - name: Show diff
-        run: git status; git diff
+        run: git status
       - name: Patch status
         run: git diff-files --quiet
 
