@@ -14,6 +14,12 @@ ffberlin_freeup_ram() {
   rm >/dev/null -f /tmp/luci-indexcache*
   rm >/dev/null -rf /tmp/luci-modulecache
 
+  # remove unused kernel modules
+  [ -x lsmod ] && UNUSED_MODULES=$(lsmod |grep '[[:space:]]0 $'| cut -d " " -f 1)
+  for module in ${UNUSED_MODULES}; do
+    rmmod $module
+  done
+
   # taken from Gluon (http://lists.infradead.org/pipermail/openwrt-devel/2020-October/031783.html)
   echo 3 > /proc/sys/vm/drop_caches
 }
