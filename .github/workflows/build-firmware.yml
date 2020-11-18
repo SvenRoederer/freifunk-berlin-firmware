@@ -28,8 +28,8 @@ jobs:
     - name: setup build-environment
       run: |
         mkdir logs
-        echo "::set-env name=MAKE_OPTS:: -j$(nproc) TARGET=${{matrix.target}} IS_BUILDBOT=${IS_BUILDBOT} "
-        echo "::set-env name=next_buildstep::config"
+        echo "MAKE_OPTS= -j$(nproc) TARGET=${{matrix.target}} IS_BUILDBOT=${IS_BUILDBOT} " >>$GITHUB_ENV
+        echo "next_buildstep=config" >>$GITHUB_ENV
         df -h
         echo "building branch (full): " ${GITHUB_REF}
         echo "building branch (short):" ${GITHUB_REF##*/}
@@ -41,14 +41,14 @@ jobs:
         # in addition replace all / by _
         var=$(echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;')
         echo helper-var: ${var}
-        echo "::set-env name=BRANCHNAME_normalized::${var}"
+        echo "BRANCHNAME_normalized=${var}" >>$GITHUB_ENV
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         echo "debug ${{ env.BRANCHNAME_normalized }}"
         echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
-        echo "::set-env name=next_buildstep::${nextstep}"
+        echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: OpenWrt-config to artifacts
       run: cp openwrt/.config logs/openwrt.config
     - name: openwrt ${{ env.next_buildstep }}
