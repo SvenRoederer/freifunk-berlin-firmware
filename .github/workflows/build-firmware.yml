@@ -41,7 +41,7 @@ jobs:
         # in addition replace all / by _
         var=$(echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;')
         echo helper-var: ${var}
-        echo "::set-env name=BRANCHNAME_normalized::${var}"
+        echo "BRANCHNAME_normalized=${var}" >> $GITHUB_ENV
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
