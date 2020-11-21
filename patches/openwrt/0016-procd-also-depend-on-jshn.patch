@@ -1,0 +1,28 @@
+From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
+Date: Sat, 21 Nov 2020 21:00:55 +0100
+Subject: procd: also depend on jshn
+
+fixes "file no found" error on stripped down images, caused by prod.sh:43.
+
+diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
+index 75da0b071b4f5d13bc901290b4a514bfbde0314e..ca8e747a260d2b5113b0ec295c1e1aee27b232bc 100644
+--- a/package/system/procd/Makefile
++++ b/package/system/procd/Makefile
+@@ -8,7 +8,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=procd
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL=$(PROJECT_GIT)/project/procd.git
+@@ -45,7 +45,7 @@ define Package/procd/Default
+   SECTION:=base
+   CATEGORY:=Base system
+   DEPENDS:=+ubusd +ubus +libjson-script +ubox +USE_GLIBC:librt +libubox \
+-	  +libubus +libblobmsg-json +libjson-c
++	  +libubus +libblobmsg-json +libjson-c +jshn
+   TITLE:=OpenWrt system process manager
+   USERID:=:dialout=20 :audio=29
+ endef
