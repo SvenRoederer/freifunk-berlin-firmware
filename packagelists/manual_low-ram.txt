@@ -10,6 +10,15 @@
 -wpad-basic-wolfssl
 hostapd-basic
 
+libblobmsg-json
+libjson-c5
+libjson-script
+libubox20191228
+libubus20191227
+procd
+jshn
+libuci20130104
+
 # Defaults
 freifunk-berlin-dhcp-defaults
 freifunk-berlin-freifunk-defaults
