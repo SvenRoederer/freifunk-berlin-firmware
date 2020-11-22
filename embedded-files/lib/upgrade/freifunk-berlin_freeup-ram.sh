@@ -25,7 +25,9 @@ ffberlin_freeup_ram() {
   PREV_MOD_COUNT=0
   while true; do
     UNUSED_MODULES=$(lsmod |grep '[[:space:]]0 $'| cut -d " " -f 1)
-    if ( $(${UNUSED_MODULES} | wc -w) -eq ${PREV_MOD_COUNT} ); then 
+    # exit loop, when no unused modules or no additional modules could be made unused
+    [[ -z "${UNUSED_MODULES}" ]] && break
+    if ( $(echo ${UNUSED_MODULES} | wc -w) -eq ${PREV_MOD_COUNT} ); then 
       break
     fi
     for module in ${UNUSED_MODULES}; do
