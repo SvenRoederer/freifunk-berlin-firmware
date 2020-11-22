@@ -6,7 +6,7 @@ ffberlin_freeup_ram() {
   ifdown ffuplink
   ifdown tunl0
 
-  SERVICES="cron pingcheck uhttpd rpcd urngd rssi firewall dnsmasq"
+  SERVICES="cron pingcheck uhttpd rpcd urngd firewall dnsmasq rssi"
 
   # stop services if existing and running
   for service in $SERVICES; do
