@@ -1,0 +1,19 @@
+From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
+Date: Sun, 22 Nov 2020 03:36:30 +0100
+Subject: sysupgrade: call custome "freifunk-berlin_freeup-ram.sh" script
+
+diff --git a/package/base-files/files/sbin/sysupgrade b/package/base-files/files/sbin/sysupgrade
+index 9c6bfd546dbd62703226cf71fcc7e67a8a1325d1..46de19f4b533e97f9db182e486d044323ab13840 100755
+--- a/package/base-files/files/sbin/sysupgrade
++++ b/package/base-files/files/sbin/sysupgrade
+@@ -352,6 +352,10 @@ if [ $TEST -eq 1 ]; then
+ 	exit 0
+ fi
+ 
++v "Calling Freifunk-Berlin freeRam ..."
++. /usr/share/freifunk-berlin/freifunk-berlin_freeup-ram.sh
++v " ... continuing original OpenWrt sysupgrade."
++
+ install_bin /sbin/upgraded
+ v "Commencing upgrade. Closing all shell sessions."
+ 
