@@ -20,7 +20,9 @@ ffberlin_freeup_ram() {
   # taken from Gluon (http://lists.infradead.org/pipermail/openwrt-devel/2020-October/031783.html)
   echo 3 > /proc/sys/vm/drop_caches
   /etc/init.d/zram stop
+}
 
+ffberlin_flush_modules() {
   [ -x /sbin/lsmod ] || return
   # remove unused kernel modules
   PREV_MOD_COUNT=0
@@ -39,4 +41,4 @@ ffberlin_freeup_ram() {
 }
 
 ffberlin_freeup_ram
-
+ffberlin_flush_modules
