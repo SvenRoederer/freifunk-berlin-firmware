@@ -30,9 +30,7 @@ ffberlin_flush_modules() {
     UNUSED_MODULES=$(lsmod |grep '[[:space:]]0 $'| cut -d " " -f 1)
     # exit loop, when no unused modules or no additional modules could be made unused
     [[ -z "${UNUSED_MODULES}" ]] && break
-    if ( $(echo ${UNUSED_MODULES} | wc -w) -eq ${PREV_MOD_COUNT} ); then 
-      break
-    fi
+    [[ $(echo ${UNUSED_MODULES} | wc -w) -eq ${PREV_MOD_COUNT} ]] && break
     for module in ${UNUSED_MODULES}; do
       rmmod $module
     done
