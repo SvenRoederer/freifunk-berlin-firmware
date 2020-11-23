@@ -9,7 +9,7 @@ ffberlin_freeup_ram() {
   json_select release
   json_get_var TARGET target
   # continue only on "tiny" subtargets
-  [[ ${TARGET} = ${TARGET%/tiny} ]] && return
+  [ ${TARGET} = ${TARGET%/tiny} ] && return
 
   ifdown ffuplink
   ifdown tunl0
@@ -33,8 +33,8 @@ ffberlin_freeup_ram() {
   while true; do
     UNUSED_MODULES=$(lsmod |grep '[[:space:]]0 $'| cut -d " " -f 1)
     # exit loop, when no unused modules or no additional modules could be made unused
-    [[ -z "${UNUSED_MODULES}" ]] && break
-    [[ $(echo ${UNUSED_MODULES} | wc -w) -eq ${PREV_MOD_COUNT} ]] && break
+    [ -z "${UNUSED_MODULES}" ] && break
+    [ $(echo ${UNUSED_MODULES} | wc -w) -eq ${PREV_MOD_COUNT} ] && break
     for module in ${UNUSED_MODULES}; do
       rmmod $module
     done
