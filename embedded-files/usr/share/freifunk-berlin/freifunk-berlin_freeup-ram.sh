@@ -1,7 +1,15 @@
+. /usr/share/libubox/jshn.sh
 
 ffberlin_freeup_ram() {
   local SERVICES
   local service
+  local TARGET
+
+  json_load "$(ubus call system board)"
+  json_select release
+  json_get_var TARGET target
+  # continue only on "tiny" subtargets
+  [[ ${TARGET} = ${TARGET%/tiny} ]] && return
 
   ifdown ffuplink
   ifdown tunl0
@@ -18,9 +26,7 @@ ffberlin_freeup_ram() {
   rm >/dev/null -rf /tmp/luci-modulecache
 
   /etc/init.d/zram stop
-}
 
-ffberlin_flush_modules() {
   [ -x /sbin/lsmod ] || return
   # remove unused kernel modules
   PREV_MOD_COUNT=0
@@ -40,4 +46,3 @@ ffberlin_flush_modules() {
 echo 3 > /proc/sys/vm/drop_caches
 
 ffberlin_freeup_ram
-ffberlin_flush_modules
