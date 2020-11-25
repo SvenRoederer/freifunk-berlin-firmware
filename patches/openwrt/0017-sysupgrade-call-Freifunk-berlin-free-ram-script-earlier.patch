@@ -1,0 +1,37 @@
+From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
+Date: Wed, 25 Nov 2020 02:31:25 +0100
+Subject: sysupgrade: call Freifunk-berlin-free-ram script earlier
+
+All purly backup-related option will have already exited before explicitly, so
+we are going to upgrade the firmware. Start freeing as much ram as possible,
+before starting with the original OpenWrt sysupgrade procedure.
+Call this here only, to not call teh "free-Ram" steps when only doing a backup,
+as the script will reduce the functionality of the whole system. Doing backups
+should not change the system-state (stopping services, networ, ...)
+
+diff --git a/package/base-files/files/sbin/sysupgrade b/package/base-files/files/sbin/sysupgrade
+index 46de19f4b533e97f9db182e486d044323ab13840..79927a2b5cc0569564afd152166284de06b46d3d 100755
+--- a/package/base-files/files/sbin/sysupgrade
++++ b/package/base-files/files/sbin/sysupgrade
+@@ -287,6 +287,10 @@ if [ -n "$CONF_RESTORE" ]; then
+ 	exit $?
+ fi
+ 
++v "Calling Freifunk-Berlin freeRam ..."
++. /usr/share/freifunk-berlin/freifunk-berlin_freeup-ram.sh
++v " ... continuing original OpenWrt sysupgrade."
++
+ type platform_check_image >/dev/null 2>/dev/null || {
+ 	echo "Firmware upgrade is not implemented for this platform." >&2
+ 	exit 1
+@@ -352,10 +356,6 @@ if [ $TEST -eq 1 ]; then
+ 	exit 0
+ fi
+ 
+-v "Calling Freifunk-Berlin freeRam ..."
+-. /usr/share/freifunk-berlin/freifunk-berlin_freeup-ram.sh
+-v " ... continuing original OpenWrt sysupgrade."
+-
+ install_bin /sbin/upgraded
+ v "Commencing upgrade. Closing all shell sessions."
+ 
