@@ -3,13 +3,13 @@ Date: Sun, 27 Sep 2020 03:07:46 +0200
 Subject: kernel log_buffer size = 64k (was 128k)
 
 diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
-index 8c7ab419a416efe9a0fe9060700f0c11086ed27a..5df68913613bf8e3b59a41620c657b615bd70974 100644
+index f686d284f67389ad361cb36c72b6f4923ef95493..b8e94ebe4edf2d933f91ba0d521786284aeadda7 100644
 --- a/target/linux/ath79/tiny/config-default
 +++ b/target/linux/ath79/tiny/config-default
-@@ -19,6 +19,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+@@ -17,6 +17,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ # CONFIG_HAVE_DEBUG_STACKOVERFLOW is not set
+ # CONFIG_HAVE_IDE is not set
  CONFIG_BLOCK=y
- # CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
 +CONFIG_LOG_BUF_SHIFT=16
  # CONFIG_HAVE_KVM is not set
  # CONFIG_NVMEM is not set
