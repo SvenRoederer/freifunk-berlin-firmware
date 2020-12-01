@@ -376,14 +376,14 @@ index 6ae2dc5f94817e83051fb97cede68c00f71f48c5..8ebff6133274be23e71107368f1085c2
  		;;
  	pqi,air-pen)
 diff --git a/target/linux/ath79/tiny/target.mk b/target/linux/ath79/tiny/target.mk
-index 2ee71ea92137f7d730b63149131489f41722a76c..f4a5a9a3b6c9e840123c5e36e5edabe21f33f073 100644
+index 91f135b56eda4534edfbf68414933cb42a75d1e2..79623bd88908a5b87c2259a2e1b78302d2fb19bf 100644
 --- a/target/linux/ath79/tiny/target.mk
 +++ b/target/linux/ath79/tiny/target.mk
 @@ -1,5 +1,5 @@
 -BOARDNAME:=Devices with small flash
--FEATURES += squashfs small_flash
+-FEATURES += small_flash
 +BOARDNAME:=Devices with small flash / low ram
-+FEATURES += squashfs
++FEATURES += 
  
  DEFAULT_PACKAGES += wpad-basic-wolfssl
  
