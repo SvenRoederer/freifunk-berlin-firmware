@@ -1,0 +1,20 @@
+From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
+Date: Sun, 6 Dec 2020 02:19:42 +0100
+Subject: olsr-defaults: depend on package "freifunk-common-olsr"
+
+Adapt to upstream split of olsr-specific features into separate package.
+This way we will include "neigh.sh" and "olsr-watchdog" again.
+
+diff --git a/defaults/freifunk-berlin-olsrd-defaults/Makefile b/defaults/freifunk-berlin-olsrd-defaults/Makefile
+index 87f442e58d03e12d52c8a8db80bf8026de937907..bccdcb4e2e292edfe5d847bbae8b84a96de4c74b 100644
+--- a/defaults/freifunk-berlin-olsrd-defaults/Makefile
++++ b/defaults/freifunk-berlin-olsrd-defaults/Makefile
+@@ -9,7 +9,7 @@ define Package/freifunk-berlin-olsrd-defaults
+   CATEGORY:=freifunk-berlin
+   TITLE:=Freifunk Berlin olsrd default configuration
+   URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +olsrd +freifunk-berlin-lib-guard
++  DEPENDS+= +olsrd +freifunk-berlin-lib-guard +freifunk-common-olsr
+   PKGARCH:=all
+ endef
+ 
