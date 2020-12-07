@@ -1,0 +1,99 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Mon, 7 Dec 2020 00:22:40 +0100
+Subject: owm: drop runtime dependency to rpcd
+
+the owm commandline tool and the common library depending on a running rpcd.
+This dependency is caused by using the luci.model.uci package. As the tool runs
+from the commandline anyway, switch to the uci package which provides the same
+functionality with nearly the same API but without needing the rpcd.
+
+For the commandline tool the switch from package "luci.model.uci" to "uci" can
+be done straight forward. The library uses the get_first() call which is not
+present in the replacement package. We switch to get() which should usually
+return the same data as before, as there have been never a 2nd "olsrd" section
+in the uci-file.
+
+diff --git a/utils/luci-app-owm/Makefile b/utils/luci-app-owm/Makefile
+index a7524766f74f9ddab28ad201ead9912117e0dfe4..c3e88bd89bc3d1a15d6c51bc0050e133b6b047a8 100644
+--- a/utils/luci-app-owm/Makefile
++++ b/utils/luci-app-owm/Makefile
+@@ -8,7 +8,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=luci-app-owm
+-PKG_RELEASE:=0.4.20
++PKG_RELEASE:=0.4.21
+ 
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+@@ -37,7 +37,7 @@ endef
+ 
+ define Package/luci-app-owm-cmd
+   $(call Package/luci-app-owm/default)
+-  DEPENDS:=luci-app-owm +luci-lib-httpclient
++  DEPENDS:=luci-app-owm +luci-lib-httpclient +libuci-lua
+   TITLE:=luci-app-owm-cmd - Commandline update tool
+ endef
+ 
+diff --git a/utils/luci-app-owm/files/owm.lua b/utils/luci-app-owm/files/owm.lua
+index 5ea13b12b6c9492d7c64e318e0adbd738ec25565..46863ef6344d484872df1ab8aaa0dbad9c4e012b 100755
+--- a/utils/luci-app-owm/files/owm.lua
++++ b/utils/luci-app-owm/files/owm.lua
+@@ -1,7 +1,7 @@
+ #!/usr/bin/lua
+ 
+ require("luci.util")
+-require("luci.model.uci")
++require("uci")
+ require("luci.sys")
+ require("nixio.fs")
+ require("luci.httpclient")
+@@ -33,7 +33,7 @@ if (#arg) > 0 and arg[1]~="--dry-run" then
+ end
+ 
+ -- Init state session
+-local uci = luci.model.uci.cursor_state()
++local uci = uci.cursor(nil, "/var/state")
+ local owm = require "luci.owm"
+ local json = require "luci.json"
+ local lockfile = "/var/run/owm.lock"
+diff --git a/utils/luci-app-owm/luasrc/owm.lua b/utils/luci-app-owm/luasrc/owm.lua
+index 2566069f94c026ba87a6788712c0a0690f8f6d84..695c62733bda9eea0f7e9c0a9bb459b5f3e8c9f4 100644
+--- a/utils/luci-app-owm/luasrc/owm.lua
++++ b/utils/luci-app-owm/luasrc/owm.lua
+@@ -16,7 +16,7 @@ $Id$
+ local bus = require "ubus"
+ local string = require "string"
+ local sys = require "luci.sys"
+-local uci = require "luci.model.uci".cursor_state()
++local uci = require "uci".cursor()
+ local util = require "luci.util"
+ local json = require "luci.json"
+ local netm = require "luci.model.network"
+@@ -84,7 +84,7 @@ end
+ 
+ function fetch_olsrd_config()
+ 	local data = {}
+-	local IpVersion = uci:get_first("olsrd", "olsrd","IpVersion")
++	local IpVersion = uci:get("olsrd", "olsrd","IpVersion")
+ 	if IpVersion == "4" or IpVersion == "6and4" then
+ 		local jsonreq4 = util.exec("echo /config | nc 127.0.0.1 9090 2>/dev/null") or {}
+ 		local jsondata4 = json.decode(jsonreq4) or {}
+@@ -104,7 +104,7 @@ end
+ 
+ function fetch_olsrd_links()
+ 	local data = {}
+-	local IpVersion = uci:get_first("olsrd", "olsrd","IpVersion")
++	local IpVersion = uci:get("olsrd", "olsrd","IpVersion")
+ 	if IpVersion == "4" or IpVersion == "6and4" then
+ 		local jsonreq4 = util.exec("echo /links | nc 127.0.0.1 9090 2>/dev/null") or {}
+ 		local jsondata4 = json.decode(jsonreq4) or {}
+@@ -145,7 +145,7 @@ end
+ 
+ function fetch_olsrd_neighbors(interfaces)
+ 	local data = {}
+-	local IpVersion = uci:get_first("olsrd", "olsrd","IpVersion")
++	local IpVersion = uci:get("olsrd", "olsrd","IpVersion")
+ 	if IpVersion == "4" or IpVersion == "6and4" then
+ 		local jsonreq4 = util.exec("echo /links | nc 127.0.0.1 9090 2>/dev/null") or {}
+ 		local jsondata4 = json.decode(jsonreq4) or {}
