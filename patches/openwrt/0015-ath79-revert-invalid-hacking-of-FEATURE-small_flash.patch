@@ -1,0 +1,40 @@
+From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
+Date: Thu, 10 Dec 2020 23:51:32 +0100
+Subject: ath79: revert invalid hacking of FEATURE small_flash
+
+not really unexpected and also mentioned by Adrian on the Mailinglist:
+FEATURE in DEVICE-devinitions will not work
+
+http://lists.openwrt.org/pipermail/openwrt-devel/2020-December/032565.html
+
+diff --git a/target/linux/ath79/image/common-tp-link.mk b/target/linux/ath79/image/common-tp-link.mk
+index 07dd622f3003297cdb2639950cf8b0a0e7c85c07..0b7b0e1935aee95f2bd108aec5e5aef6e764c969 100644
+--- a/target/linux/ath79/image/common-tp-link.mk
++++ b/target/linux/ath79/image/common-tp-link.mk
+@@ -40,7 +40,6 @@ define Device/tplink-4m
+   $(Device/tplink-nolzma)
+   TPLINK_FLASHLAYOUT := 4M
+   IMAGE_SIZE := 3904k
+-  FEATURES := small_flash
+   DEFAULT := n
+ endef
+ 
+@@ -48,7 +47,6 @@ define Device/tplink-4mlzma
+   $(Device/tplink-v1)
+   TPLINK_FLASHLAYOUT := 4Mlzma
+   IMAGE_SIZE := 3904k
+-  FEATURES := small_flash
+   DEFAULT := n
+ endef
+ 
+diff --git a/target/linux/ath79/tiny/target.mk b/target/linux/ath79/tiny/target.mk
+index 79623bd88908a5b87c2259a2e1b78302d2fb19bf..0f71315782785cf573822e6219ee0f1a1330308b 100644
+--- a/target/linux/ath79/tiny/target.mk
++++ b/target/linux/ath79/tiny/target.mk
+@@ -1,5 +1,5 @@
+ BOARDNAME:=Devices with small flash / low ram
+-FEATURES += 
++FEATURES += small_flash
+ 
+ DEFAULT_PACKAGES += wpad-basic-wolfssl
+ 
