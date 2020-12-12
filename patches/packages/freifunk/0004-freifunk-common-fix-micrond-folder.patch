@@ -1,0 +1,35 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sat, 12 Dec 2020 03:30:39 +0100
+Subject: freifunk-common: fix micrond folder
+
+The micrond tasks belong into the /usr/lib/micron.d/ folder.
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+
+diff --git a/contrib/package/freifunk-common/Makefile b/contrib/package/freifunk-common/Makefile
+index a2aac75d5c18c2a81f4d0f4b79af56fcabfaba68..5c6b8285a757789ed54dae9112be85633f609320 100644
+--- a/contrib/package/freifunk-common/Makefile
++++ b/contrib/package/freifunk-common/Makefile
+@@ -4,7 +4,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=freifunk-common
+-PKG_RELEASE:=9
++PKG_RELEASE:=10
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
+diff --git a/contrib/package/freifunk-common/files-olsrv1/usr/lib/micron.d/ff_olsr_watchdog b/contrib/package/freifunk-common/files-olsrv1/usr/lib/micron.d/ff_olsr_watchdog
+new file mode 100644
+index 0000000000000000000000000000000000000000..23d8be696bda22d433d12837bada3399f7ea57cb
+--- /dev/null
++++ b/contrib/package/freifunk-common/files-olsrv1/usr/lib/micron.d/ff_olsr_watchdog
+@@ -0,0 +1 @@
++*/5 * * * *	/usr/sbin/ff_olsr_watchdog
+diff --git a/contrib/package/freifunk-common/files-olsrv1/usr/micron.d/ff_olsr_watchdog b/contrib/package/freifunk-common/files-olsrv1/usr/micron.d/ff_olsr_watchdog
+deleted file mode 100644
+index 23d8be696bda22d433d12837bada3399f7ea57cb..0000000000000000000000000000000000000000
+--- a/contrib/package/freifunk-common/files-olsrv1/usr/micron.d/ff_olsr_watchdog
++++ /dev/null
+@@ -1 +0,0 @@
+-*/5 * * * *	/usr/sbin/ff_olsr_watchdog
