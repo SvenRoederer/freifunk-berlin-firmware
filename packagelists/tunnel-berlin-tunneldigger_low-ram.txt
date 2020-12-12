@@ -70,6 +70,7 @@ olsrd-mod-arprefresh
 olsrd-mod-dyn-gw
 olsrd-mod-jsoninfo
 olsrd-mod-nameservice
+olsrd-mod-watchdog
 kmod-ipip
 
 # Uplink
