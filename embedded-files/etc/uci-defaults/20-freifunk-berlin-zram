@@ -1,6 +1,6 @@
 #!/bin/sh
 
 uci set system.@system[0].zram_comp_algo=lzo
-uci set system.@system[0].zram_size_mb=6
+uci set system.@system[0].zram_size_mb=3
 uci commit system
 
