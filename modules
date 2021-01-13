@@ -18,4 +18,7 @@ PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
 PACKAGES_ROUTING_COMMIT=02b4dbfcb7b8f8b566940847d22d5a6f229d2e66
 PACKAGES_ROUTING_BRANCH=openwrt-19.07
 
-GLUON_FEEDS='packages luci routing'
+PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
+PACKAGES_GLUON_COMMIT=95c805c863cd0818f0e5196d3b7bde6860fd2861
+
+GLUON_FEEDS='packages luci routing gluon'
