@@ -12,20 +12,9 @@ REVISION=git describe --always
 FW_DIR=$(shell pwd)
 OPENWRT_DIR=$(FW_DIR)/openwrt
 TARGET_CONFIG=$(FW_DIR)/configs/common.config $(FW_DIR)/configs/$(MAINTARGET)-$(SUBTARGET).config
-TARGET_CONFIG_AUTOBUILD=$(FW_DIR)/configs/common-autobuild.config
 FW_TARGET_DIR=$(FW_DIR)/firmwares/$(MAINTARGET)-$(SUBTARGET)
 VERSION_FILE=$(FW_TARGET_DIR)/VERSION.txt
 UMASK=umask 022
-
-ifeq ($(SET_BUILDBOT),no)
-override IS_BUILDBOT=no
-else ifeq ($(SET_BUILDBOT),yes)
-override IS_BUILDBOT=yes
-endif
-
-ifeq ($(IS_BUILDBOT),yes)
-$(info special actions apply to builds on this host ...)
-endif
 
 # test for existing $TARGET-config or abort
 ifeq ($(wildcard $(FW_DIR)/configs/$(TARGET).config),)
@@ -33,30 +22,25 @@ $(error config for $(TARGET) not defined)
 endif
 
 # if any of the following files have been changed: clean up openwrt dir
-DEPS=$(TARGET_CONFIG) feeds.conf patches $(wildcard patches/*)
+DEPS=$(TARGET_CONFIG) modules patches $(wildcard patches/*)
 
 # profiles to be built (router models)
 PROFILES=$(shell cat $(FW_DIR)/profiles/$(MAINTARGET)-$(SUBTARGET).profiles)
 
 FW_REVISION=$(shell $(REVISION))
 
-define FEEDS
- $(shell ./scripts/ffberlin_feeds.sh)
-endef
-
 default: firmwares
 
 ## Gluon - Begin
 # compatibility to Gluon.buildsystem
 # * setup required makros and variables
-# * create the modules-file from config.mk and feeds.conf
 
 # check for spaces & resolve possibly relative paths
 define mkabspath
- ifneq (1,$(words [$($(1))]))
-  $$(error $(1) must not contain spaces)
- endif
- override $(1) := $(abspath $($(1)))
+   ifneq (1,$(words [$($(1))]))
+     $$(error $(1) must not contain spaces)
+   endif
+   override $(1) := $(abspath $($(1)))
 endef
 
 # initialize (possibly already user set) directory variables
@@ -68,46 +52,13 @@ $(eval $(call mkabspath,GLUON_PATCHESDIR))
 
 export GLUON_TMPDIR GLUON_PATCHESDIR
 
-# use .stamp-gluon-module-openwrt and .stamp-gluon-module- of each feed to create modules-file
-$(FW_DIR)/modules: $(addprefix .stamp-gluon-module-,$(FEEDS)) .stamp-gluon-module-openwrt
-	rm -f $@
-	cat >>$@ .stamp-gluon-module-openwrt
-	cat >>$@ $(addprefix .stamp-gluon-module-,$(FEEDS))
-	echo >>$@ GLUON_FEEDS=\'$(FEEDS)\'
-
-.stamp-gluon-module-openwrt: $(FW_DIR)/config.mk
-	rm -f $@
-	echo >>$@ "OPENWRT_REPO=$(OPENWRT_SRC)"
-	echo >>$@ "OPENWRT_COMMIT=$(OPENWRT_COMMIT)"
-# set the $FEED-Branch
-	git clone $$(grep _REPO $@ | cut -d "=" -f 2) $(GLUON_TMPDIR)/gluon_$@
-	cd $(GLUON_TMPDIR)/gluon_$@; git name-rev --refs openwrt-* $$(grep _COMMIT $(FW_DIR)/$@ | \
-		cut -d "=" -f 2) | cut -d / -f 2 | cut -d \~ -f 1 >branchname.txt
-	cd $(GLUON_TMPDIR)/gluon_$@; grep -q master branchname.txt  || \
-		printf >>$(FW_DIR)/$@ "OPENWRT_BRANCH=%s\n" \
-			$$(echo $* | tr '[:lower:]' '[:upper:]') \
-			$$(cat branchname.txt)
-	rm -rf $(GLUON_TMPDIR)/gluon_$@
-
-.stamp-gluon-module-%: $(FW_DIR)/feeds.conf
-	rm -f $@
-# set the $FEED-REPO
-	@echo -n "PACKAGES_$*_REPO=" | tr '[:lower:]' '[:upper:]' >>$@
-	@grep -E "^src-(git|svn)[[:space:]]$*[[:space:]].*" $(FW_DIR)/feeds.conf | \
-		awk -F '([[:space:]|^])' '{ print $$3 }' >>$@
-# set the $FEED-COMMIT
-	@echo -n "PACKAGES_$*_COMMIT=" | tr '[:lower:]' '[:upper:]' >>$@
-	@grep -E "^src-(git|svn)[[:space:]]$*[[:space:]].*" $(FW_DIR)/feeds.conf | \
-		awk -F '([[:space:]|^])' '{ print $$4 }' >>$@
-# set the $FEED-Branch
-	git clone $$(grep _REPO $@ | cut -d "=" -f 2) $(GLUON_TMPDIR)/gluon_$@
-	cd $(GLUON_TMPDIR)/gluon_$@; git name-rev $$(grep _COMMIT $(FW_DIR)/$@ | \
-		cut -d "=" -f 2) | cut -d / -f 3 | cut -d \~ -f 1 >branchname.txt
-	cd $(GLUON_TMPDIR)/gluon_$@; grep -q master branchname.txt  || \
-		printf >>$(FW_DIR)/$@ "PACKAGES_%s_BRANCH=%s\n" \
-			$$(echo $* | tr '[:lower:]' '[:upper:]') \
-			$$(cat branchname.txt)
-	rm -rf $(GLUON_TMPDIR)/gluon_$@
+# restore .patch files from all commits between 
+# patched-branch and base-branch
+update-patches: .stamp-pre-patch .FORCE
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/update-patches.sh
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
+	@git status $(GLUON_PATCHESDIR)
+	@echo "patches/ has been updated from the packages-repos. You probably need to rebuild."
 
 ## Gluon - End
 
@@ -139,7 +90,7 @@ pre-patch: stamp-clean-pre-patch .stamp-pre-patch
 # patch openwrt and feeds working copy
 patch: stamp-clean-patched .stamp-patched
 .stamp-patched: .stamp-pre-patch $(wildcard $(GLUON_PATCHESDIR)/openwrt/*) $(wildcard $(GLUON_PATCHESDIR)/packages/*/*)
-	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
+	@$(UMASK); GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
 	touch $@
 
 .stamp-build_rev: .FORCE
@@ -164,12 +115,8 @@ $(OPENWRT_DIR)/files: $(FW_DIR)/embedded-files
 	ln -s $(FW_DIR)/embedded-files $(OPENWRT_DIR)/files
 
 # openwrt config
-$(OPENWRT_DIR)/.config: .stamp-feeds-updated $(TARGET_CONFIG) $(TARGET_CONFIG_AUTOBUILD) .stamp-build_rev $(OPENWRT_DIR)/dl
-ifdef IS_BUILDBOT
-	cat $(TARGET_CONFIG) $(TARGET_CONFIG_AUTOBUILD) >$(OPENWRT_DIR)/.config
-else
+$(OPENWRT_DIR)/.config: .stamp-feeds-updated $(TARGET_CONFIG) .stamp-build_rev $(OPENWRT_DIR)/dl
 	cat $(TARGET_CONFIG) >$(OPENWRT_DIR)/.config
-endif
 	# always replace CONFIG_VERSION_CODE by FW_REVISION
 	sed -i "/^CONFIG_VERSION_CODE=/c\CONFIG_VERSION_CODE=\"$(FW_REVISION)\"" $(OPENWRT_DIR)/.config
 	$(UMASK); \
@@ -185,10 +132,6 @@ compile: stamp-clean-compiled .stamp-compiled
 .stamp-compiled: .stamp-prepared openwrt-clean-bin
 	$(UMASK); \
 	  $(MAKE) -C $(OPENWRT_DIR) $(MAKE_ARGS)
-# check if running via buildbot and remove the build_dir folder to save some space
-ifdef IS_BUILDBOT
-	rm -rf $(OPENWRT_DIR)/build_dir
-endif
 	touch $@
 
 # fill firmwares-directory with:
@@ -228,24 +171,15 @@ initrd: .stamp-initrd
 	done
 	touch $@
 
+version-file: stamp-clean-$(VERSION_FILE) $(VERSION_FILE)
+
 $(VERSION_FILE): .stamp-prepared
 	mkdir -p $(FW_TARGET_DIR)
-	# Create version info file
-	GIT_BRANCH_ESC=$(shell $(GIT_BRANCH) | tr '/' '_'); \
-	echo "https://github.com/freifunk-berlin/firmware" > $(VERSION_FILE); \
-	echo "https://wiki.freifunk.net/Berlin:Firmware" >> $(VERSION_FILE); \
-	echo "Firmware: git branch \"$$GIT_BRANCH_ESC\", revision $(FW_REVISION)" >> $(VERSION_FILE); \
-	# add openwrt revision with data from config.mk \
-	OPENWRT_REVISION=`cd $(OPENWRT_DIR); $(REVISION)`; \
-	echo "OpenWRT: repository from $(OPENWRT_SRC), git branch \"$(OPENWRT_COMMIT)\", revision $$OPENWRT_REVISION" >> $(VERSION_FILE); \
-	# add feed revisions \
-	for FEED in `cd $(OPENWRT_DIR); ./scripts/feeds list -n`; do \
-	  FEED_DIR=$(addprefix $(OPENWRT_DIR)/feeds/,$$FEED); \
-	  FEED_GIT_REPO=`cd $$FEED_DIR; $(GIT_REPO)`; \
-	  FEED_GIT_BRANCH_ESC=`cd $$FEED_DIR; $(GIT_BRANCH) | tr '/' '_'`; \
-	  FEED_REVISION=`cd $$FEED_DIR; $(REVISION)`; \
-	  echo "Feed $$FEED: repository from $$FEED_GIT_REPO, git branch \"$$FEED_GIT_BRANCH_ESC\", revision $$FEED_REVISION" >> $(VERSION_FILE); \
-	done
+	VERSION_FILE=$(VERSION_FILE) \
+	  OPENWRT_DIR=$(OPENWRT_DIR) \
+	  REVISION_CMD="$(REVISION)" \
+	  GIT_BRANCH=$(shell $(GIT_BRANCH)) \
+	  ./scripts/create_version-txt.sh
 
 images: .stamp-images
 
@@ -267,7 +201,7 @@ else
 	$(eval IB_FILE := $(shell ls -tr $(OPENWRT_DIR)/bin/targets/$(MAINTARGET)/$(SUBTARGET)/*-imagebuilder-*.tar.xz | tail -n1))
 endif
 	mkdir -p $(FW_TARGET_DIR)
-	$(UMASK); ./assemble_firmware.sh -p "$(PROFILES)" -i $(IB_FILE) -e $(FW_DIR)/embedded-files -t $(FW_TARGET_DIR) -u "$(PACKAGES_LIST_DEFAULT)"
+	$(UMASK); ./scripts/assemble_firmware.sh -p "$(PROFILES)" -i $(IB_FILE) -e $(FW_DIR)/embedded-files -t $(FW_TARGET_DIR) -u "$(PACKAGES_LIST_DEFAULT)"
 	# get relative path of firmwaredir
 	$(eval RELPATH := $(shell perl -e 'use File::Spec; print File::Spec->abs2rel(@ARGV) . "\n"' "$(FW_TARGET_DIR)" "$(FW_DIR)" ))
 	# shorten firmware of images to prevent some (TP-Link) firmware-upgrader from complaining
@@ -278,21 +212,46 @@ endif
 	for file in `find $(RELPATH) -name "freifunk-berlin-*-$(MAINTARGET)-$(SUBTARGET)-*.bin"` ; do mv $$file $${file/$(MAINTARGET)-$(SUBTARGET)-/}; done
 	touch $@
 
+setup-sdk: .stamp-patched
+	 @if [ -z "$(SDK_FILE)" ]; then \
+		echo Error: Please provide SDK-FILE by using "make SDK_FILE=<filename>"; \
+		exit 1; \
+	fi
+	@if [[ ! "$(SDK_FILE)" == *"$(MAINTARGET)-$(SUBTARGET)"* ]]; then \
+		echo Error: TARGET seems not to match SDK-Target; \
+		exit 1; \
+	fi
+	$(eval SDK_DIR=$(FW_DIR)/sdk-$(MAINTARGET)-$(SUBTARGET))
+	mkdir $(SDK_DIR)
+	tar -xJf $(SDK_FILE) --strip-components=1 -C $(SDK_DIR)
+	# generating feeds.conf
+	# replace src-git openwrt
+	sed -i -e "/^src-git base/d" $(SDK_DIR)/feeds.conf.default
+	echo "src-link base ../../openwrt/package" >> $(SDK_DIR)/feeds.conf.default
+#	# replace ../../ by ../ (for relative feeds-path)
+#	#sed -i -e "s/..\/..\//..\//" $(SDK_DIR)/feeds.conf.default
+	@$(SDK_DIR)/scripts/feeds update
+	@$(UMASK); $(SDK_DIR)/scripts/feeds install -a
+	cat $(TARGET_CONFIG) >$(SDK_DIR)/.config
+	$(UMASK); $(MAKE) -C $(SDK_DIR) defconfig
+
 stamp-clean-firmwares:
 	rm -f $(OPENWRT_DIR)/.config
 	rm -f .stamp-$*
+
+stamp-clean-$(VERSION_FILE):
+	rm -f $(VERSION_FILE)
 
 stamp-clean-%:
 	rm -f .stamp-$*
 
 stamp-clean:
 	rm -f .stamp-*
-	rm -f $(FW_DIR)/modules
 	rm -rf $(GLUON_TMPDIR)
 
 clean: stamp-clean .stamp-openwrt-cleaned
 
-.PHONY: openwrt-clean openwrt-clean-bin patch feeds-update prepare compile firmwares stamp-clean clean
+.PHONY: openwrt-clean openwrt-clean-bin patch feeds-update prepare compile firmwares stamp-clean clean setup-sdk
 .NOTPARALLEL:
 .FORCE:
 .SUFFIXES:
