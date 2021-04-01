@@ -29,7 +29,7 @@ libiwinfo-lua
 
 # GUI-basics
 #px5g-mbedtls
-libustream-mbedtls
+#libustream-mbedtls
 # owm depends on olsr-mod-jsoninfo
 #luci-app-owm
 
