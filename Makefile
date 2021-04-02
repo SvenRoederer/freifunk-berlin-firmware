@@ -37,10 +37,10 @@ default: firmwares
 
 # check for spaces & resolve possibly relative paths
 define mkabspath
-   ifneq (1,$(words [$($(1))]))
-     $$(error $(1) must not contain spaces)
-   endif
-   override $(1) := $(abspath $($(1)))
+ ifneq (1,$(words [$($(1))]))
+  $$(error $(1) must not contain spaces)
+ endif
+ override $(1) := $(abspath $($(1)))
 endef
 
 # initialize (possibly already user set) directory variables
@@ -55,10 +55,10 @@ export GLUON_TMPDIR GLUON_PATCHESDIR
 # restore .patch files from all commits between 
 # patched-branch and base-branch
 update-patches: .stamp-pre-patch .FORCE
-	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/update-patches.sh
-	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
-	@git status $(GLUON_PATCHESDIR)
-	@echo "patches/ has been updated from the packages-repos. You probably need to rebuild."
+	GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/update-patches.sh
+	GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
+	git status $(GLUON_PATCHESDIR)
+	echo "patches/ has been updated from the packages-repos. You probably need to rebuild."
 
 ## Gluon - End
 
@@ -87,10 +87,27 @@ pre-patch: stamp-clean-pre-patch .stamp-pre-patch
 	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/update.sh
 	touch $@
 
+# concat all files of patches/ into a stream and generate a chksum.
+# remove tailing " -" with cut
+define PATCH_CHKSUM
+$(shell find $(GLUON_PATCHESDIR) -type f -exec cat '{}' \; | sha256sum | cut -d " " -f 1)
+endef
+
 # patch openwrt and feeds working copy
 patch: stamp-clean-patched .stamp-patched
-.stamp-patched: .stamp-pre-patch $(wildcard $(GLUON_PATCHESDIR)/openwrt/*) $(wildcard $(GLUON_PATCHESDIR)/packages/*/*)
-	@$(UMASK); GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
+.stamp-patch-chksum: $(wildcard $(GLUON_PATCHESDIR)/openwrt/*) $(wildcard $(GLUON_PATCHESDIR)/packages/*/*) .FORCE
+	$(eval CURR_CHKSUM=$(call PATCH_CHKSUM))
+# create status-file with current checksum of patches if not present
+# check that current checksum matches previously stored checksum or reapply patches
+# and update .stamp file
+	if [[ ! -f $@ || ! "$(CURR_CHKSUM)" = "$(shell [ -f $@ ] && cat $@)" ]]; then \
+	   echo "patches changed"; \
+	   echo $(CURR_CHKSUM) >$@; \
+	fi
+
+.stamp-patched: .stamp-pre-patch .stamp-patch-chksum
+	echo rgular patch
+	GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
 	touch $@
 
 .stamp-build_rev: .FORCE
@@ -139,7 +156,7 @@ compile: stamp-clean-compiled .stamp-compiled
 #  * packages directory
 #  * firmware-images are already in place (target images)
 firmwares: stamp-clean-firmwares .stamp-firmwares
-.stamp-firmwares: .stamp-images $(VERSION_FILE) .stamp-initrd
+.stamp-firmwares: .stamp-images $(VERSION_FILE) .stamp-initrd build-logs
 	# copy imagebuilder, sdk and toolchain (if existing)
 	# remove old versions
 	rm -f $(FW_TARGET_DIR)/*.tar.xz
@@ -180,6 +197,15 @@ $(VERSION_FILE): .stamp-prepared
 	  REVISION_CMD="$(REVISION)" \
 	  GIT_BRANCH=$(shell $(GIT_BRANCH)) \
 	  ./scripts/create_version-txt.sh
+
+build-logs: clean-build-logs .stamp-compiled
+	mkdir -p $(FW_TARGET_DIR)
+	[ -d $(OPENWRT_DIR)/logs ] && mv $(OPENWRT_DIR)/logs $(FW_TARGET_DIR)
+	touch .stamp-$@
+
+clean-build-logs:
+	rm -rf $(FW_TARGET_DIR)/logs
+	rm -rf .stamp-build-logs
 
 images: .stamp-images
 
@@ -251,7 +277,7 @@ stamp-clean:
 
 clean: stamp-clean .stamp-openwrt-cleaned
 
-.PHONY: openwrt-clean openwrt-clean-bin patch feeds-update prepare compile firmwares stamp-clean clean setup-sdk
+.PHONY: openwrt-clean openwrt-clean-bin clean-build-logs patch feeds-update prepare compile firmwares stamp-clean clean setup-sdk
 .NOTPARALLEL:
 .FORCE:
 .SUFFIXES:
