@@ -1,0 +1,25 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Fri, 2 Apr 2021 22:03:50 +0200
+Subject: ath79: remove REVISION suffix from edimax images version-comment
+
+fixes FS#3721
+
+diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
+index 6eda757445d73925ad906a58363e82bd0f78fb2d..39f8d26d63d32c6557f6a173785b4ddba4eed0c5 100644
+--- a/target/linux/ath79/image/generic.mk
++++ b/target/linux/ath79/image/generic.mk
+@@ -53,12 +53,12 @@ define Build/edimax-headers
+ 	$(eval edimax_model=$(word 2,$(1)))
+ 
+ 	$(STAGING_DIR_HOST)/bin/edimax_fw_header -M $(edimax_magic) -m $(edimax_model)\
+-		-v $(VERSION_DIST)$(firstword $(subst +, , $(firstword $(subst -, ,$(REVISION))))) \
++		-v $(VERSION_DIST) \
+ 		-n "uImage" \
+ 		-i $(KDIR)/loader-$(DEVICE_NAME).uImage \
+ 		-o $@.uImage
+ 	$(STAGING_DIR_HOST)/bin/edimax_fw_header -M $(edimax_magic) -m $(edimax_model)\
+-		-v $(VERSION_DIST)$(firstword $(subst +, , $(firstword $(subst -, ,$(REVISION))))) \
++		-v $(VERSION_DIST) \
+ 		-n "rootfs" \
+ 		-i $@ \
+ 		-o $@.rootfs
