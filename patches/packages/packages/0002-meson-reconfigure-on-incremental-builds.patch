@@ -1,0 +1,31 @@
+From: Andre Heider <a.heider@gmail.com>
+Date: Tue, 9 Mar 2021 10:12:38 +0100
+Subject: meson: reconfigure on incremental builds
+
+When toggling a package specific config knob, we need to pass --reconfigure
+to the meson setup command if an earlier build already exists.
+
+Fixes #15032.
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+
+diff --git a/devel/meson/meson.mk b/devel/meson/meson.mk
+index b855e267d40d08278f97c415ab96a8b9db0e733c..a5861685d86627b7295861db8a36dc8bf9961a45 100644
+--- a/devel/meson/meson.mk
++++ b/devel/meson/meson.mk
+@@ -90,6 +90,7 @@ endef
+ define Host/Configure/Meson
+ 	$(call Meson/CreateNativeFile,$(HOST_BUILD_DIR)/openwrt-native.txt)
+ 	$(call Meson, \
++		setup $(if $(wildcard $(MESON_HOST_BUILD_DIR)/meson-*),--reconfigure,) \
+ 		--native-file $(HOST_BUILD_DIR)/openwrt-native.txt \
+ 		$(MESON_HOST_ARGS) \
+ 		$(MESON_HOST_BUILD_DIR) \
+@@ -113,6 +114,7 @@ define Build/Configure/Meson
+ 	$(call Meson/CreateNativeFile,$(PKG_BUILD_DIR)/openwrt-native.txt)
+ 	$(call Meson/CreateCrossFile,$(PKG_BUILD_DIR)/openwrt-cross.txt)
+ 	$(call Meson, \
++		setup $(if $(wildcard $(MESON_BUILD_DIR)/meson-*),--reconfigure,) \
+ 		--buildtype plain \
+ 		--native-file $(PKG_BUILD_DIR)/openwrt-native.txt \
+ 		--cross-file $(PKG_BUILD_DIR)/openwrt-cross.txt \
