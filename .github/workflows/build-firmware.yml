@@ -11,10 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        target: 
-          - ath79-generic
-          - ath79-tiny
-          - x86-generic
+        target: [ath79-generic, ath79-tiny, x86-generic]
       fail-fast: false
 
     env:
@@ -32,8 +29,21 @@ jobs:
         echo "MAKE_OPTS= -j$(nproc) TARGET=${{matrix.target}} IS_BUILDBOT=${IS_BUILDBOT} " >>$GITHUB_ENV
         echo "next_buildstep=config" >>$GITHUB_ENV
         df -h
+        echo "building branch (full): " ${GITHUB_REF}
+        echo "building branch (short):" ${GITHUB_REF##*/}
+        echo "building branch (prefix stripped):" ${GITHUB_REF#"refs/heads/"}
+        echo "building branch (replaced):" 
+        echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;'
+        # this sets env BRANCHNAME_normalized by removing the 1st two elements from $GITHUB_REF
+        # These elements are usually "refs/heads/"
+        # in addition replace all / by _
+        var=$(echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;')
+        echo helper-var: ${var}
+        echo "BRANCHNAME_normalized=${var}" >>$GITHUB_ENV
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
+        echo "debug ${{ env.BRANCHNAME_normalized }}"
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-config)
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
@@ -42,60 +52,70 @@ jobs:
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: openwrt ${{ env.next_buildstep }}
       if: ${{ env.next_buildstep != null }}
       run: |
+        echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
         make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}
         nextstep=$(make -f Makefile.autobuild next-buildstep-for-${next_buildstep})
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
@@ -107,7 +127,7 @@ jobs:
         path: logs
     - name: prepare upload of imagebuilder and sdk
       run: |
-       mkdir tmp_build-tools
+       mkdir -p tmp_build-tools
        find openwrt/bin -name *imagebuilder*.tar.xz -exec mv '{}' tmp_build-tools/ \;
        find openwrt/bin -name *sdk*.tar.xz -exec mv '{}' tmp_build-tools/ \;
     - name: Archive imagebuilder and sdk
