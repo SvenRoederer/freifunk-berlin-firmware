@@ -130,8 +130,8 @@ jobs:
     - name: prepare upload of imagebuilder and sdk
       run: |
        mkdir -p tmp_build-tools
-       find openwrt/bin -name *imagebuilder*.tar.xz -exec mv '{}' tmp_build-tools/ \;
-       find openwrt/bin -name *sdk*.tar.xz -exec mv '{}' tmp_build-tools/ \;
+       find openwrt/bin/ -name *imagebuilder*.tar.xz -exec mv '{}' tmp_build-tools/ \;
+       find openwrt/bin/ -name *sdk*.tar.xz -exec mv '{}' tmp_build-tools/ \;
     - name: Archive imagebuilder and sdk
       if: ${{ !cancelled() }}
       continue-on-error: true
