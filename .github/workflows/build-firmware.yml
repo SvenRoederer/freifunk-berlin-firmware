@@ -42,6 +42,20 @@ jobs:
         var=$(echo ${GITHUB_REF} | sed -e 's#^[a-zA-Z]*/[a-zA-Z]*/##; s#/#_#g;')
         echo helper-var: ${var}
         echo "BRANCHNAME_normalized=${var}" >> $GITHUB_ENV
+    - name: change storage paths
+      run: |
+        echo "GITHUB_WORKSPACE is ${GITHUB_WORKSPACE}"
+        echo "setting download and bin folder to /mnt (as there are 9GB space and WORKSPACE is too small for ath79-generic)"
+        sudo mkdir -m 777 /mnt/build
+        mkdir "/mnt/build/bin"
+        mkdir "/mnt/build/downloads"
+        echo >>configs/common-autobuild.config 'CONFIG_BINARY_FOLDER="/mnt/build/bin"'
+        echo >>configs/common-autobuild.config 'CONFIG_DOWNLOAD_FOLDER="/mnt/build/downloads"'
+        cat configs/common-autobuild.config
+        # symlink the original folders to the new localtions, to satisfy "common" scripts
+        mkdir openwrt
+        ln -s /mnt/build/downloads openwrt/dl
+        ln -s /mnt/build/bin openwrt/bin
     - name: OpenWrt ${{ env.next_buildstep }}
       run: |
         echo "running: make -f Makefile.autobuild ${MAKE_OPTS} ${next_buildstep}"
