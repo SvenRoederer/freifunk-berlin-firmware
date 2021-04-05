@@ -5,10 +5,10 @@ Subject: kernel: add CONFIG_RTC_DRV_JZ4740 for 5.4
 For ath79-generic this symbol is undefined.
 
 diff --git a/target/linux/generic/config-5.4 b/target/linux/generic/config-5.4
-index 21dd447cdfeca0a818f0827966698c1708cf747b..448bad433f5a8487309d5b6697f077fe4e81fc18 100644
+index 9ca6b7573ec634d5df804080f312ed86ac6a3bbf..b44df2c2f506212162a9cd64170766914b580eb6 100644
 --- a/target/linux/generic/config-5.4
 +++ b/target/linux/generic/config-5.4
-@@ -4342,6 +4342,7 @@ CONFIG_RTC_DRV_CMOS=y
+@@ -4372,6 +4372,7 @@ CONFIG_RTC_DRV_CMOS=y
  # CONFIG_RTC_DRV_ISL12026 is not set
  # CONFIG_RTC_DRV_ISL12057 is not set
  # CONFIG_RTC_DRV_ISL1208 is not set
