@@ -1,8 +1,8 @@
 -ppp
 -ppp-mod-pppoe
--wpad-mini
+wpad-mini
 -wpad-basic-wolfssl
-wpad-basic
+-wpad-basic
 
 # Defaults
 freifunk-berlin-dhcp-defaults
