@@ -1,9 +1,8 @@
 #!/bin/sh /etc/rc.common
 
-START=11
-USE_PROCD=1
-
 boot() {
   echo "previous GLinet sysstem detected ... flushing flash ..."
   [ -f /etc/config/glconfig ] && firstboot -y -r
 }
+
+boot
