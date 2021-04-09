@@ -17,11 +17,6 @@ iw
 iwinfo
 jshn
 jsonfilter
-#kmod-ath
-#kmod-ath9k
-#kmod-ath9k-common
-#kmod-cfg80211
-kmod-fs-f2fs
 kmod-ip6tables
 kmod-ipt-conntrack
 kmod-ipt-core
@@ -32,7 +27,6 @@ kmod-iptunnel4
 kmod-lib-crc-ccitt
 kmod-nf-nathelper-extra
 kmod-sit
-kmod-slhc
 kmod-usb-core
 kmod-usb-ledtrig-usbport
 kmod-usb-storage
@@ -55,7 +49,6 @@ xinetd
 
 #openvpn-openssl
 #luci-app-wireguard
-#kmod-tun
 
 ppp
 ppp-mod-pppoe
