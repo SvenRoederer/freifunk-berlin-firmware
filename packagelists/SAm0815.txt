@@ -9,6 +9,10 @@ curl
 fstools
 micrond
 
+-wpad-basic
+-wpad-basic-wolfssl
+wpad-basic-openssl
+
 iw
 iwinfo
 jshn
@@ -65,3 +69,6 @@ tcpdump
 apcupsd
 #kmod-usb-serial
 kmod-usb-serial-pl2303
+
+libustream-openssl
+-libustream-wolfssl
