@@ -53,9 +53,8 @@ muninlite
 ethtool
 xinetd
 
-openvpn-openssl
-#openvpn-mbedtls
-luci-app-wireguard
+#openvpn-openssl
+#luci-app-wireguard
 #kmod-tun
 
 ppp
