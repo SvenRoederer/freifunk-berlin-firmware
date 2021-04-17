@@ -165,7 +165,7 @@ index 97305dad66adf66b6a8db9ef93617d20db221eea..76451605f3a24b40bf67e7f55e68c9ee
  include ../../freifunk-berlin-generic.mk
  
 diff --git a/freifunk-berlin-generic.mk b/freifunk-berlin-generic.mk
-index 4f55def0635e61a5b7b6da6704aa6344fd1bf1ad..1e4cc8f69e1050056eb8731e3a3a66548f520ee7 100644
+index 48cbe9c1d1d09101b41d6258f62f55aeab3fbc91..ff24284edc6ba85007dd7f2a7255fe7ca8e2b677 100644
 --- a/freifunk-berlin-generic.mk
 +++ b/freifunk-berlin-generic.mk
 @@ -15,8 +15,10 @@ else
@@ -179,7 +179,7 @@ index 4f55def0635e61a5b7b6da6704aa6344fd1bf1ad..1e4cc8f69e1050056eb8731e3a3a6654
 +LUCI_MAINTAINER=Freifunk Berlin community
 +LUCI_URL=http://github.com/freifunk-berlin/packages_berlin
  
- xx__PKG_VERSION?=$(if $(DUMP),x,$(strip $(shell \
+ PKG_VERSION?=$(if $(DUMP),x,$(strip $(shell \
  	if svn info >/dev/null 2>/dev/null; then \
 diff --git a/uplinks/freifunk-berlin-uplink-notunnel/Makefile b/uplinks/freifunk-berlin-uplink-notunnel/Makefile
 index 2565cd06d8ccb313d895275bf4fa0b3d4f937ca3..e176f2c6a3e61cad3b3cd15f58bcc6784388aca1 100644
