@@ -1,0 +1,200 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 17 Apr 2021 18:01:35 +0200
+Subject: treewide: use more (of the new) luci.mk variables
+
+diff --git a/addons/freifunk-berlin-lib-guard/Makefile b/addons/freifunk-berlin-lib-guard/Makefile
+index 6229d60f956e6b836a3dd13b39761e700396464b..0ec7247b54e4904ad618f72928cb7a787e5115d9 100644
+--- a/addons/freifunk-berlin-lib-guard/Makefile
++++ b/addons/freifunk-berlin-lib-guard/Makefile
+@@ -3,8 +3,6 @@ include $(TOPDIR)/rules.mk
+ PKG_RELEASE:=2
+ 
+ LUCI_TITLE:=Freifunk Berlin guard function
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-
+ LUCI_DESCRIPTION:=Freifunk Berlin guard function
+ 
+ include ../../freifunk-berlin-generic.mk
+diff --git a/defaults/freifunk-berlin-dhcp-defaults/Makefile b/defaults/freifunk-berlin-dhcp-defaults/Makefile
+index db5a5755987c8aa4a2bbfa5b7ff17113b949ed22..4a648c76aa067448243f0a7b7366942d36351f2c 100644
+--- a/defaults/freifunk-berlin-dhcp-defaults/Makefile
++++ b/defaults/freifunk-berlin-dhcp-defaults/Makefile
+@@ -1,10 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin dhcp default configuration
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +dnsmasq +freifunk-berlin-lib-guard
+-
+-LUCI_DESCRIPTION=Freifunk Berlin configuration files for dhcp
++LUCI_DEPENDS:=+dnsmasq +freifunk-berlin-lib-guard
++LUCI_DESCRIPTION:=Freifunk Berlin configuration files for dhcp
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/defaults/freifunk-berlin-firewall-defaults/Makefile b/defaults/freifunk-berlin-firewall-defaults/Makefile
+index 141e32cc99ba0b1b0aacef53e6541178cb730a2c..20feac3dc2b650a6916bca9e3f6d4d0553f7ffb6 100644
+--- a/defaults/freifunk-berlin-firewall-defaults/Makefile
++++ b/defaults/freifunk-berlin-firewall-defaults/Makefile
+@@ -1,11 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+-
+ LUCI_TITLE:=Freifunk Berlin firewall default configuration
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +firewall +freifunk-berlin-lib-guard
+-
+-LUCI_DESCRIPTION=Freifunk Berlin configuration files for firewall
++LUCI_DEPENDS= +firewall +freifunk-berlin-lib-guard
++LUCI_DESCRIPTION:=Freifunk Berlin configuration files for firewall
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/defaults/freifunk-berlin-freifunk-defaults/Makefile b/defaults/freifunk-berlin-freifunk-defaults/Makefile
+index 0000e0384b480ae795595042e721cb2edd477b11..e63f7ac9ea43c89a03c4890826ba2060a068a87e 100644
+--- a/defaults/freifunk-berlin-freifunk-defaults/Makefile
++++ b/defaults/freifunk-berlin-freifunk-defaults/Makefile
+@@ -1,9 +1,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin freifunk default configuration
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-
+-LUCI_DESCRIPTION=Freifunk Berlin configuration files for freifunk
++LUCI_DESCRIPTION:=Freifunk Berlin configuration files for freifunk
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/defaults/freifunk-berlin-network-defaults/Makefile b/defaults/freifunk-berlin-network-defaults/Makefile
+index 2ce8ecbaaeb5a9383aefed9093fef80765cf4ecf..c2d60b9a956eab61c8e626178ecc27cb9dcf771e 100644
+--- a/defaults/freifunk-berlin-network-defaults/Makefile
++++ b/defaults/freifunk-berlin-network-defaults/Makefile
+@@ -1,10 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin network default configuration
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +freifunk-berlin-lib-guard +iwinfo +pingcheck
+-
+-LUCI_DESCRIPTION=Freifunk Berlin configuration files for network
++LUCI_DEPENDS:= +freifunk-berlin-lib-guard +iwinfo +pingcheck
++LUCI_DESCRIPTION:=Freifunk Berlin configuration files for network
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/defaults/freifunk-berlin-olsrd-defaults/Makefile b/defaults/freifunk-berlin-olsrd-defaults/Makefile
+index 9f9ed1773e50aed28ad7c8827e560061dccac09d..24945d331a18100518b382b98060e2560e49eacf 100644
+--- a/defaults/freifunk-berlin-olsrd-defaults/Makefile
++++ b/defaults/freifunk-berlin-olsrd-defaults/Makefile
+@@ -1,10 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin olsrd default configuration
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +olsrd +freifunk-berlin-lib-guard
+-
+-LUCI_DESCRIPTION=Freifunk Berlin configuration files for olsrd and olsrd6
++LUCI_DEPENDS:=+olsrd +freifunk-berlin-lib-guard
++LUCI_DESCRIPTION:=Freifunk Berlin configuration files for olsrd and olsrd6
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/defaults/freifunk-berlin-openvpn-files/Makefile b/defaults/freifunk-berlin-openvpn-files/Makefile
+index 7f28da4e1705fccd868a276575c327eb7f1f3c5d..fe07be10723e6315dba27c0969d4e3d579f28c59 100644
+--- a/defaults/freifunk-berlin-openvpn-files/Makefile
++++ b/defaults/freifunk-berlin-openvpn-files/Makefile
+@@ -1,9 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin openVPN files (commmon)
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +openvpn +freifunk-berlin-lib-guard +freifunk-berlin-network-defaults
+-LUCI_DESCRIPTION=Freifunk Berlin openVPN files
++LUCI_DEPENDS:=+openvpn +freifunk-berlin-lib-guard +freifunk-berlin-network-defaults
++LUCI_DESCRIPTION:=Freifunk Berlin openVPN files
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/defaults/freifunk-berlin-statistics-defaults/Makefile b/defaults/freifunk-berlin-statistics-defaults/Makefile
+index 09496edac5e34d6a9f0b5e588089ccf402362fc6..9ee45d1081db0e36b27a45083e3ae03391f45636 100644
+--- a/defaults/freifunk-berlin-statistics-defaults/Makefile
++++ b/defaults/freifunk-berlin-statistics-defaults/Makefile
+@@ -1,10 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin statistics default configuration
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +olsrd-mod-txtinfo +freifunk-berlin-lib-guard
+-
+-LUCI_DESCRIPTION=Freifunk Berlin configuration files for statistics
++LUCI_DEPENDS:=+olsrd-mod-txtinfo +freifunk-berlin-lib-guard
++LUCI_DESCRIPTION:=Freifunk Berlin configuration files for statistics
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/defaults/freifunk-berlin-system-defaults/Makefile b/defaults/freifunk-berlin-system-defaults/Makefile
+index 437a684f435b4f3caeedcd4d04d787ffe02d2ac1..07b20b1e5a8f61d9d51854889dd39fc9b3b6034a 100644
+--- a/defaults/freifunk-berlin-system-defaults/Makefile
++++ b/defaults/freifunk-berlin-system-defaults/Makefile
+@@ -1,9 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin system default configuration
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +freifunk-berlin-lib-guard
+-LUCI_DESCRIPTION=Freifunk Berlin configuration files for basic system-files
++LUCI_DEPENDS:=+freifunk-berlin-lib-guard
++LUCI_DESCRIPTION:=Freifunk Berlin configuration files for basic system-files
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/defaults/freifunk-berlin-uhttpd-defaults/Makefile b/defaults/freifunk-berlin-uhttpd-defaults/Makefile
+index 97305dad66adf66b6a8db9ef93617d20db221eea..76451605f3a24b40bf67e7f55e68c9eeb631eaea 100644
+--- a/defaults/freifunk-berlin-uhttpd-defaults/Makefile
++++ b/defaults/freifunk-berlin-uhttpd-defaults/Makefile
+@@ -1,9 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin uhttpd default configuration
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+= +uhttpd +freifunk-berlin-lib-guard
+-LUCI_DESCRIPTION=Freifunk Berlin configuration files for uhttpd
++LUCI_DEPENDS:=+uhttpd +freifunk-berlin-lib-guard
++LUCI_DESCRIPTION:=Freifunk Berlin configuration files for uhttpd
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
+diff --git a/freifunk-berlin-generic.mk b/freifunk-berlin-generic.mk
+index 4f55def0635e61a5b7b6da6704aa6344fd1bf1ad..1e4cc8f69e1050056eb8731e3a3a66548f520ee7 100644
+--- a/freifunk-berlin-generic.mk
++++ b/freifunk-berlin-generic.mk
+@@ -15,8 +15,10 @@ else
+ #$(info found luci.mk at $(LUCIMKFILE))
+ endif
+ 
+-LUCI_SECTION?=freifunk-berlin
+-LUCI_CATEGORY?=freifunk-berlin
++LUCI_SECTION=freifunk-berlin
++LUCI_CATEGORY=freifunk-berlin
++LUCI_MAINTAINER=Freifunk Berlin community
++LUCI_URL=http://github.com/freifunk-berlin/packages_berlin
+ 
+ xx__PKG_VERSION?=$(if $(DUMP),x,$(strip $(shell \
+ 	if svn info >/dev/null 2>/dev/null; then \
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/Makefile b/uplinks/freifunk-berlin-uplink-notunnel/Makefile
+index 2565cd06d8ccb313d895275bf4fa0b3d4f937ca3..e176f2c6a3e61cad3b3cd15f58bcc6784388aca1 100644
+--- a/uplinks/freifunk-berlin-uplink-notunnel/Makefile
++++ b/uplinks/freifunk-berlin-uplink-notunnel/Makefile
+@@ -3,10 +3,10 @@ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin no tunnel files
+   URL:=http://github.com/freifunk-berlin/packages_berlin
+-  DEPENDS+=+freifunk-berlin-lib-guard +kmod-veth +freifunk-berlin-network-defaults +pingcheck
++LUCI_DEPENDS:=+freifunk-berlin-lib-guard +kmod-veth +freifunk-berlin-network-defaults +pingcheck
+   PROVIDES:=freifunk-berlin-uplink
+ 
+-LUCI_DESCRIPTION=Freifunk Berlin files to setup a uplink without any
++LUCI_DESCRIPTION:=Freifunk Berlin files to setup a uplink without any
+   tunnel.
+   upstream traffic will be directly routed via your network
+ 
