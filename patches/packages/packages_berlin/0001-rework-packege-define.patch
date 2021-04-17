@@ -493,21 +493,19 @@ index 8428893fc519bce190731cc785aad1ba66fa72bc..00000000000000000000000000000000
 -uci set uhttpd.main.redirect_https=0
 -uci commit
 diff --git a/freifunk-berlin-generic.mk b/freifunk-berlin-generic.mk
-index 82d5b602561d9ed3bf229f9f27b6e354eddf9f04..4f55def0635e61a5b7b6da6704aa6344fd1bf1ad 100644
+index 82d5b602561d9ed3bf229f9f27b6e354eddf9f04..48cbe9c1d1d09101b41d6258f62f55aeab3fbc91 100644
 --- a/freifunk-berlin-generic.mk
 +++ b/freifunk-berlin-generic.mk
-@@ -15,7 +15,10 @@ else
+@@ -15,6 +15,9 @@ else
  #$(info found luci.mk at $(LUCIMKFILE))
  endif
  
--PKG_VERSION?=$(if $(DUMP),x,$(strip $(shell \
 +LUCI_SECTION?=freifunk-berlin
 +LUCI_CATEGORY?=freifunk-berlin
 +
-+xx__PKG_VERSION?=$(if $(DUMP),x,$(strip $(shell \
+ PKG_VERSION?=$(if $(DUMP),x,$(strip $(shell \
  	if svn info >/dev/null 2>/dev/null; then \
  		revision="svn-r$$(LC_ALL=C svn info | sed -ne 's/^Revision: //p')"; \
- 	elif git log -1 >/dev/null 2>/dev/null; then \
 diff --git a/uplinks/freifunk-berlin-uplink-notunnel/Makefile b/uplinks/freifunk-berlin-uplink-notunnel/Makefile
 index 2d128f70b09681aa7316e557389c1f17a97631fa..2565cd06d8ccb313d895275bf4fa0b3d4f937ca3 100644
 --- a/uplinks/freifunk-berlin-uplink-notunnel/Makefile
