@@ -1,0 +1,17 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 18 Apr 2021 18:59:07 +0200
+Subject: freifunk-mod-ui: update makefile for changed SUBMENU_OVERRIDE
+
+diff --git a/utils/luci-mod-freifunk-ui/Makefile b/utils/luci-mod-freifunk-ui/Makefile
+index 70e4a20b0026309cba4bae8d6ed66a9dacf9791f..4dcdbd87471ad5fcfa37053bcaf86e9165883174 100644
+--- a/utils/luci-mod-freifunk-ui/Makefile
++++ b/utils/luci-mod-freifunk-ui/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ LUCI_TITLE:=Freifunk Public and Admin LuCI UI
+ LUCI_SECTION:=luci
+ LUCI_CATEGORY:=LuCI
+-LUCI_SUBMENU_OVERRIDE:=2. Modules
++LUCI_SUBMENU:=2. Modules
+ LUCI_DEPENDS:=+luci-mod-admin-full +luci-lib-json +community-profiles +luci-lib-ipkg
+ LUCI_PKGARCH:=all
+ PKG_RELEASE:=3
