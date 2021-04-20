@@ -1,0 +1,29 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Tue, 20 Apr 2021 02:14:30 +0200
+Subject: toolchain: use xz compression
+
+Also use xz compression, as we do for sdk and imagebuilder.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/target/toolchain/Makefile b/target/toolchain/Makefile
+index c3ba70db04ed7e4041f06d22b28c3109c338c8dd..cf34a89e04f44cffa8747df78b8fa033aa0c3e7d 100644
+--- a/target/toolchain/Makefile
++++ b/target/toolchain/Makefile
+@@ -62,13 +62,13 @@ $(BIN_DIR)/$(TOOLCHAIN_NAME).tar.bz2: clean
+ 	find $(TOOLCHAIN_BUILD_DIR) -name CVS | $(XARGS) rm -rf
+ 	mkdir -p $(BIN_DIR)
+ 	(cd $(BUILD_DIR); \
+-		tar cfj $@ $(TOOLCHAIN_NAME); \
++		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(filter 1,$(NPROC)),2,0)' -cf $@ $(TOOLCHAIN_NAME); \
+ 	)
+ 
+ download:
+ prepare:
+-compile: $(BIN_DIR)/$(TOOLCHAIN_NAME).tar.bz2
++compile: $(BIN_DIR)/$(TOOLCHAIN_NAME).tar.xz
+ install: compile
+ 
+ clean:
+-	rm -rf $(TOOLCHAIN_BUILD_DIR) $(BIN_DIR)/$(TOOLCHAIN_NAME).tar.bz2
++	rm -rf $(TOOLCHAIN_BUILD_DIR) $(BIN_DIR)/$(TOOLCHAIN_NAME).tar.xz
