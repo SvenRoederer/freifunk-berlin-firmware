@@ -1,0 +1,43 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Tue, 20 Apr 2021 20:56:54 +0200
+Subject: rename option to NPROC_MAX
+
+diff --git a/config/Config-devel.in b/config/Config-devel.in
+index b8043b9ffd4dd0f4255bc4e18290567fdf98e194..11ddc85b6e5b4721e9d0efcf6458dd72704f248f 100644
+--- a/config/Config-devel.in
++++ b/config/Config-devel.in
+@@ -45,7 +45,7 @@ menuconfig DEVEL
+ 		  This allows you to symlink build_dir into a scratch location, e.g. a ramdisk,
+ 		  which does not have enough space to keep a complete build_dir.
+ 
+-	config NPROC_FORCE
++	config NPROC_MAX
+ 		int "max CPUs to be used" if DEVEL
+ 		default 0
+ 		help
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index ad402c1927b07a4dec1bc2e25077a5355889b89c..2c6b42cf8950d3768e86c4758a3c270b879d2ed8 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -107,7 +107,7 @@ endif
+ 	$(CP) $(TOPDIR)/staging_dir/host/lib/libfakeroot* $(PKG_BUILD_DIR)/staging_dir/host/lib
+ 	STRIP=$(STAGING_DIR_HOST)/bin/sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/host/bin/
+ 	(cd $(BUILD_DIR); \
+-		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(CONFIG_NPROC_FORCE),$(CONFIG_NPROC_FORCE),$(if $(filter 1,$(NPROC)),2,0))' -cf $@ $(IB_NAME) \
++		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(CONFIG_NPROC_MAX),$(CONFIG_NPROC_MAX),$(if $(filter 1,$(NPROC)),2,0))' -cf $@ $(IB_NAME) \
+ 		--mtime="$(shell date --date=@$(SOURCE_DATE_EPOCH))"; \
+ 	)
+ 
+diff --git a/target/sdk/Makefile b/target/sdk/Makefile
+index d85c17b613e518bffac996932e0fd090511660d6..61918259c7cb231d6f66ccc84060b86a968dd723 100644
+--- a/target/sdk/Makefile
++++ b/target/sdk/Makefile
+@@ -166,7 +166,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
+ 	find $(SDK_BUILD_DIR) -name CVS | $(XARGS) rm -rf
+ 	-make -C $(SDK_BUILD_DIR)/scripts/config clean
+ 	(cd $(BUILD_DIR); \
+-		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(filter 1,$(NPROC)),2,0)' -cf $@ $(SDK_NAME) \
++		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(CONFIG_NPROC_MAX),$(CONFIG_NPROC_MAX),$(if $(filter 1,$(NPROC)),2,0))' -cf $@ $(SDK_NAME) \
+ 		--mtime="$(shell date --date=@$(SOURCE_DATE_EPOCH))"; \
+ 	)
+ 
