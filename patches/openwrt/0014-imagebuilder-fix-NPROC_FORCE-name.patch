@@ -1,0 +1,17 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Tue, 20 Apr 2021 20:46:48 +0200
+Subject: imagebuilder: fix NPROC_FORCE name
+
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index 2a666daf7b7b1a3b8b01b0ec244cadd67e100699..ad402c1927b07a4dec1bc2e25077a5355889b89c 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -107,7 +107,7 @@ endif
+ 	$(CP) $(TOPDIR)/staging_dir/host/lib/libfakeroot* $(PKG_BUILD_DIR)/staging_dir/host/lib
+ 	STRIP=$(STAGING_DIR_HOST)/bin/sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/host/bin/
+ 	(cd $(BUILD_DIR); \
+-		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(NPROC_FORCE),$(NPROC_FORCE),$(if $(filter 1,$(NPROC)),2,0))' -cf $@ $(IB_NAME) \
++		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(CONFIG_NPROC_FORCE),$(CONFIG_NPROC_FORCE),$(if $(filter 1,$(NPROC)),2,0))' -cf $@ $(IB_NAME) \
+ 		--mtime="$(shell date --date=@$(SOURCE_DATE_EPOCH))"; \
+ 	)
+ 
