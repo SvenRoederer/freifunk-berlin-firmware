@@ -1,0 +1,238 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 18 Apr 2021 05:03:27 +0200
+Subject: uplink-notunnel: fix packe build
+
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/Makefile b/uplinks/freifunk-berlin-uplink-notunnel/Makefile
+index e176f2c6a3e61cad3b3cd15f58bcc6784388aca1..d053feeadfb0ab6a734ccc4aa86879c589a00a77 100644
+--- a/uplinks/freifunk-berlin-uplink-notunnel/Makefile
++++ b/uplinks/freifunk-berlin-uplink-notunnel/Makefile
+@@ -1,14 +1,11 @@
+-
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=Freifunk Berlin no tunnel files
+-  URL:=http://github.com/freifunk-berlin/packages_berlin
+ LUCI_DEPENDS:=+freifunk-berlin-lib-guard +kmod-veth +freifunk-berlin-network-defaults +pingcheck
+-  PROVIDES:=freifunk-berlin-uplink
++PKG_PROVIDES:=freifunk-berlin-uplink
+ 
+-LUCI_DESCRIPTION:=Freifunk Berlin files to setup a uplink without any
+-  tunnel.
+-  upstream traffic will be directly routed via your network
++LUCI_DESCRIPTION:=Freifunk Berlin files to setup a uplink without any tunnel. upstream traffic will be directly routed via your network
+ 
+ include ../../freifunk-berlin-generic.mk
+ 
++# call BuildPackage - is done via freifunk-berlin-generic.mk --> luci.mk
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/files/etc/pingcheck/offline.d/60-freifunk-notunnel b/uplinks/freifunk-berlin-uplink-notunnel/files/etc/pingcheck/offline.d/60-freifunk-notunnel
+deleted file mode 100755
+index fa7fd796bd3072a82f7fd4a096bdc916f1df2494..0000000000000000000000000000000000000000
+--- a/uplinks/freifunk-berlin-uplink-notunnel/files/etc/pingcheck/offline.d/60-freifunk-notunnel
++++ /dev/null
+@@ -1,15 +0,0 @@
+-#!/bin/sh
+-
+-[ "$INTERFACE" = wan ] || exit
+-
+-. /lib/functions.sh
+-
+-config_load ffberlin-uplink
+-config_get ffuplink preset current
+-
+-[ "$ffuplink" = notunnel ] || exit
+-
+-# Internet connectivity via WAN is up, start the ffuplink interface
+-logger -t freifunk-pingcheck "WAN is down, stopping ffuplink"
+-ifdown ffuplink
+-
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/files/etc/pingcheck/online.d/60-freifunk-notunnel b/uplinks/freifunk-berlin-uplink-notunnel/files/etc/pingcheck/online.d/60-freifunk-notunnel
+deleted file mode 100755
+index 9c1d140308ccce39b6123ea5be667f8a87c3d635..0000000000000000000000000000000000000000
+--- a/uplinks/freifunk-berlin-uplink-notunnel/files/etc/pingcheck/online.d/60-freifunk-notunnel
++++ /dev/null
+@@ -1,22 +0,0 @@
+-#!/bin/sh
+-
+-[ "$INTERFACE" = wan ] || exit
+-
+-. /lib/functions.sh
+-
+-config_load ffberlin-uplink
+-config_get ffuplink preset current
+-
+-[ "$ffuplink" = notunnel ] || exit
+-
+-# Make sure ffuplink is not already up
+-. /usr/share/libubox/jshn.sh
+-json_load "$(ubus call network.interface.ffuplink status)"
+-json_select $1
+-json_get_vars up
+-[ "$up" == "0" ] || exit
+-
+-# Internet connectivity via WAN is up, start the ffuplink interface
+-# In the case where ffuplink is set disabled '1', then ifup dies quietly
+-logger -t freifunk-pingcheck "WAN is up, starting ffuplink"
+-ifup ffuplink
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/root/etc/pingcheck/offline.d/60-freifunk-notunnel b/uplinks/freifunk-berlin-uplink-notunnel/root/etc/pingcheck/offline.d/60-freifunk-notunnel
+new file mode 100755
+index 0000000000000000000000000000000000000000..fa7fd796bd3072a82f7fd4a096bdc916f1df2494
+--- /dev/null
++++ b/uplinks/freifunk-berlin-uplink-notunnel/root/etc/pingcheck/offline.d/60-freifunk-notunnel
+@@ -0,0 +1,15 @@
++#!/bin/sh
++
++[ "$INTERFACE" = wan ] || exit
++
++. /lib/functions.sh
++
++config_load ffberlin-uplink
++config_get ffuplink preset current
++
++[ "$ffuplink" = notunnel ] || exit
++
++# Internet connectivity via WAN is up, start the ffuplink interface
++logger -t freifunk-pingcheck "WAN is down, stopping ffuplink"
++ifdown ffuplink
++
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/root/etc/pingcheck/online.d/60-freifunk-notunnel b/uplinks/freifunk-berlin-uplink-notunnel/root/etc/pingcheck/online.d/60-freifunk-notunnel
+new file mode 100755
+index 0000000000000000000000000000000000000000..9c1d140308ccce39b6123ea5be667f8a87c3d635
+--- /dev/null
++++ b/uplinks/freifunk-berlin-uplink-notunnel/root/etc/pingcheck/online.d/60-freifunk-notunnel
+@@ -0,0 +1,22 @@
++#!/bin/sh
++
++[ "$INTERFACE" = wan ] || exit
++
++. /lib/functions.sh
++
++config_load ffberlin-uplink
++config_get ffuplink preset current
++
++[ "$ffuplink" = notunnel ] || exit
++
++# Make sure ffuplink is not already up
++. /usr/share/libubox/jshn.sh
++json_load "$(ubus call network.interface.ffuplink status)"
++json_select $1
++json_get_vars up
++[ "$up" == "0" ] || exit
++
++# Internet connectivity via WAN is up, start the ffuplink interface
++# In the case where ffuplink is set disabled '1', then ifup dies quietly
++logger -t freifunk-pingcheck "WAN is up, starting ffuplink"
++ifup ffuplink
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/root/etc/uci-defaults/freifunk-berlin-z95_notunnel b/uplinks/freifunk-berlin-uplink-notunnel/root/etc/uci-defaults/freifunk-berlin-z95_notunnel
+new file mode 100644
+index 0000000000000000000000000000000000000000..0e6a3ef2dbd7d1905f7f7f45bd682ae4020f879e
+--- /dev/null
++++ b/uplinks/freifunk-berlin-uplink-notunnel/root/etc/uci-defaults/freifunk-berlin-z95_notunnel
+@@ -0,0 +1,51 @@
++#!/bin/sh
++
++THIS_UPLINKNAME="notunnel"
++
++. /lib/functions/freifunk-berlin-network.sh 
++. /lib/functions/guard.sh
++. /lib/functions.sh
++
++# always set correct masquerading, regardless of guard
++uci set firewall.zone_ffuplink.masq=1
++uci commit firewall
++
++current_preset=$(uci get ffberlin-uplink.preset.current)
++if [ ${current_preset} != ${THIS_UPLINKNAME} ]; then
++  # do not track preset when it was 'undefined', aka never configured
++  if [ ${current_preset} != "undefined" ]; then
++    logger -t "ffuplink" "uplink-preset has been changed."
++    uci set ffberlin-uplink.preset.previous=${current_preset}
++    create_ffuplink
++  fi
++  uci set ffberlin-uplink.preset.current=${THIS_UPLINKNAME}
++fi
++# set set auth-type required for this uplink-type, e.g. for freifunk-wizard
++uci set ffberlin-uplink.uplink.auth=none
++
++macaddr=$(uci -q get ffberlin-uplink.uplink.macaddr)
++if [ -z "$macaddr" ]; then
++  macaddr=$(generate_random_mac_hex "fe")
++  uci set ffberlin-uplink.uplink.macaddr=$macaddr
++fi
++
++uci commit ffberlin-uplink
++
++guard "notunnel"
++
++uci -q delete network.ffuplink_dev
++uci set network.ffuplink_dev=device
++uci set network.ffuplink_dev.type=veth
++uci set network.ffuplink_dev.name=ffuplink
++uci set network.ffuplink_dev.peer_name=ffuplink_wan
++uci set network.ffuplink_dev.macaddr=$macaddr
++uci commit network.ffuplink_dev
++
++# add ffuplink_dev to br-wan if not there
++ifnames=$(uci get network.wan.ifname)
++list_contains ifnames ffuplink_wan || uci set network.wan.ifname="${ifnames} ffuplink_wan"
++uci commit network.wan
++
++uci set network.ffuplink.proto=dhcp
++uci set network.ffuplink.hostname=freifunk-$(echo $macaddr|tr -d :)-uplink
++uci commit network.ffuplink
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/uci-defaults/freifunk-berlin-z95_notunnel b/uplinks/freifunk-berlin-uplink-notunnel/uci-defaults/freifunk-berlin-z95_notunnel
+deleted file mode 100644
+index 0e6a3ef2dbd7d1905f7f7f45bd682ae4020f879e..0000000000000000000000000000000000000000
+--- a/uplinks/freifunk-berlin-uplink-notunnel/uci-defaults/freifunk-berlin-z95_notunnel
++++ /dev/null
+@@ -1,51 +0,0 @@
+-#!/bin/sh
+-
+-THIS_UPLINKNAME="notunnel"
+-
+-. /lib/functions/freifunk-berlin-network.sh 
+-. /lib/functions/guard.sh
+-. /lib/functions.sh
+-
+-# always set correct masquerading, regardless of guard
+-uci set firewall.zone_ffuplink.masq=1
+-uci commit firewall
+-
+-current_preset=$(uci get ffberlin-uplink.preset.current)
+-if [ ${current_preset} != ${THIS_UPLINKNAME} ]; then
+-  # do not track preset when it was 'undefined', aka never configured
+-  if [ ${current_preset} != "undefined" ]; then
+-    logger -t "ffuplink" "uplink-preset has been changed."
+-    uci set ffberlin-uplink.preset.previous=${current_preset}
+-    create_ffuplink
+-  fi
+-  uci set ffberlin-uplink.preset.current=${THIS_UPLINKNAME}
+-fi
+-# set set auth-type required for this uplink-type, e.g. for freifunk-wizard
+-uci set ffberlin-uplink.uplink.auth=none
+-
+-macaddr=$(uci -q get ffberlin-uplink.uplink.macaddr)
+-if [ -z "$macaddr" ]; then
+-  macaddr=$(generate_random_mac_hex "fe")
+-  uci set ffberlin-uplink.uplink.macaddr=$macaddr
+-fi
+-
+-uci commit ffberlin-uplink
+-
+-guard "notunnel"
+-
+-uci -q delete network.ffuplink_dev
+-uci set network.ffuplink_dev=device
+-uci set network.ffuplink_dev.type=veth
+-uci set network.ffuplink_dev.name=ffuplink
+-uci set network.ffuplink_dev.peer_name=ffuplink_wan
+-uci set network.ffuplink_dev.macaddr=$macaddr
+-uci commit network.ffuplink_dev
+-
+-# add ffuplink_dev to br-wan if not there
+-ifnames=$(uci get network.wan.ifname)
+-list_contains ifnames ffuplink_wan || uci set network.wan.ifname="${ifnames} ffuplink_wan"
+-uci commit network.wan
+-
+-uci set network.ffuplink.proto=dhcp
+-uci set network.ffuplink.hostname=freifunk-$(echo $macaddr|tr -d :)-uplink
+-uci commit network.ffuplink
