@@ -22,8 +22,8 @@ index f9c08776a8a68a3b724f32059851e307cdc2a37a..3e69ae4a13e7bcc3ab60b48dd11a0261
  	mkdir -p $(IB_KDIR) $(IB_LDIR) $(PKG_BUILD_DIR)/staging_dir/host/lib \
  		$(PKG_BUILD_DIR)/target $(PKG_BUILD_DIR)/scripts $(IB_DTSDIR)
  	-cp $(TOPDIR)/.config $(PKG_BUILD_DIR)/.config
-+	sed -i 's/^CONFIG_BINARY_FOLDER=.*/# CONFIG_BINARY_FOLDER was reset by Imagebuilder/' $(PKG_BUILD_DIR)/.config
-+	sed -i 's/^CONFIG_DOWNLOAD_FOLDER=.*/# CONFIG_DOWNLOAD_FOLDER was reset by Imagebuilder/' $(PKG_BUILD_DIR)/.config
++	$(SED) 's/^CONFIG_BINARY_FOLDER=.*/# CONFIG_BINARY_FOLDER was reset by Imagebuilder/' $(PKG_BUILD_DIR)/.config
++	$(SED) 's/^CONFIG_DOWNLOAD_FOLDER=.*/# CONFIG_DOWNLOAD_FOLDER was reset by Imagebuilder/' $(PKG_BUILD_DIR)/.config
  	$(CP) -L \
  		$(INCLUDE_DIR) $(SCRIPT_DIR) \
  		$(TOPDIR)/rules.mk \
