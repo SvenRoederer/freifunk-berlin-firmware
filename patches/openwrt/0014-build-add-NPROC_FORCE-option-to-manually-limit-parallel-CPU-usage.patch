@@ -33,7 +33,7 @@ index 126462bfc3a0a12324b3ac38614c4f94638d0115..b8043b9ffd4dd0f4255bc4e18290567f
  		string "Build suffix to append to the target BUILD_DIR variable" if DEVEL
  		default ""
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index 3e69ae4a13e7bcc3ab60b48dd11a0261483fce49..2a666daf7b7b1a3b8b01b0ec244cadd67e100699 100644
+index ef7fd3f25e856c4173f78ace45a98090f61a0779..b513cf79e48c9c619d6379fda1c97597c6273e11 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
 @@ -107,7 +107,7 @@ endif

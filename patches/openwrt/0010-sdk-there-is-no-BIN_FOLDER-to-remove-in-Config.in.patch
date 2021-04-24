@@ -1,0 +1,16 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 24 Apr 2021 02:30:06 +0200
+Subject: sdk: there is no BIN_FOLDER to remove in Config.in
+
+diff --git a/target/sdk/Makefile b/target/sdk/Makefile
+index d85c17b613e518bffac996932e0fd090511660d6..5330d1495543bdfdb4286d01e7ea7300ce9239dc 100644
+--- a/target/sdk/Makefile
++++ b/target/sdk/Makefile
+@@ -159,7 +159,6 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
+ 	$(SED) 's,^# REVISION:=.*,REVISION:=$(REVISION),g' $(SDK_BUILD_DIR)/include/version.mk
+ 	$(SED) 's,^# SOURCE_DATE_EPOCH:=.*,SOURCE_DATE_EPOCH:=$(SOURCE_DATE_EPOCH),g' $(SDK_BUILD_DIR)/include/version.mk
+ 	$(SED) '/LINUX_VERMAGIC:=/ { s,unknown,$(LINUX_VERMAGIC),g }' $(SDK_BUILD_DIR)/include/kernel.mk
+-	$(SED) 's,default "$(CONFIG_BINARY_FOLDER)",default "",' $(SDK_BUILD_DIR)/Config.in
+ 	$(SED) 's,default "$(CONFIG_DOWNLOAD_FOLDER)",default "",' $(SDK_BUILD_DIR)/Config.in
+ 	find $(SDK_BUILD_DIR) -name .git | $(XARGS) rm -rf
+ 	find $(SDK_BUILD_DIR) -name .svn | $(XARGS) rm -rf

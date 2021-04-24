@@ -3,7 +3,7 @@ Date: Tue, 20 Apr 2021 20:46:48 +0200
 Subject: imagebuilder: fix NPROC_FORCE name
 
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index 2a666daf7b7b1a3b8b01b0ec244cadd67e100699..ad402c1927b07a4dec1bc2e25077a5355889b89c 100644
+index b513cf79e48c9c619d6379fda1c97597c6273e11..23af4d4208e968d9706b5453c5f8210e5288511d 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
 @@ -107,7 +107,7 @@ endif
