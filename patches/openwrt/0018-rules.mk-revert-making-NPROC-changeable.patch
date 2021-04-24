@@ -3,7 +3,7 @@ Date: Thu, 22 Apr 2021 00:02:03 +0200
 Subject: rules.mk revert making NPROC changeable
 
 diff --git a/rules.mk b/rules.mk
-index c52227be588fcf9ee9b96c04cfda5a877a14a8e1..dee0cc43955ad7ec36ad321040707bfc9f8c8cf8 100644
+index 15327f98eef02bdf775ee3814305c8f64a52de1b..9815bca61585af2fb27b7486bce17c9081d9c4ae 100644
 --- a/rules.mk
 +++ b/rules.mk
 @@ -67,7 +67,7 @@ TARGET_SUFFIX=$(call qstrip,$(CONFIG_TARGET_SUFFIX))

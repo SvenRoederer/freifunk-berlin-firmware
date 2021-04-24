@@ -23,7 +23,7 @@ index 11ddc85b6e5b4721e9d0efcf6458dd72704f248f..126462bfc3a0a12324b3ac38614c4f94
  		string "Build suffix to append to the target BUILD_DIR variable" if DEVEL
  		default ""
 diff --git a/rules.mk b/rules.mk
-index 8f41ff5861a046bcad893b9a11874f96e3f43e3e..c52227be588fcf9ee9b96c04cfda5a877a14a8e1 100644
+index f31d9bb113e25f83475177ca83125d98ba9346a6..15327f98eef02bdf775ee3814305c8f64a52de1b 100644
 --- a/rules.mk
 +++ b/rules.mk
 @@ -67,7 +67,7 @@ TARGET_SUFFIX=$(call qstrip,$(CONFIG_TARGET_SUFFIX))
@@ -36,7 +36,7 @@ index 8f41ff5861a046bcad893b9a11874f96e3f43e3e..c52227be588fcf9ee9b96c04cfda5a87
  
  IS_PACKAGE_BUILD := $(if $(filter package/%,$(BUILD_SUBDIR)),1)
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index 2c6b42cf8950d3768e86c4758a3c270b879d2ed8..3e69ae4a13e7bcc3ab60b48dd11a0261483fce49 100644
+index ef1b7007bee0466f55bb1a6834d80f5669c5241d..ef7fd3f25e856c4173f78ace45a98090f61a0779 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
 @@ -107,7 +107,7 @@ endif
@@ -49,10 +49,10 @@ index 2c6b42cf8950d3768e86c4758a3c270b879d2ed8..3e69ae4a13e7bcc3ab60b48dd11a0261
  	)
  
 diff --git a/target/sdk/Makefile b/target/sdk/Makefile
-index 61918259c7cb231d6f66ccc84060b86a968dd723..d85c17b613e518bffac996932e0fd090511660d6 100644
+index aba1f336f1ec6bbbd37c00058340ed6d2a1231b2..5330d1495543bdfdb4286d01e7ea7300ce9239dc 100644
 --- a/target/sdk/Makefile
 +++ b/target/sdk/Makefile
-@@ -166,7 +166,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
+@@ -165,7 +165,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
  	find $(SDK_BUILD_DIR) -name CVS | $(XARGS) rm -rf
  	-make -C $(SDK_BUILD_DIR)/scripts/config clean
  	(cd $(BUILD_DIR); \

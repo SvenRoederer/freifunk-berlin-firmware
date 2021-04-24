@@ -16,7 +16,7 @@ index b8043b9ffd4dd0f4255bc4e18290567fdf98e194..11ddc85b6e5b4721e9d0efcf6458dd72
  		default 0
  		help
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index ad402c1927b07a4dec1bc2e25077a5355889b89c..2c6b42cf8950d3768e86c4758a3c270b879d2ed8 100644
+index 23af4d4208e968d9706b5453c5f8210e5288511d..ef1b7007bee0466f55bb1a6834d80f5669c5241d 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
 @@ -107,7 +107,7 @@ endif
@@ -29,10 +29,10 @@ index ad402c1927b07a4dec1bc2e25077a5355889b89c..2c6b42cf8950d3768e86c4758a3c270b
  	)
  
 diff --git a/target/sdk/Makefile b/target/sdk/Makefile
-index d85c17b613e518bffac996932e0fd090511660d6..61918259c7cb231d6f66ccc84060b86a968dd723 100644
+index 5330d1495543bdfdb4286d01e7ea7300ce9239dc..aba1f336f1ec6bbbd37c00058340ed6d2a1231b2 100644
 --- a/target/sdk/Makefile
 +++ b/target/sdk/Makefile
-@@ -166,7 +166,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
+@@ -165,7 +165,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
  	find $(SDK_BUILD_DIR) -name CVS | $(XARGS) rm -rf
  	-make -C $(SDK_BUILD_DIR)/scripts/config clean
  	(cd $(BUILD_DIR); \

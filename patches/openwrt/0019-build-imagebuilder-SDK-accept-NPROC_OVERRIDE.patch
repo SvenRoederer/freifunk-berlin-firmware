@@ -3,7 +3,7 @@ Date: Thu, 22 Apr 2021 00:02:48 +0200
 Subject: build: imagebuilder, SDK accept NPROC_OVERRIDE
 
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index 3e69ae4a13e7bcc3ab60b48dd11a0261483fce49..6a6b6f6effd5b07a616c53f74fa6d7e56b1d2d2f 100644
+index ef7fd3f25e856c4173f78ace45a98090f61a0779..e29d1899d46e49ee5899e5dc65805b2d467ed87c 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
 @@ -107,7 +107,7 @@ endif
@@ -16,10 +16,10 @@ index 3e69ae4a13e7bcc3ab60b48dd11a0261483fce49..6a6b6f6effd5b07a616c53f74fa6d7e5
  	)
  
 diff --git a/target/sdk/Makefile b/target/sdk/Makefile
-index d85c17b613e518bffac996932e0fd090511660d6..96ab628f29a90045a8de2433b543e20b1a0e817c 100644
+index 5330d1495543bdfdb4286d01e7ea7300ce9239dc..e9ddf059a85659040d670573e5e010748c28e2cf 100644
 --- a/target/sdk/Makefile
 +++ b/target/sdk/Makefile
-@@ -166,7 +166,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
+@@ -165,7 +165,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
  	find $(SDK_BUILD_DIR) -name CVS | $(XARGS) rm -rf
  	-make -C $(SDK_BUILD_DIR)/scripts/config clean
  	(cd $(BUILD_DIR); \
