@@ -1,0 +1,128 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Mon, 26 Apr 2021 01:43:25 +0200
+Subject: ath79: update mtd-partitions for "tplink_eap2x5-1port"
+
+The firmware-layout of a freshly bought TPLink EAP225 Outdoor v1 shows the following layout:
+
+[    0.970000] m25p80 spi0.0: found en25q128a, expected m25p80
+[    0.980000] m25p80 spi0.0: en25q128a (16384 Kbytes)
+[    0.980000] 9 cmdlinepart partitions found on MTD device spi0.0
+[    0.990000] Creating 9 MTD partitions on "spi0.0":
+[    0.990000] 0x000000000000-0x000000020000 : "u-boot"
+[    1.000000] 0x000000020000-0x000000030000 : "pation-table"
+[    1.010000] 0x000000030000-0x000000040000 : "product-info"
+[    1.010000] 0x000000040000-0x0000001c0000 : "kernel"
+[    1.020000] 0x0000001c0000-0x000000f00000 : "rootfs"
+[    1.030000] mtd: partition "rootfs" set to be root filesystem
+[    1.030000] 0x000000f00000-0x000000f30000 : "config"
+[    1.040000] 0x000000f30000-0x000000fb0000 : "mutil-log"
+[    1.050000] 0x000000fb0000-0x000000ff0000 : "oops"
+[    1.050000] 0x000000ff0000-0x000001000000 : "ART"
+
+Basically it seems to extend the previously unused area between "rootfs" and "config" by
+moving the "config" partition.
+Either the vendor changed the layout recently, initial layout was wrong of only the "Outdoor"
+board had a different layout at all.
+
+Initally seen with firmware "0.0.0 Build 20210415 Rel. 0", but also with
+- 1.7.0 Build 20200113 Rel. 35383
+- 1.20.0 Build 20200422
+- 5.0.0 Build 20200918 Rel. 58628
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+
+diff --git a/target/linux/ath79/dts/qca9563_tplink_eap2x5-1port.dtsi b/target/linux/ath79/dts/qca9563_tplink_eap2x5-1port.dtsi
+index a6aefc7b55a8e8705f833d06290d78a3f1937516..3978be75e663e57fc2c76893feb17004e3f92cde 100644
+--- a/target/linux/ath79/dts/qca9563_tplink_eap2x5-1port.dtsi
++++ b/target/linux/ath79/dts/qca9563_tplink_eap2x5-1port.dtsi
+@@ -60,18 +60,17 @@
+ 			partition@40000 {
+ 				compatible = "openwrt,elf";
+ 				label = "firmware";
+-				reg = <0x040000 0xd80000>;
++				reg = <0x040000 0xec0000>;
+ 			};
+ 
+-			partition@dc0000 {
++			partition@f00000 {
+ 				label = "config";
+-				reg = <0xdc0000 0x030000>;
++				reg = <0xf00000 0x030000>;
+ 				read-only;
+ 			};
+ 
+-			/* df0000-f30000 undefined in vendor firmware */
+-
+ 			partition@f30000 {
++				/* vendor firmware: f30000-fb0000 "multi-log"; fb0000-ff0000 "oops"  */
+ 				label = "log";
+ 				reg = <0xf30000 0x0c0000>;
+ 				read-only;
+diff --git a/target/linux/ath79/image/generic-tp-link.mk b/target/linux/ath79/image/generic-tp-link.mk
+index 0058d74f773dc218ce50bb0ab49f0ddcb80fe1f5..afab62e944bea928ec82a76eb8eab1bf86b9846e 100644
+--- a/target/linux/ath79/image/generic-tp-link.mk
++++ b/target/linux/ath79/image/generic-tp-link.mk
+@@ -374,7 +374,7 @@ endef
+ define Device/tplink_eap225-outdoor-v1
+   $(Device/tplink-eap2x5)
+   SOC := qca9563
+-  IMAGE_SIZE := 13824k
++  IMAGE_SIZE := 15104k
+   DEVICE_MODEL := EAP225-Outdoor
+   DEVICE_VARIANT := v1
+   DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9888-ct
+@@ -385,7 +385,7 @@ TARGET_DEVICES += tplink_eap225-outdoor-v1
+ define Device/tplink_eap225-v3
+   $(Device/tplink-eap2x5)
+   SOC := qca9563
+-  IMAGE_SIZE := 13824k
++  IMAGE_SIZE := 15104k
+   DEVICE_MODEL := EAP225
+   DEVICE_VARIANT := v3
+   DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9888-ct
+@@ -407,7 +407,7 @@ TARGET_DEVICES += tplink_eap225-wall-v2
+ define Device/tplink_eap245-v1
+   $(Device/tplink-eap2x5)
+   SOC := qca9563
+-  IMAGE_SIZE := 13824k
++  IMAGE_SIZE := 15104k
+   DEVICE_MODEL := EAP245
+   DEVICE_VARIANT := v1
+   DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca988x-ct
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index ac71b3305ee68f19d08c05f3e0357b6345e883c2..354c0c9b0f4f4de3242a18047207cbcf3345d334 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -1377,8 +1377,8 @@ static struct device_info boards[] = {
+ 			{"support-list", 0x31000, 0x00100},
+ 			{"product-info", 0x31100, 0x00400},
+ 			{"soft-version", 0x32000, 0x00100},
+-			{"firmware", 0x40000, 0xd80000},
+-			{"user-config", 0xdc0000, 0x30000},
++			{"firmware", 0x40000, 0xec0000},
++			{"user-config", 0xf00000, 0x30000},
+ 			{"mutil-log", 0xf30000, 0x80000},
+ 			{"oops", 0xfb0000, 0x40000},
+ 			{"radio", 0xff0000, 0x10000},
+@@ -1406,8 +1406,8 @@ static struct device_info boards[] = {
+ 			{"support-list", 0x31000, 0x00100},
+ 			{"product-info", 0x31100, 0x00400},
+ 			{"soft-version", 0x32000, 0x00100},
+-			{"firmware", 0x40000, 0xd80000},
+-			{"user-config", 0xdc0000, 0x30000},
++			{"firmware", 0x40000, 0xec0000},
++			{"user-config", 0xf00000, 0x30000},
+ 			{"mutil-log", 0xf30000, 0x80000},
+ 			{"oops", 0xfb0000, 0x40000},
+ 			{"radio", 0xff0000, 0x10000},
+@@ -1492,8 +1492,8 @@ static struct device_info boards[] = {
+ 			{"support-list", 0x31000, 0x00100},
+ 			{"product-info", 0x31100, 0x00400},
+ 			{"soft-version", 0x32000, 0x00100},
+-			{"firmware", 0x40000, 0xd80000},
+-			{"user-config", 0xdc0000, 0x30000},
++			{"firmware", 0x40000, 0xec0000},
++			{"user-config", 0xf00000, 0x30000},
+ 			{"radio", 0xff0000, 0x10000},
+ 			{NULL, 0, 0}
+ 		},
