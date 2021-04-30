@@ -2,8 +2,12 @@ From: Sven Roederer <devel-sven@geroedel.de>
 Date: Sat, 17 Apr 2021 14:37:12 +0200
 Subject: rework package defines to changes of luci.mk
 
-LuCI-PR https://github.com/openwrt/luci/pull/2637 was rewritten, so update our
-packages to this hopefully finanl implementation.
+LuCI-PR https://github.com/openwrt/luci/pull/2637 was rewritten, so update our packages to this implementation.
+Even it's still in PR-state let's use the new LuCI-code, as it makes our package-definitions quite short and provides automatic versioning.
+
+* adapt freifunk.mk to override LuCI defaults with our requirements
+* change most of the simple Makefiles to use LuCI-wrapper
+* move files of package in correct location to match LuCI-wrappers requirements
 
 diff --git a/addons/freifunk-berlin-lib-guard/Makefile b/addons/freifunk-berlin-lib-guard/Makefile
 index 0ba782ca6ff0017ff8899ce0bbe11487d5f7c0a9..0ec7247b54e4904ad618f72928cb7a787e5115d9 100644
