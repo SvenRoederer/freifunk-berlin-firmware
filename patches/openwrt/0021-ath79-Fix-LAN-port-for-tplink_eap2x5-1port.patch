@@ -1,6 +1,6 @@
 From: Sven Roederer <devel-sven@geroedel.de>
 Date: Tue, 27 Apr 2021 00:47:19 +0200
-Subject: [WIP] ath79: Fix LAN-port for tplink_eap2x5-1port
+Subject: ath79: Fix LAN-port for tplink_eap2x5-1port
 
 The Lan port on TPLink EAP225 Outdoor v1 is unable to connect to an 100MBit/s
 link and is intermittent on some 1GBit/s peers.
