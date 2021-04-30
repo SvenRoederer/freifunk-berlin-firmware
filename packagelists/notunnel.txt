@@ -7,8 +7,10 @@ wpad-basic
 -ath10k-ct
 -kmod-ath10k-ct
 -ath10k-firmware-qca9888-ct
-#ath10k
 kmod-ath10k
+ath10k-board-qca988x
+ath10k-firmware-qca988x
+ath10k-board-qca9888
 ath10k-firmware-qca9888
 
 # Defaults
