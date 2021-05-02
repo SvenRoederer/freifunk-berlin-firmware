@@ -137,6 +137,9 @@ info $DEST_DIR
 
 info "Extract image builder $IB_FILE"
 tar xf "$IB_FILE" --strip-components=1 -C "$TEMP_DIR"
+echo "CONFIG_TARGET_ROOTFS_SQUASHFS=y" >> "$TEMP_DIR"/.config
+echo "CONFIG_TARGET_SQUASHFS_BLOCK_SIZE=256" >> "$TEMP_DIR"/.config
+
 
 for profile in $PROFILES ; do
 	info "Building a profile for $profile"
