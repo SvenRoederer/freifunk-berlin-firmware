@@ -1,0 +1,18 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 3 May 2021 00:04:23 +0200
+Subject: imagebuilder: check for SQUASHFS_BLOCK_SIZE during buildtime
+
+probably this value is avail, so we can bake it into the archive ...
+
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index e29d1899d46e49ee5899e5dc65805b2d467ed87c..55cde7d5793c5f3d2727e2da9c956d64d0e6334f 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -31,6 +31,7 @@ $(BIN_DIR)/$(IB_NAME).tar.xz: clean
+ 	-cp $(TOPDIR)/.config $(PKG_BUILD_DIR)/.config
+ 	$(SED) 's/^CONFIG_BINARY_FOLDER=.*/# CONFIG_BINARY_FOLDER was reset by Imagebuilder/' $(PKG_BUILD_DIR)/.config
+ 	$(SED) 's/^CONFIG_DOWNLOAD_FOLDER=.*/# CONFIG_DOWNLOAD_FOLDER was reset by Imagebuilder/' $(PKG_BUILD_DIR)/.config
++$(error SQUASHFS: --$(CONFIG_TARGET_SQUASHFS_BLOCK_SIZE)--)
+ 	$(CP) -L \
+ 		$(INCLUDE_DIR) $(SCRIPT_DIR) \
+ 		$(TOPDIR)/rules.mk \
