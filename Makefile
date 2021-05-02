@@ -196,7 +196,7 @@ ifeq ($(origin IB_FILE),command line)
 .stamp-images: $(FW_DIR)/embedded-files .FORCE
 	$(info IB_FILE explicitly defined; using it for building firmware-images)
 else
-.stamp-images: .stamp-compiled
+.stamp-images: $(FW_DIR)/embedded-files .stamp-compiled
 	$(info IB_FILE not defined; assuming called from inside regular build)
 	$(eval IB_FILE := $(shell ls -tr $(OPENWRT_DIR)/bin/targets/$(MAINTARGET)/$(SUBTARGET)/*-imagebuilder-*.tar.xz | tail -n1))
 endif
