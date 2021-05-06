@@ -1,0 +1,37 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 26 Apr 2021 16:58:22 +0200
+Subject: sdk: unset BINARY_FOLDER and DOWNLOAD_FOLDER in final archives
+
+Using these config-options to customize the folders used at build-time makes these
+folder settings appear in generated archive. This causes the SDK to be not
+portable, as it's going to use the build-time folders on the new systems.
+The errors vary from passing the build, disk out-of-space to permission denied.
+
+The build-time settings of these folders are passed into the archive via Config.build.
+The expected behavior is that the SDK acts after unpacking like these settings have
+their defaults, using intree folders. So just filter these folders out when running
+convert-config.pl to create Config.build.
+
+This addresses the same issue that's fixed in the previous commit for the imagebuilder.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/target/sdk/convert-config.pl b/target/sdk/convert-config.pl
+index f73744af099d2966b1ecacca35483c72b90ec7c6..08189df95cb5f0bf9934909de24f54003dbc4420 100755
+--- a/target/sdk/convert-config.pl
++++ b/target/sdk/convert-config.pl
+@@ -9,7 +9,13 @@ while (<>) {
+ 	chomp;
+ 	next if /^CONFIG_SIGNED_PACKAGES/;
+ 
+-	if (/^CONFIG_([^=]+)=(.*)$/) {
++	if (/^CONFIG_((BINARY)|(DOWNLOAD))_FOLDER=(.*)$/) {
++		# We don't want to preserve the build setting of
++		# BINARY_FOLDER and DOWNLOAD_FOLDER.
++		$var = "$1_FOLDER";
++		$val = '""';
++		$type = "string";
++	} elsif (/^CONFIG_([^=]+)=(.*)$/) {
+ 		$var = $1;
+ 		$val = $2;
+ 

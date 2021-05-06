@@ -1,0 +1,36 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 26 Apr 2021 16:58:21 +0200
+Subject: imagebuilder: unset BINARY_FOLDER and DOWNLOAD_FOLDER in final archive
+
+Using these config-options to customize the folders used at build-time
+makes these folder settings appear in generated archive. This causes the
+imagebuilder to be not portable, as it's going to use the build-time folders
+on the new systems. Errors look like:
+
+  mkdir: cannot create directory '/mnt/build': Permission denied
+  Makefile:116: recipe for target '_call_image' failed
+  make[2]: *** [_call_image] Error 1
+  Makefile:241: recipe for target 'image' failed
+  make[1]: *** [image] Error 2
+
+The build-time settings of these folders are passed into the archives via
+.config file.
+The expected behavior is that after unpacking the imagebuilder acts like
+these settings have their defaults, using intree folders. So unset the
+build-time settings.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index f9c08776a8a68a3b724f32059851e307cdc2a37a..0580e41c5790d8989ec2daf38e89e046cd1c0862 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -29,6 +29,8 @@ $(BIN_DIR)/$(IB_NAME).tar.xz: clean
+ 	mkdir -p $(IB_KDIR) $(IB_LDIR) $(PKG_BUILD_DIR)/staging_dir/host/lib \
+ 		$(PKG_BUILD_DIR)/target $(PKG_BUILD_DIR)/scripts $(IB_DTSDIR)
+ 	-cp $(TOPDIR)/.config $(PKG_BUILD_DIR)/.config
++	$(SED) 's/^CONFIG_BINARY_FOLDER=.*/# CONFIG_BINARY_FOLDER is not set/' $(PKG_BUILD_DIR)/.config
++	$(SED) 's/^CONFIG_DOWNLOAD_FOLDER=.*/# CONFIG_DOWNLOAD_FOLDER is not set/' $(PKG_BUILD_DIR)/.config
+ 	$(CP) -L \
+ 		$(INCLUDE_DIR) $(SCRIPT_DIR) \
+ 		$(TOPDIR)/rules.mk \
