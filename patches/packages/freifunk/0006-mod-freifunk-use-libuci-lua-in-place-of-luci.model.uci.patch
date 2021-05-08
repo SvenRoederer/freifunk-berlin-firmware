@@ -32,7 +32,7 @@ index 5b00ea572b6ca14f4824c4476ea7f5dc61ae1c12..801d37058ed626ee41f1234b5768cb22
  
  LUCI_TITLE:=LuCI Freifunk module
 -LUCI_DEPENDS:=+luci-compat +luci-mod-admin-full +luci-lib-json +luci-lib-ipkg +freifunk-firewall +freifunk-common
-+LUCI_DEPENDS:=+luci-compat +luci-mod-admin-full +libuci-lua +luci-lib-json +luci-lib-ipkg +libuci-lua +freifunk-firewall +freifunk-common
++LUCI_DEPENDS:=+luci-compat +luci-mod-admin-full +libuci-lua +luci-lib-json +luci-lib-ipkg +freifunk-firewall +freifunk-common
  
  include ../../freifunk.mk
  
