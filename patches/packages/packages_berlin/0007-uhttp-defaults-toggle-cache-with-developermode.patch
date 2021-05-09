@@ -1,0 +1,24 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 9 May 2021 20:43:46 +0200
+Subject: uhttp-defaults: toggle cache with developermode
+
+diff --git a/defaults/freifunk-berlin-uhttpd-defaults/root/etc/uci-defaults/freifunk-berlin-uhttpd-defaults b/defaults/freifunk-berlin-uhttpd-defaults/root/etc/uci-defaults/freifunk-berlin-uhttpd-defaults
+index 8428893fc519bce190731cc785aad1ba66fa72bc..be15f5e46a15b1d8374f4b0a55a0de7d4885f721 100644
+--- a/defaults/freifunk-berlin-uhttpd-defaults/root/etc/uci-defaults/freifunk-berlin-uhttpd-defaults
++++ b/defaults/freifunk-berlin-uhttpd-defaults/root/etc/uci-defaults/freifunk-berlin-uhttpd-defaults
+@@ -1,6 +1,15 @@
+ #!/bin/sh
+ 
+ . /lib/functions/guard.sh
++
++if [ $(uci -q get system.ffberlin.development) = "1" ]; then
++  uci set luci.ccache.enable='0'
++  uci commit luci
++else
++  uci set luci.ccache.enable='1'
++  uci commit luci
++fi
++
+ guard "uhttpd"
+ 
+ # insert a random part into commonname (Freifunk Berlin - <random>)
