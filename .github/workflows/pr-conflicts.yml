@@ -2,7 +2,7 @@ name: Check PRs for conflict
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   triage:
