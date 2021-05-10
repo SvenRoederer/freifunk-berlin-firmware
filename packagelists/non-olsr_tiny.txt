@@ -1,0 +1,34 @@
+-kmod-usb-core
+-kmod-usb2
+-kmod-usb-chipidea2
+-kmod-usb-ledtrig-usbport
+-kmod-usb-ohci
+-kmod-ppp
+-kmod-usb-serial
+-ppp
+-ppp-mod-pppoe
+-wpad
+-wpad-basic-wolfssl
+wpad-mini
+opkg
+-usign
+
+# Defaults
+freifunk-berlin-dhcp-defaults
+freifunk-berlin-freifunk-defaults
+freifunk-berlin-migration
+freifunk-berlin-network-defaults
+freifunk-berlin-system-defaults
+community-profiles
+
+# Common
+dnsmasq
+-firewall
+-iptables
+-ip6tables
+iwinfo
+libiwinfo-lua
+
+# BATMAN
+kmod-batman-adv
+batctl-tiny
