@@ -1,0 +1,22 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Thu, 13 May 2021 19:31:18 +0200
+Subject: mod-freifunk: hotfix for "https://github.com/freifunk/openwrt-packages/issues/33"
+
+* don't drop root priviledges make page work again, but it's not a real fix of the issue
+
+diff --git a/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua b/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
+index e04cfaf7dfcbcdfa357986a7247310eb2366a360..2c1f184703a9ff4deca8889a366d58967f35f5f9 100644
+--- a/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
++++ b/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
+@@ -18,8 +18,9 @@ function index()
+ 	page.title    = _("Freifunk")
+ 	page.target   = alias("freifunk", "index")
+ 	page.order    = 5
+-	page.setuser  = "nobody"
+-	page.setgroup = "nogroup"
++-- TODO: fix issue #33 and drop privileges again
++--	page.setuser  = "nobody"
++--	page.setgroup = "nogroup"
+ 	page.i18n     = "freifunk"
+ 	page.index    = true
+ 
