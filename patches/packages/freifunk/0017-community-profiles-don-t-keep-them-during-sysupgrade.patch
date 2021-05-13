@@ -7,7 +7,7 @@ them during sysupgrades and also overwrite recent files with the
 old ones of the backup. Moving the files into /usr/share and
 symlinking them into /etc/config results in having the most recent
 versions in the system.
-fixes https://github.com/openwrt/luci/issues/944
+fixes https://github.com/freifunk/openwrt-packages/pull/21 (previously https://github.com/openwrt/luci/issues/944)
 
 Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
 
