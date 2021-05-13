@@ -1,0 +1,179 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Fri, 14 May 2021 00:12:25 +0200
+Subject: Revert "remove virtualearth based freifunk map"
+
+This reverts commit eaff91e3c6b1d412b7744d6921cb21b6caf79b28.
+according to https://github.com/freifunk/openwrt-packages/pull/17#ref-commit-22bb9b7
+
+diff --git a/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua b/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
+index 2c1f184703a9ff4deca8889a366d58967f35f5f9..8c9a1d9b965fb6078cb13d14e889cd3e14cb77b8 100644
+--- a/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
++++ b/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
+@@ -92,6 +92,8 @@ function index()
+ 	page.title  = _("Contact")
+ 	page.order  = 15
+ 
++	entry({"freifunk", "map"}, template("freifunk-map/frame"), _("Map"), 50)
++	entry({"freifunk", "map", "content"}, template("freifunk-map/map"), nil, 51)
+ 	entry({"admin", "freifunk", "profile_error"}, template("freifunk/profile_error"))
+ end
+ 
+diff --git a/modules/luci-mod-freifunk/luasrc/view/freifunk-map/frame.htm b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/frame.htm
+new file mode 100644
+index 0000000000000000000000000000000000000000..bd936ac705ae69d6bb614877a9a17b98eb6c5e2d
+--- /dev/null
++++ b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/frame.htm
+@@ -0,0 +1,29 @@
++<%+header%>
++
++<%
++	local has_latlon = false
++	local uci = require "luci.model.uci".cursor()
++	uci:foreach("olsrd", "LoadPlugin", function(s)
++		if s.library == "olsrd_nameservice" and s.latlon_file then
++			has_latlon = true
++		end
++	end)
++%>
++
++<% if has_latlon then %>
++	<iframe style="width:100%; height:640px; border:none" src="<%=url("freifunk/map/content")%>"></iframe>
++	<h3><%:Legend%>:</h3>
++	<ul>
++		<li><strong><span style="color:#00cc00"><%:Green%></span></strong>:<%:Very good (ETX < 2)%></li>
++		<li><strong><span style="color:#ffcb05"><%:Yellow%></span></strong>:<%:Good (2 < ETX < 4)%></li>
++		<li><strong><span style="color:#ff6600"><%:Orange%></span></strong>:<%:Still usable (4 < ETX < 10)%></li>
++		<li><strong><span style="color:#bb3333"><%:Red%></span></strong>:<%:Bad (ETX > 10)%></li>
++	</ul>
++
++<% else %>
++	<h2><%:Map Error%></h2>
++	<p><%_The OLSRd service is not configured to capture position data from the network.<br />
++		Please make sure that the nameservice plugin is properly configured and that the <em>latlon_file</em> option is enabled.%></p>
++<% end %>
++<%+footer%>
++
+diff --git a/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+new file mode 100644
+index 0000000000000000000000000000000000000000..f69401d6e35669b532a88a1ecda1d3a38161533d
+--- /dev/null
++++ b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+@@ -0,0 +1,118 @@
++<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
++<html>
++	<head>
++		<title>Map</title>
++	</head>
++
++	<body style="margin:0">
++		<script src="//dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1&s=1" type="text/javascript"></script>
++		<script type="text/javascript">
++			var alias = new Array;
++			var points = new Array;
++			var unkpos = new Array;
++			var lineid = 0;
++			onload=new Function("if(null!=window.ffmapinit)ffmapinit();");
++
++			function Mid(mainip,aliasip)
++			{
++				alias[aliasip]=mainip;
++			}
++
++			function Node(mainip,lat,lon,ishna,hnaip,name)
++			{
++				points[mainip] = new VELatLong(lat, lon);
++				map.AddPushpin(new VEPushpin(mainip, points[mainip],
++				'<%=luci.config.main.resourcebase%>/freifunk-map/'+(ishna?'hna':'node')+'.gif', 'Node:'+name,
++				'<br><img src="<%=luci.config.main.resourcebase%>/freifunk-map/'+(ishna?'hna':'node')+'.gif">'+
++				'<br>IP:'+mainip+'<br>DefGW:'+hnaip));
++			}
++
++			function Self(mainip,lat,lon,ishna,hnaip,name)
++			{
++				//map.SetDashboardSize(VEDashboardSize.Small);
++				map.LoadMap(new VELatLong(lat, lon), 15, VEMapStyle.Hybrid);
++				map.SetScaleBarDistanceUnit(VEDistanceUnit.Kilometers);
++				map.ShowMiniMap(14, 474);
++				Node(mainip,lat,lon,ishna,hnaip,name);
++			}
++
++			function Link(fromip,toip,lq,nlq,etx)
++			{
++				if (0==lineid && null!=window.ffmapstatic) ffmapstatic();
++				if (null != alias[toip]) toip = alias[toip];
++				if (null != alias[fromip]) fromip = alias[fromip];
++				if (null != points[fromip] && null != points[toip])
++				{
++					var color;
++					var red = 240;
++					var green = 0;
++					var blue = 0;
++					var w = 1
++
++					if (etx < 100) {red=252;green=102;blue=0;w=2};
++					if (etx < 10) {red=255;green=203;blue=5;w=3};
++					if (etx < 4) {red=240;green=255;blue=0;w=4};
++					if (etx < 2) {red=0;green=204;blue=0;w=5};
++					if (etx < 1) {red=80;green=0;blue=0;w=1};
++
++					map.AddPolyline(new VEPolyline('id'+lineid, [points[fromip], points[toip]],
++					new VEColor(red, green, blue, 0.5), w));
++
++
++				}
++				else
++				{
++					if (null == points[toip]) unkpos[toip] = '';
++					if (null == points[fromip]) unkpos[fromip] = '';
++				}
++				lineid++;
++			}
++
++			function PLink(fromip,toip,lq,nlq,etx,lata,lona,ishnaa,latb,lonb,ishnab)
++			{
++				Link(fromip,toip,lq,nlq,etx);
++			}
++
++			function ffmapinit()
++			{
++				if(null!=window.map)map.Dispose();
++
++				var INFINITE = 99.99;
++
++				map = new VEMap('ffmap');
++				<%
++					local fd
++					local uci = require "luci.model.uci".cursor()
++
++					uci:foreach("olsrd", "LoadPlugin", function(s)
++						if s.library == "olsrd_nameservice" and s.latlon_file then
++							fd = io.open(s.latlon_file)
++						end
++					end)
++
++					if fd then
++						local data = fd:read("*a")
++						fd:close()
++
++						if data then
++							local line
++							for line in data:gmatch("[^\n]+") do
++								if line:match(";$") then
++									write(line .. "\n")
++								else
++									break
++								end
++							end
++						end
++					end
++				%>
++			}
++
++			function ffgoto(ip)
++			{
++				map.SetCenter(points[ip]);
++			}
++		</script>
++		<div id="ffmap" style="position:relative; width:100%; height:640px;"></div>
++	</body>
++</html>

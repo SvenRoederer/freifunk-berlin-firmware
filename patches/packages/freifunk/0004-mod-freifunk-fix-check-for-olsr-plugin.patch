@@ -1,0 +1,17 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Fri, 14 May 2021 01:25:28 +0200
+Subject: mod-freifunk: fix check for olsr-plugin
+
+diff --git a/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+index e69227a96a138769bec9aea779bcb983aa0dd095..72b223b6c93dfa38a280d21e29dbc76bf0905c40 100644
+--- a/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
++++ b/modules/luci-mod-freifunk/luasrc/view/freifunk-map/map.htm
+@@ -112,7 +112,7 @@
+           local uci = require "luci.model.uci".cursor()
+ 
+           uci:foreach("olsrd", "LoadPlugin", function(s)
+-            if s.library == "olsrd_nameservice.so.0.3" and s.latlon_file then
++            if s.library == "olsrd_nameservice" and s.latlon_file then
+               fd = io.open(s.latlon_file)
+             end
+           end)
