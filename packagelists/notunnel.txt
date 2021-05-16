@@ -6,7 +6,6 @@ wpad-basic
 
 -ath10k-ct
 -kmod-ath10k-ct
--kmod-ath10k-ct-smallbuffers
 -ath10k-firmware-qca9888-ct
 kmod-ath10k
 #ath10k-board-qca988x
