@@ -6,10 +6,10 @@ Subject: ath79: move some 8/32MB devices to tiny subtarget
 * some tplink 8/32 (WR1043v1; WR842v1/v2; WR710)
 
 diff --git a/target/linux/ath79/image/Makefile b/target/linux/ath79/image/Makefile
-index 4b4a67fd4d54d0f345477b4d3d221ebb8ff198e2..cac44823beb79f8e6e6dc4c566b914219c8536e7 100644
+index c2d2474336bd6288d3babd9dc2a8d021f72d992e..7938687cd4ae28f080b3f8a377424b2b8c659588 100644
 --- a/target/linux/ath79/image/Makefile
 +++ b/target/linux/ath79/image/Makefile
-@@ -73,6 +73,7 @@ endif
+@@ -82,6 +82,7 @@ endif
  ifeq ($(SUBTARGET),tiny)
  include tiny-netgear.mk
  include tiny-tp-link.mk
@@ -274,12 +274,12 @@ index 0000000000000000000000000000000000000000..a8c5a2cf68d8851afcd66fe1857f1c54
 +endef
 +TARGET_DEVICES += ubnt_rocket-m
 diff --git a/target/linux/ath79/tiny/base-files/etc/board.d/01_leds b/target/linux/ath79/tiny/base-files/etc/board.d/01_leds
-index bc0b15bba5a18e1a2a586542e8e1e0364ca6aa22..a94f0786e306623ecb62fb3c1999fea166e5bea0 100755
+index f0b4acf0662ee0df824ca36f20fcfb889e730fef..cc66a9a7ce2e73c0e26d65e09cbf79af10adc52c 100755
 --- a/target/linux/ath79/tiny/base-files/etc/board.d/01_leds
 +++ b/target/linux/ath79/tiny/base-files/etc/board.d/01_leds
-@@ -99,6 +99,13 @@ tplink,tl-wr941-v4)
- 	ucidef_set_led_switch "lan3" "LAN3" "tp-link:green:lan3" "switch0" "0x08"
- 	ucidef_set_led_switch "lan4" "LAN4" "tp-link:green:lan4" "switch0" "0x10"
+@@ -94,6 +94,13 @@ tplink,tl-wa850re-v2)
+ 	ucidef_set_led_rssi "rssimediumhigh" "RSSIMEDIUMHIGH" "blue:signal4" "wlan0" "60" "100"
+ 	ucidef_set_led_rssi "rssihigh" "RSSIHIGH" "blue:signal5" "wlan0" "80" "100"
  	;;
 +tplink,tl-wr842n-v2)
 +	ucidef_set_led_netdev "wan" "WAN" "tp-link:green:wan" "eth1"
@@ -292,10 +292,10 @@ index bc0b15bba5a18e1a2a586542e8e1e0364ca6aa22..a94f0786e306623ecb62fb3c1999fea1
  tplink,tl-wr940n-v4|\
  tplink,tl-wr941nd-v6)
 diff --git a/target/linux/ath79/tiny/base-files/etc/board.d/02_network b/target/linux/ath79/tiny/base-files/etc/board.d/02_network
-index cbcdbe9a895c7d8e9f0a9413a936cc4a24099aa9..45a4a7b589667603343d631c970c8fc24bd62346 100755
+index cca63520237ba21ef611b398fc983b361a2590e8..bd006cc71a579ce61b83c1a61e44dd9aa9db782c 100755
 --- a/target/linux/ath79/tiny/base-files/etc/board.d/02_network
 +++ b/target/linux/ath79/tiny/base-files/etc/board.d/02_network
-@@ -59,6 +59,7 @@ ath79_setup_interfaces()
+@@ -66,6 +66,7 @@ ath79_setup_interfaces()
  	tplink,tl-wr841-v10|\
  	tplink,tl-wr841-v11|\
  	tplink,tl-wr841-v12|\
@@ -303,7 +303,7 @@ index cbcdbe9a895c7d8e9f0a9413a936cc4a24099aa9..45a4a7b589667603343d631c970c8fc2
  	tplink,tl-wr940n-v3|\
  	tplink,tl-wr940n-v4|\
  	tplink,tl-wr940n-v6|\
-@@ -71,11 +72,16 @@ ath79_setup_interfaces()
+@@ -78,11 +79,16 @@ ath79_setup_interfaces()
  	tplink,tl-wr740n-v4|\
  	tplink,tl-wr740n-v5|\
  	tplink,tl-wr741nd-v4|\
@@ -321,7 +321,7 @@ index cbcdbe9a895c7d8e9f0a9413a936cc4a24099aa9..45a4a7b589667603343d631c970c8fc2
  	tplink,tl-wr941-v2)
  		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "wan"
  		;;
-@@ -83,6 +89,9 @@ ath79_setup_interfaces()
+@@ -90,6 +96,9 @@ ath79_setup_interfaces()
  		ucidef_add_switch "switch0" \
  			"0@eth0" "2:lan:1" "3:lan:2" "4:lan:3" "5:lan:4" "1:wan"
  		;;
@@ -358,10 +358,10 @@ index 0000000000000000000000000000000000000000..91eeee7937c0f7fcfe0138e211666211
 +
 +exit 0
 diff --git a/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom b/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
-index 6ae2dc5f94817e83051fb97cede68c00f71f48c5..8ebff6133274be23e71107368f1085c2512ca7bc 100644
+index ffbc46afd0151b652244c5d366ae14b283bc1191..b6cf1dc9bc47166c55c0110c456f8d686edb366d 100644
 --- a/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
 +++ b/target/linux/ath79/tiny/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
-@@ -33,7 +33,12 @@ case "$FIRMWARE" in
+@@ -36,7 +36,12 @@ case "$FIRMWARE" in
  	tplink,tl-wr740n-v3|\
  	tplink,tl-wr741-v1|\
  	tplink,tl-wr743nd-v1|\
@@ -376,14 +376,17 @@ index 6ae2dc5f94817e83051fb97cede68c00f71f48c5..8ebff6133274be23e71107368f1085c2
  		;;
  	pqi,air-pen)
 diff --git a/target/linux/ath79/tiny/target.mk b/target/linux/ath79/tiny/target.mk
-index 2ee71ea92137f7d730b63149131489f41722a76c..f4a5a9a3b6c9e840123c5e36e5edabe21f33f073 100644
+index 91f135b56eda4534edfbf68414933cb42a75d1e2..66178abfd260c97cca5d26c43589d99a3093b37c 100644
 --- a/target/linux/ath79/tiny/target.mk
 +++ b/target/linux/ath79/tiny/target.mk
-@@ -1,5 +1,5 @@
+@@ -1,8 +1,8 @@
 -BOARDNAME:=Devices with small flash
--FEATURES += squashfs small_flash
 +BOARDNAME:=Devices with small flash / low ram
-+FEATURES += squashfs
+ FEATURES += small_flash
  
  DEFAULT_PACKAGES += wpad-basic-wolfssl
  
+ define Target/Description
+-	Build firmware images for Atheros AR71xx/AR913x/AR934x based boards with small flash
++	Build firmware images for Atheros AR71xx/AR913x/AR934x based boards with small flash and low RAM (8MB)
+ endef

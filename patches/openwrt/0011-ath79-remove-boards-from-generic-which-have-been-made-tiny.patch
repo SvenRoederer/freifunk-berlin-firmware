@@ -3,22 +3,26 @@ Date: Mon, 17 May 2021 00:55:37 +0200
 Subject: ath79: remove boards from generic which have been made tiny
 
 diff --git a/target/linux/ath79/generic/base-files/etc/board.d/01_leds b/target/linux/ath79/generic/base-files/etc/board.d/01_leds
-index decbb350963d54020983197a9c2ff0d2121c15e5..a48923ea4f58f57b72a1eacb29db0d6436e1c637 100755
+index fae5ac7c923419ba09bbdb696ea18dab6c38a767..3c0dc45b86e6a44c7435e9c39fea8bfd9e76caf9 100755
 --- a/target/linux/ath79/generic/base-files/etc/board.d/01_leds
 +++ b/target/linux/ath79/generic/base-files/etc/board.d/01_leds
-@@ -319,27 +319,12 @@ tplink,tl-wpa8630p-v2-eu|\
- tplink,tl-wpa8630p-v2-int)
- 	ucidef_set_led_switch "lan" "LAN" "tp-link:green:lan" "switch0" "0x3c"
+@@ -350,13 +350,6 @@ tplink,tl-wpa8630p-v2.0-eu|\
+ tplink,tl-wpa8630p-v2.1-eu)
+ 	ucidef_set_led_switch "lan" "LAN" "green:lan" "switch0" "0x3c"
  	;;
 -tplink,tl-wr842n-v2)
--	ucidef_set_led_netdev "wan" "WAN" "tp-link:green:wan" "eth1"
--	ucidef_set_led_switch "lan1" "LAN1" "tp-link:green:lan1" "switch0" "0x04"
--	ucidef_set_led_switch "lan2" "LAN2" "tp-link:green:lan2" "switch0" "0x08"
--	ucidef_set_led_switch "lan3" "LAN3" "tp-link:green:lan3" "switch0" "0x10"
--	ucidef_set_led_switch "lan4" "LAN4" "tp-link:green:lan4" "switch0" "0x02"
+-	ucidef_set_led_netdev "wan" "WAN" "green:wan" "eth1"
+-	ucidef_set_led_switch "lan1" "LAN1" "green:lan1" "switch0" "0x04"
+-	ucidef_set_led_switch "lan2" "LAN2" "green:lan2" "switch0" "0x08"
+-	ucidef_set_led_switch "lan3" "LAN3" "green:lan3" "switch0" "0x10"
+-	ucidef_set_led_switch "lan4" "LAN4" "green:lan4" "switch0" "0x02"
 -	;;
  trendnet,tew-823dru)
- 	ucidef_set_led_netdev "wan" "WAN" "trendnet:green:planet" "eth0"
+ 	ucidef_set_led_netdev "wan" "WAN" "green:planet" "eth0"
+ 	;;
+@@ -371,17 +364,9 @@ ubnt,powerbeam-5ac-gen2)
+ 	ucidef_set_led_rssi "rssimediumhigh" "RSSIMEDIUMHIGH" "blue:rssi2" "wlan0" "51" "100"
+ 	ucidef_set_led_rssi "rssihigh" "RSSIHIGH" "blue:rssi3" "wlan0" "76" "100"
  	;;
 -ubnt,bullet-m-ar7240|\
 -ubnt,bullet-m-ar7241|\
@@ -33,16 +37,16 @@ index decbb350963d54020983197a9c2ff0d2121c15e5..a48923ea4f58f57b72a1eacb29db0d64
 -ubnt,rocket-m)
 +ubnt,nanostation-m-xw)
  	ucidef_set_rssimon "wlan0" "200000" "1"
- 	ucidef_set_led_rssi "rssilow" "RSSILOW" "ubnt:red:link1" "wlan0" "1" "100"
- 	ucidef_set_led_rssi "rssimediumlow" "RSSIMEDIUMLOW" "ubnt:orange:link2" "wlan0" "26" "100"
+ 	ucidef_set_led_rssi "rssilow" "RSSILOW" "red:link1" "wlan0" "1" "100"
+ 	ucidef_set_led_rssi "rssimediumlow" "RSSIMEDIUMLOW" "orange:link2" "wlan0" "26" "100"
 diff --git a/target/linux/ath79/generic/base-files/etc/board.d/02_network b/target/linux/ath79/generic/base-files/etc/board.d/02_network
-index 518ca6f91a413a9fda90b69f9505e15a6707c0fa..bdeeb767c0a0ea46c39ce8ba01ea92edaa6a0a4f 100755
+index 1e522b91c67565bf066191d3a480d4879a10dcd6..92ff02118d2c5dfff2448a1abf9da602503773f7 100755
 --- a/target/linux/ath79/generic/base-files/etc/board.d/02_network
 +++ b/target/linux/ath79/generic/base-files/etc/board.d/02_network
-@@ -52,21 +52,14 @@ ath79_setup_interfaces()
- 	tplink,re450-v2|\
+@@ -73,21 +73,14 @@ ath79_setup_interfaces()
  	tplink,re450-v3|\
  	tplink,tl-wr902ac-v1|\
+ 	ubnt,bullet-ac|\
 -	ubnt,bullet-m-ar7240|\
 -	ubnt,bullet-m-ar7241|\
  	ubnt,bullet-m-xw|\
@@ -61,7 +65,7 @@ index 518ca6f91a413a9fda90b69f9505e15a6707c0fa..bdeeb767c0a0ea46c39ce8ba01ea92ed
  	ubnt,unifiac-lite|\
  	ubnt,unifiac-lr|\
  	ubnt,unifiac-mesh|\
-@@ -101,9 +94,7 @@ ath79_setup_interfaces()
+@@ -149,9 +142,7 @@ ath79_setup_interfaces()
  	tplink,archer-c60-v2|\
  	tplink,archer-c60-v3|\
  	tplink,tl-wdr3500-v1|\
@@ -72,7 +76,7 @@ index 518ca6f91a413a9fda90b69f9505e15a6707c0fa..bdeeb767c0a0ea46c39ce8ba01ea92ed
  		ucidef_set_interface_wan "eth1"
  		ucidef_add_switch "switch0" \
  			"0@eth0" "1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1"
-@@ -124,7 +115,6 @@ ath79_setup_interfaces()
+@@ -183,7 +174,6 @@ ath79_setup_interfaces()
  	tplink,wbs210-v2|\
  	tplink,wbs510-v1|\
  	tplink,wbs510-v2|\
@@ -80,7 +84,7 @@ index 518ca6f91a413a9fda90b69f9505e15a6707c0fa..bdeeb767c0a0ea46c39ce8ba01ea92ed
  	ubnt,routerstation)
  		ucidef_set_interfaces_lan_wan "eth1" "eth0"
  		;;
-@@ -323,15 +313,6 @@ ath79_setup_interfaces()
+@@ -382,15 +372,6 @@ ath79_setup_interfaces()
  		ucidef_add_switch "switch0" \
  			"0@eth0" "2:lan:3" "3:lan:2" "4:lan:1" "5:lan:4"
  		;;
@@ -96,27 +100,11 @@ index 518ca6f91a413a9fda90b69f9505e15a6707c0fa..bdeeb767c0a0ea46c39ce8ba01ea92ed
  	tplink,tl-wr1043nd-v2|\
  	tplink,tl-wr1043nd-v3|\
  	tplink,tl-wr1045nd-v2)
-@@ -470,15 +451,6 @@ ath79_setup_macs()
- 		label_mac=$(mtd_get_mac_ascii u-boot-env athaddr)
- 		;;
- 	engenius,enh202-v1|\
--	ubnt,airrouter|\
--	ubnt,bullet-m-ar7240|\
--	ubnt,bullet-m-ar7241|\
--	ubnt,nanobridge-m|\
--	ubnt,nanostation-loco-m|\
--	ubnt,nanostation-m|\
--	ubnt,picostation-m|\
--	ubnt,powerbridge-m|\
--	ubnt,rocket-m|\
- 	ubnt,unifi)
- 		label_mac=$(cat /sys/class/ieee80211/phy0/macaddress)
- 		;;
 diff --git a/target/linux/ath79/generic/base-files/etc/board.d/03_gpio_switches b/target/linux/ath79/generic/base-files/etc/board.d/03_gpio_switches
-index cf30bb405a26f24edcca7684aadc3490a57fa553..2c513c8b5c7d6ccb9b22ef8af50b6296efdd62fb 100755
+index b3e0d0dd316d87b2fce576828aa882440aa3928b..56b255cfcc06ede1110707419fcd9d3fee8e1b20 100755
 --- a/target/linux/ath79/generic/base-files/etc/board.d/03_gpio_switches
 +++ b/target/linux/ath79/generic/base-files/etc/board.d/03_gpio_switches
-@@ -76,9 +76,6 @@ tplink,wbs510-v2)
+@@ -81,9 +81,6 @@ ubnt,nanobeam-ac-gen2|\
  ubnt,nanostation-ac)
  	ucidef_add_gpio_switch "poe_passthrough" "PoE Passthrough" "3"
  	;;
@@ -127,10 +115,10 @@ index cf30bb405a26f24edcca7684aadc3490a57fa553..2c513c8b5c7d6ccb9b22ef8af50b6296
  	ucidef_add_gpio_switch "poe_passthrough" "PoE Passthrough" "2"
  	;;
 diff --git a/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom b/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
-index 88d43e25c48baea2ecf7e2b504c6081f7c52156a..f3d7ec283cda5893080164591e975c1cdbf99f2a 100644
+index 08d9e017a734e29c9b3be4c865e32f109847b4f5..9fb3d83c9fc2a8546ec7a75a9d7ab922119cfc7f 100644
 --- a/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
 +++ b/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
-@@ -105,17 +105,7 @@ case "$FIRMWARE" in
+@@ -111,17 +111,7 @@ case "$FIRMWARE" in
  	netgear,wnr2200-8m|\
  	netgear,wnr2200-16m|\
  	pcs,cap324|\
@@ -148,14 +136,14 @@ index 88d43e25c48baea2ecf7e2b504c6081f7c52156a..f3d7ec283cda5893080164591e975c1c
 +	tplink,tl-wr2543-v1)
  		caldata_extract "art" 0x1000 0x1000
  		;;
- 	wd,mynet-n750)
+ 	openmesh,mr600-v1|\
 diff --git a/target/linux/ath79/image/generic-tp-link.mk b/target/linux/ath79/image/generic-tp-link.mk
-index 22d1ac8a9e306759db22805d967af18dab4b75a0..77eb2aeaa493a9d65db82f4bdc8ffc5ace104c66 100644
+index 0058d74f773dc218ce50bb0ab49f0ddcb80fe1f5..5b279e87be5739b0f7128d767b61f6b28fcf7a1d 100644
 --- a/target/linux/ath79/image/generic-tp-link.mk
 +++ b/target/linux/ath79/image/generic-tp-link.mk
-@@ -564,17 +564,6 @@ define Device/tplink_tl-wpa8630p-v2-int
+@@ -617,17 +617,6 @@ define Device/tplink_tl-wpa8630p-v2.1-eu
  endef
- TARGET_DEVICES += tplink_tl-wpa8630p-v2-int
+ TARGET_DEVICES += tplink_tl-wpa8630p-v2.1-eu
  
 -define Device/tplink_tl-wr1043nd-v1
 -  $(Device/tplink-8m)
@@ -171,7 +159,7 @@ index 22d1ac8a9e306759db22805d967af18dab4b75a0..77eb2aeaa493a9d65db82f4bdc8ffc5a
  define Device/tplink_tl-wr1043nd-v2
    $(Device/tplink-8mlzma)
    SOC := qca9558
-@@ -645,29 +634,6 @@ define Device/tplink_tl-wr2543-v1
+@@ -698,29 +687,6 @@ define Device/tplink_tl-wr2543-v1
  endef
  TARGET_DEVICES += tplink_tl-wr2543-v1
  
@@ -201,7 +189,7 @@ index 22d1ac8a9e306759db22805d967af18dab4b75a0..77eb2aeaa493a9d65db82f4bdc8ffc5a
  define Device/tplink_tl-wr810n-v1
    $(Device/tplink-8mlzma)
    SOC := qca9531
-@@ -679,38 +645,6 @@ define Device/tplink_tl-wr810n-v1
+@@ -732,38 +698,6 @@ define Device/tplink_tl-wr810n-v1
  endef
  TARGET_DEVICES += tplink_tl-wr810n-v1
  
@@ -241,10 +229,10 @@ index 22d1ac8a9e306759db22805d967af18dab4b75a0..77eb2aeaa493a9d65db82f4bdc8ffc5a
    $(Device/tplink-16mlzma)
    SOC := qca9533
 diff --git a/target/linux/ath79/image/generic-ubnt.mk b/target/linux/ath79/image/generic-ubnt.mk
-index 6939edd25de86a8de1418a16bc444548a85acf52..6739287698e2f6ff257c4785a329805a9b08f404 100644
+index 733d803d7ab6c42f249f5f1b10ceb7d22e0edac2..6642d9d1cc7e82024e79ebb36fa50080814e8fcd 100644
 --- a/target/linux/ath79/image/generic-ubnt.mk
 +++ b/target/linux/ath79/image/generic-ubnt.mk
-@@ -86,18 +86,6 @@ define Device/ubnt-xc
+@@ -96,18 +96,6 @@ define Device/ubnt-xc
    UBNT_VERSION := 8.5.3
  endef
  
@@ -263,9 +251,9 @@ index 6939edd25de86a8de1418a16bc444548a85acf52..6739287698e2f6ff257c4785a329805a
  define Device/ubnt-xw
    $(Device/ubnt)
    SOC := ar9342
-@@ -122,34 +110,6 @@ define Device/ubnt_acb-isp
+@@ -158,14 +146,6 @@ define Device/ubnt_aircube-isp
  endef
- TARGET_DEVICES += ubnt_acb-isp
+ TARGET_DEVICES += ubnt_aircube-isp
  
 -define Device/ubnt_airrouter
 -  $(Device/ubnt-xm)
@@ -275,6 +263,13 @@ index 6939edd25de86a8de1418a16bc444548a85acf52..6739287698e2f6ff257c4785a329805a
 -endef
 -TARGET_DEVICES += ubnt_airrouter
 -
+ define Device/ubnt_bullet-ac
+   $(Device/ubnt-2wa)
+   DEVICE_MODEL := Bullet AC
+@@ -173,26 +153,6 @@ define Device/ubnt_bullet-ac
+ endef
+ TARGET_DEVICES += ubnt_bullet-ac
+ 
 -define Device/ubnt_bullet-m-ar7240
 -  $(Device/ubnt-xm)
 -  SOC := ar7240
@@ -298,9 +293,9 @@ index 6939edd25de86a8de1418a16bc444548a85acf52..6739287698e2f6ff257c4785a329805a
  define Device/ubnt_bullet-m-xw
    $(Device/ubnt-xw)
    DEVICE_MODEL := Bullet M
-@@ -193,15 +153,6 @@ define Device/ubnt_nanobeam-ac
+@@ -245,15 +205,6 @@ define Device/ubnt_nanobeam-ac-gen2
  endef
- TARGET_DEVICES += ubnt_nanobeam-ac
+ TARGET_DEVICES += ubnt_nanobeam-ac-gen2
  
 -define Device/ubnt_nanobridge-m
 -  $(Device/ubnt-xm)
@@ -314,7 +309,7 @@ index 6939edd25de86a8de1418a16bc444548a85acf52..6739287698e2f6ff257c4785a329805a
  define Device/ubnt_nanostation-ac
    $(Device/ubnt-wa)
    DEVICE_MODEL := Nanostation AC
-@@ -216,15 +167,6 @@ define Device/ubnt_nanostation-ac-loco
+@@ -268,15 +219,6 @@ define Device/ubnt_nanostation-ac-loco
  endef
  TARGET_DEVICES += ubnt_nanostation-ac-loco
  
@@ -330,7 +325,7 @@ index 6939edd25de86a8de1418a16bc444548a85acf52..6739287698e2f6ff257c4785a329805a
  define Device/ubnt_nanostation-loco-m-xw
    $(Device/ubnt-xw)
    DEVICE_MODEL := Nanostation Loco M
-@@ -233,15 +175,6 @@ define Device/ubnt_nanostation-loco-m-xw
+@@ -285,15 +227,6 @@ define Device/ubnt_nanostation-loco-m-xw
  endef
  TARGET_DEVICES += ubnt_nanostation-loco-m-xw
  
@@ -346,7 +341,7 @@ index 6939edd25de86a8de1418a16bc444548a85acf52..6739287698e2f6ff257c4785a329805a
  define Device/ubnt_nanostation-m-xw
    $(Device/ubnt-xw)
    DEVICE_MODEL := Nanostation M
-@@ -250,15 +183,6 @@ define Device/ubnt_nanostation-m-xw
+@@ -302,15 +235,6 @@ define Device/ubnt_nanostation-m-xw
  endef
  TARGET_DEVICES += ubnt_nanostation-m-xw
  
@@ -362,7 +357,7 @@ index 6939edd25de86a8de1418a16bc444548a85acf52..6739287698e2f6ff257c4785a329805a
  define Device/ubnt_powerbeam-5ac-500
    $(Device/ubnt-xc)
    SOC := qca9558
-@@ -276,24 +200,6 @@ define Device/ubnt_powerbeam-5ac-gen2
+@@ -328,24 +252,6 @@ define Device/ubnt_powerbeam-5ac-gen2
  endef
  TARGET_DEVICES += ubnt_powerbeam-5ac-gen2
  
