@@ -1,0 +1,50 @@
+From: Andre Heider <a.heider@gmail.com>
+Date: Tue, 16 Feb 2021 08:21:08 +0100
+Subject: build: prereq: drop support for Python 3.5
+
+The final Python 3.5 release was 3.5.10 in September 2020 [0].
+This release series is now End-of-Life (EOL).
+
+The only LTS distribution that still only ships Python 3.5 is Ubuntu 16.04,
+which will be EOL in April 2021 [1].
+
+The meson build system bumped their python requirement to 3.6 for the 0.57.0
+release. This patch ensures that OpenWrt can update meson while still
+relying on the host python.
+
+[0] https://www.python.org/dev/peps/pep-0478/#id4
+[1] https://ubuntu.com/about/release-cycle
+[2] https://mesonbuild.com/Release-notes-for-0-57-0.html#minimum-required-python-version-updated-to-36
+
+Signed-off-by: Andre Heider <a.heider@gmail.com>
+
+diff --git a/include/prereq-build.mk b/include/prereq-build.mk
+index 86c22f7c959b326a8bed2f9331b38c3758c3151d..ee4c42d141be624dcadb4e298552a79504ce82f2 100644
+--- a/include/prereq-build.mk
++++ b/include/prereq-build.mk
+@@ -141,21 +141,19 @@ $(eval $(call SetupHostCommand,perl,Please install Perl 5.x, \
+ 
+ $(eval $(call CleanupPython2))
+ 
+-$(eval $(call SetupHostCommand,python,Please install Python >= 3.5, \
++$(eval $(call SetupHostCommand,python,Please install Python >= 3.6, \
+ 	python3.9 -V 2>&1 | grep 'Python 3', \
+ 	python3.8 -V 2>&1 | grep 'Python 3', \
+ 	python3.7 -V 2>&1 | grep 'Python 3', \
+ 	python3.6 -V 2>&1 | grep 'Python 3', \
+-	python3.5 -V 2>&1 | grep 'Python 3', \
+-	python3 -V 2>&1 | grep -E 'Python 3\.[5-9]\.?'))
++	python3 -V 2>&1 | grep -E 'Python 3\.[6-9]\.?'))
+ 
+-$(eval $(call SetupHostCommand,python3,Please install Python >= 3.5, \
++$(eval $(call SetupHostCommand,python3,Please install Python >= 3.6, \
+ 	python3.9 -V 2>&1 | grep 'Python 3', \
+ 	python3.8 -V 2>&1 | grep 'Python 3', \
+ 	python3.7 -V 2>&1 | grep 'Python 3', \
+ 	python3.6 -V 2>&1 | grep 'Python 3', \
+-	python3.5 -V 2>&1 | grep 'Python 3', \
+-	python3 -V 2>&1 | grep -E 'Python 3\.[5-9]\.?'))
++	python3 -V 2>&1 | grep -E 'Python 3\.[6-9]\.?'))
+ 
+ $(eval $(call SetupHostCommand,git,Please install Git (git-core) >= 1.7.12.2, \
+ 	git --exec-path | xargs -I % -- grep -q -- --recursive %/git-submodule))

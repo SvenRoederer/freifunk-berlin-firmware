@@ -1,0 +1,17 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Thu, 22 Apr 2021 00:02:03 +0200
+Subject: rules.mk revert making NPROC changeable
+
+diff --git a/rules.mk b/rules.mk
+index 15327f98eef02bdf775ee3814305c8f64a52de1b..9815bca61585af2fb27b7486bce17c9081d9c4ae 100644
+--- a/rules.mk
++++ b/rules.mk
+@@ -67,7 +67,7 @@ TARGET_SUFFIX=$(call qstrip,$(CONFIG_TARGET_SUFFIX))
+ BUILD_SUFFIX:=$(call qstrip,$(CONFIG_BUILD_SUFFIX))
+ SUBDIR:=$(patsubst $(TOPDIR)/%,%,${CURDIR})
+ BUILD_SUBDIR:=$(patsubst $(TOPDIR)/%,%,${CURDIR})
+-NPROC?=$(shell sysctl -n hw.ncpu 2>/dev/null || nproc)
++NPROC=$(shell sysctl -n hw.ncpu 2>/dev/null || nproc)
+ export SHELL:=/usr/bin/env bash
+ 
+ IS_PACKAGE_BUILD := $(if $(filter package/%,$(BUILD_SUBDIR)),1)

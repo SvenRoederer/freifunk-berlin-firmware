@@ -1,0 +1,47 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Tue, 20 Apr 2021 02:17:38 +0200
+Subject: build: add NPROC_FORCE option, to manually limit parallel CPU-usage
+
+The NPROC variable is used by some tools to control the parallel usage of
+the CPUs. By default all available CPUs are used.
+The new option can be used to keep some CPUs free and the system more
+responsitive. This value can also prevent out of memory errors on low RAM
+and high CPU systems.
+Currently the NPROC variable is use for compressing the imagebuilder and
+sdk.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/config/Config-devel.in b/config/Config-devel.in
+index 126462bfc3a0a12324b3ac38614c4f94638d0115..b8043b9ffd4dd0f4255bc4e18290567fdf98e194 100644
+--- a/config/Config-devel.in
++++ b/config/Config-devel.in
+@@ -45,6 +45,15 @@ menuconfig DEVEL
+ 		  This allows you to symlink build_dir into a scratch location, e.g. a ramdisk,
+ 		  which does not have enough space to keep a complete build_dir.
+ 
++	config NPROC_FORCE
++		int "max CPUs to be used" if DEVEL
++		default 0
++		help
++		   Forces to use this many CPU in parallel at max.
++		   A value of 0 uses autodetection for max available CPUs. All other values
++		   definie the upper limit.
++		   This is currently relevant for the compression of the imagebuilder and sdk.
++
+ 	config BUILD_SUFFIX
+ 		string "Build suffix to append to the target BUILD_DIR variable" if DEVEL
+ 		default ""
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index ef7fd3f25e856c4173f78ace45a98090f61a0779..b513cf79e48c9c619d6379fda1c97597c6273e11 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -107,7 +107,7 @@ endif
+ 	$(CP) $(TOPDIR)/staging_dir/host/lib/libfakeroot* $(PKG_BUILD_DIR)/staging_dir/host/lib
+ 	STRIP=$(STAGING_DIR_HOST)/bin/sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/host/bin/
+ 	(cd $(BUILD_DIR); \
+-		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(filter 1,$(NPROC)),2,0)' -cf $@ $(IB_NAME) \
++		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(NPROC_FORCE),$(NPROC_FORCE),$(if $(filter 1,$(NPROC)),2,0))' -cf $@ $(IB_NAME) \
+ 		--mtime="$(shell date --date=@$(SOURCE_DATE_EPOCH))"; \
+ 	)
+ 
