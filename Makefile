@@ -143,18 +143,20 @@ compile: stamp-clean-compiled .stamp-compiled
 	  $(MAKE) -C $(OPENWRT_DIR) $(MAKE_ARGS)
 	touch $@
 
-# fill firmwares-directory with:
-#  * imagebuilder file
-#  * packages directory
-#  * firmware-images are already in place (target images)
-firmwares: stamp-clean-firmwares .stamp-firmwares
-.stamp-firmwares: .stamp-images $(VERSION_FILE) .stamp-initrd
-	# copy imagebuilder, sdk and toolchain (if existing)
+place-resulting-archives: .stamp-compiled
+#  * imagebuilder file 
+#  * SDK and toolchain, if existing
 	# remove old versions
 	rm -f $(FW_TARGET_DIR)/*.tar.xz
 	for file in $(OPENWRT_DIR)/bin/targets/$(MAINTARGET)/$(SUBTARGET)/*{imagebuilder,sdk,toolchain}*.tar.xz; do
 	  if [ -e $$file ]; then mv $$file $(FW_TARGET_DIR)/ ; fi
 	done
+
+# fill firmwares-directory with:
+#  * packages directory
+#  * firmware-images are already in place (target images)
+firmwares: stamp-clean-firmwares .stamp-firmwares
+.stamp-firmwares: .stamp-images $(VERSION_FILE) .stamp-initrd
 	# copy packages
 	PACKAGES_DIR="$(FW_TARGET_DIR)/packages";
 	  rm -rf $$PACKAGES_DIR;
@@ -206,10 +208,10 @@ ifeq ($(origin IB_FILE),command line)
 	+
 	$(info IB_FILE explicitly defined; using it for building firmware-images)
 else
-.stamp-images: $(FW_DIR)/embedded-files .stamp-compiled
+.stamp-images: $(FW_DIR)/embedded-files place-resulting-archives
 	+
 	$(info IB_FILE not defined; assuming called from inside regular build)
-	$(eval IB_FILE := $(shell ls -tr $(OPENWRT_DIR)/bin/targets/$(MAINTARGET)/$(SUBTARGET)/*-imagebuilder-*.tar.xz | tail -n1))
+	$(eval IB_FILE := $(shell ls -tr $(FW_TARGET_DIR)/*-imagebuilder-*.tar.xz | tail -n1))
 endif
 	mkdir -p $(FW_TARGET_DIR)
 	$(UMASK); ./scripts/assemble_firmware.sh -p "$(PROFILES)" -i $(IB_FILE) -e $(FW_DIR)/embedded-files -t $(FW_TARGET_DIR) -u "$(PACKAGES_LIST_DEFAULT)"
