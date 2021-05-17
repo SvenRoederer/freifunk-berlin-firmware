@@ -74,4 +74,4 @@ olsrd-mod-watchdog
 kmod-ipip
 
 # Uplink
-freifunk-berlin-uplink-notunnel-files
+freifunk-berlin-uplink-notunnel
