@@ -37,7 +37,7 @@ tplink_tl-wr1043nd-v2
 tplink_tl-wr1043nd-v3
 tplink_tl-wr1043nd-v4
 tplink_tl-wr1043n-v5
-ubnt_airrouter
+ubnt_airrouter:low-ram
 ubnt_bullet-m-xw
 ubnt_bullet-m-ar7240:low-ram
 ubnt_bullet-m-ar7241:low-ram
