@@ -21,4 +21,10 @@ tplink_tl-wr841-v11:tiny
 tplink_tl-wr842n-v1:low-ram
 tplink_tl-wr842n-v2:low-ram
 tplink_tl-wr1043nd-v1:low-ram
+ubnt_airrouter:low-ram
+ubnt_bullet-m-ar7240:low-ram
+ubnt_bullet-m-ar7241:low-ram
+ubnt_nanostation-loco-m:low-ram
 ubnt_nanostation-m:low-ram
+ubnt_picostation-m:low-ram
+ubnt_rocket-m:low-ram
