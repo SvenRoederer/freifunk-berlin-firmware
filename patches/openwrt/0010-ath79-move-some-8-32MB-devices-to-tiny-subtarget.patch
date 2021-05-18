@@ -17,26 +17,6 @@ index c2d2474336bd6288d3babd9dc2a8d021f72d992e..7938687cd4ae28f080b3f8a377424b2b
  endif
  
  $(eval $(call BuildImage))
-diff --git a/target/linux/ath79/image/common-tp-link.mk b/target/linux/ath79/image/common-tp-link.mk
-index 0b7b0e1935aee95f2bd108aec5e5aef6e764c969..07dd622f3003297cdb2639950cf8b0a0e7c85c07 100644
---- a/target/linux/ath79/image/common-tp-link.mk
-+++ b/target/linux/ath79/image/common-tp-link.mk
-@@ -40,6 +40,7 @@ define Device/tplink-4m
-   $(Device/tplink-nolzma)
-   TPLINK_FLASHLAYOUT := 4M
-   IMAGE_SIZE := 3904k
-+  FEATURES := small_flash
-   DEFAULT := n
- endef
- 
-@@ -47,6 +48,7 @@ define Device/tplink-4mlzma
-   $(Device/tplink-v1)
-   TPLINK_FLASHLAYOUT := 4Mlzma
-   IMAGE_SIZE := 3904k
-+  FEATURES := small_flash
-   DEFAULT := n
- endef
- 
 diff --git a/target/linux/ath79/image/tiny-tp-link.mk b/target/linux/ath79/image/tiny-tp-link.mk
 index c918c6baa682e78b2b1c204fb9a55dc0a5aef1e7..d5b36de577aadecdeec599ae708acc6a52b678b4 100644
 --- a/target/linux/ath79/image/tiny-tp-link.mk
