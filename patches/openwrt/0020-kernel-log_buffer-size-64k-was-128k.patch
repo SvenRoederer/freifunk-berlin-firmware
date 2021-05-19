@@ -1,16 +1,24 @@
+From d61163695579706610a429562712e848ea4ba81a Mon Sep 17 00:00:00 2001
 From: adminuser <adminuser@cvt.bln.roederer.dhs.org>
 Date: Sun, 27 Sep 2020 03:07:46 +0200
-Subject: kernel log_buffer size = 64k (was 128k)
+Subject: [PATCH 1/2] kernel log_buffer size = 64k (was 128k)
+
+---
+ target/linux/ath79/tiny/config-default | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
-index af95860ebab53076e8f627736018289b49ef9bab..8897591d3165dbf10cac948a4cccdac48018e9ff 100644
+index f1f743fc0d..1d4859a275 100644
 --- a/target/linux/ath79/tiny/config-default
 +++ b/target/linux/ath79/tiny/config-default
-@@ -14,6 +14,7 @@ CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- # CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+@@ -15,6 +15,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ # CONFIG_USB_SUPPORT is not set
+ # CONFIG_HAVE_DEBUG_KMEMLEAK is not set
+ # CONFIG_HAVE_DEBUG_STACKOVERFLOW is not set
 +CONFIG_LOG_BUF_SHIFT=16
+ CONFIG_BLOCK=y
+ # CONFIG_HAVE_IDE is not set
  # CONFIG_HAVE_KVM is not set
- # CONFIG_DEBUG_FS is not set
- # CONFIG_DEBUG_KERNEL is not set
+-- 
+2.17.1
+
