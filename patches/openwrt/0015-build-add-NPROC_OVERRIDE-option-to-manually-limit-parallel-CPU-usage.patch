@@ -1,9 +1,20 @@
 From: Sven Roederer <devel-sven@geroedel.de>
-Date: Thu, 22 Apr 2021 00:02:48 +0200
-Subject: build: imagebuilder, SDK accept NPROC_OVERRIDE
+Date: Tue, 20 Apr 2021 02:17:38 +0200
+Subject: build: add NPROC_OVERRIDE option, to manually limit parallel CPU-usage
+
+The NPROC variable is used by some tools to control the parallel usage of
+the CPUs. By default all available CPUs are used.
+The new option can be used to keep some CPUs free and the system more
+responsitive. This value can also prevent out of memory errors on low RAM
+and high CPU systems.
+
+Currently the NPROC variable is useed for compressing the imagebuilder and
+sdk.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
 
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index ef7fd3f25e856c4173f78ace45a98090f61a0779..e29d1899d46e49ee5899e5dc65805b2d467ed87c 100644
+index 0580e41c5790d8989ec2daf38e89e046cd1c0862..c69dc1df375a6c463c291d2a8702f216dfa5c33f 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
 @@ -107,7 +107,7 @@ endif
@@ -16,10 +27,10 @@ index ef7fd3f25e856c4173f78ace45a98090f61a0779..e29d1899d46e49ee5899e5dc65805b2d
  	)
  
 diff --git a/target/sdk/Makefile b/target/sdk/Makefile
-index 5330d1495543bdfdb4286d01e7ea7300ce9239dc..e9ddf059a85659040d670573e5e010748c28e2cf 100644
+index 0606621192c7508fc7a470eff0173dc62ff70ded..bad3c192ed0ac8d80fe2f93364d54359b96006ca 100644
 --- a/target/sdk/Makefile
 +++ b/target/sdk/Makefile
-@@ -165,7 +165,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
+@@ -164,7 +164,7 @@ $(BIN_DIR)/$(SDK_NAME).tar.xz: clean
  	find $(SDK_BUILD_DIR) -name CVS | $(XARGS) rm -rf
  	-make -C $(SDK_BUILD_DIR)/scripts/config clean
  	(cd $(BUILD_DIR); \
