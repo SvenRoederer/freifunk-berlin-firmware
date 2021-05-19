@@ -90,7 +90,7 @@ index 0058d74f773dc218ce50bb0ab49f0ddcb80fe1f5..afab62e944bea928ec82a76eb8eab1bf
    DEVICE_VARIANT := v1
    DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca988x-ct
 diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
-index ac71b3305ee68f19d08c05f3e0357b6345e883c2..354c0c9b0f4f4de3242a18047207cbcf3345d334 100644
+index 90027221b679b7b0b29b11fecd1b3f4f5a0b3d6c..7f4329a8d66f608842293506d353d003525e00d8 100644
 --- a/tools/firmware-utils/src/tplink-safeloader.c
 +++ b/tools/firmware-utils/src/tplink-safeloader.c
 @@ -1377,8 +1377,8 @@ static struct device_info boards[] = {
