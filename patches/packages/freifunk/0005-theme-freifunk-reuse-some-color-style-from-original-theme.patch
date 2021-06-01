@@ -1,0 +1,28 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sat, 29 May 2021 22:58:07 +0200
+Subject: theme-freifunk: reuse some color-style from original theme
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+
+diff --git a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/cascade.css b/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/cascade.css
+index cf83e806024fc19ed2b131f336188d40e8e88f11..3b9d9bf2ebbb5473a764c56f2b77f8aa680dd777 100644
+--- a/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/cascade.css
++++ b/themes/luci-theme-freifunk-generic/htdocs/luci-static/freifunk-generic/cascade.css
+@@ -1,7 +1,6 @@
+ :root {
+-	--main-bright-color: #00A3E1;
++	--main-bright-color: #e5eef5;
+ 	--main-dark-color: #002B49;
+-	--secondary-bright-color: #FFFFFF;
+ 	--secondary-dark-color: #212322;
+ 	--danger-color: #CC1111;
+ 	--warning-color: #CC8800;
+@@ -40,7 +39,7 @@ html {
+ 	width: 100%;
+ 	max-width: 1366px;
+ 	margin: 0 auto;
+-	background: #fff linear-gradient(90deg, rgba(0, 0, 0, .8), rgba(0, 0, 0 ,.5), rgba(0, 0, 0, .8));
++	background: #e5eef5 linear-gradient(#fff 0%, #e5eef5 100%) no-repeat;
+ }
+ 
+ body {
