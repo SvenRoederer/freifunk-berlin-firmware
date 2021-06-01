@@ -1,0 +1,44 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Tue, 1 Jun 2021 01:25:47 +0200
+Subject: wizard: use "redirect_landingurl"
+
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
+index 76f6eade0e71d787b5aa4cb624e81714eccc4fdb..da92f4b140b9dfba12723f0a8e4977ca1dda0c44 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
+@@ -35,10 +35,7 @@ function prepare()
+     uci:commit("ffwizard")
+   end
+   if not uci:get("ffwizard","settings","runbefore") and not fftools.hasRootPass() then
+-    -- taken from old "redirect on firstboot" patch (https://github.com/freifunk-berlin/firmware/blob/v0.1.2/patches/014-ffwizard-redirect-on-firstboot.patch)
+-    local url = luci.dispatcher.build_url("admin/freifunk/assistent/changePassword")
+-    url = url .. "?luci_username=root&luci_password="
+-    luci.http.redirect(url)
++    luci.http.redirect(luci.dispatcher.build_url("admin/freifunk/assistent/changePassword"))
+   else
+     luci.http.redirect(luci.dispatcher.build_url("admin/freifunk/assistent/generalInfo"))
+   end
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm b/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
+index 5e8eb13286bfdd78928f321328679ea28ae15672..af1a54897314a9802b450221040879f90137614f 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
++++ b/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
+@@ -1,7 +1,7 @@
+ <%
+   -- remove landingpage redirection of luci-mod-freifunk before final reboot
+   local uci = require "luci.model.uci".cursor()
+-  uci:set('freifunk', 'luci', 'redirect_landingpage', '')
++  uci:set('freifunk', 'luci', 'redirect_landingurl', '')
+   uci:commit('freifunk', 'luci')
+ 
+   luci.sys.reboot()
+diff --git a/utils/luci-app-ffwizard-berlin/root/etc/uci-defaults/wizarddefaults b/utils/luci-app-ffwizard-berlin/root/etc/uci-defaults/wizarddefaults
+index 8cd5b49ec72e3bbf4a4cbb6264d37a093d5fe433..086f9dfd60deb77f61b5c3ed5ce9d24737737799 100644
+--- a/utils/luci-app-ffwizard-berlin/root/etc/uci-defaults/wizarddefaults
++++ b/utils/luci-app-ffwizard-berlin/root/etc/uci-defaults/wizarddefaults
+@@ -8,5 +8,5 @@ uci set freifunk-policyrouting.pr.zones="freifunk"
+ uci commit freifunk-policyrouting
+ 
+ uci set freifunk.luci=setting
+-uci set freifunk.luci.redirect_landingpage='admin/freifunk/assistent'
++uci set freifunk.luci.redirect_landingurl='/cgi-bin/luci/admin/freifunk/assistent?luci_username=root&luci_password='
+ uci commit freifunk.luci
