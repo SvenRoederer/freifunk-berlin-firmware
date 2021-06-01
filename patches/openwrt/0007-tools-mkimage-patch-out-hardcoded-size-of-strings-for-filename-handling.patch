@@ -1,0 +1,115 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Thu, 27 May 2021 21:54:42 +0200
+Subject: tools/mkimage: patch out hardcoded size of strings for filename handling
+
+diff --git a/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch b/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..dede97468fc43484c3d87fe0d98081fa35f04ba9
+--- /dev/null
++++ b/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch
+@@ -0,0 +1,105 @@
++diff -ur u-boot-2021.01-orig/tools/fit_image.c u-boot-2021.01/tools/fit_image.c
++--- u-boot-2021.01-orig/tools/fit_image.c	2021-01-11 19:11:43.000000000 +0100
+++++ u-boot-2021.01/tools/fit_image.c	2021-05-27 21:37:52.158651416 +0200
++@@ -723,33 +723,48 @@
++  */
++ static int fit_handle_file(struct image_tool_params *params)
++ {
++-	char tmpfile[MKIMAGE_MAX_TMPFILE_LEN];
++-	char bakfile[MKIMAGE_MAX_TMPFILE_LEN + 4] = {0};
++-	char cmd[MKIMAGE_MAX_DTC_CMDLINE_LEN];
+++//	char tmpfile[MKIMAGE_MAX_TMPFILE_LEN];
+++//	char bakfile[MKIMAGE_MAX_TMPFILE_LEN + 4] = {0};
+++//	char cmd[MKIMAGE_MAX_DTC_CMDLINE_LEN];
+++	char *tmpfile, *bakfile, *cmd = NULL;
+++	int tmpfilelen = strlen (params->imagefile);
++ 	size_t size_inc;
++ 	int ret;
++ 
++ 	/* Flattened Image Tree (FIT) format  handling */
++ 	debug ("FIT format handling\n");
++ 
++-	/* call dtc to include binary properties into the tmp file */
++-	if (strlen (params->imagefile) +
++-		strlen (MKIMAGE_TMPFILE_SUFFIX) + 1 > sizeof (tmpfile)) {
++-		fprintf (stderr, "%s: Image file name (%s) too long, "
+++	tmpfile = malloc (tmpfilelen + strlen (MKIMAGE_TMPFILE_SUFFIX) + 1);
+++	bakfile = malloc (tmpfilelen + 4);
+++	cmd = malloc (tmpfilelen * 2 + 35);
+++
+++	fprintf (stderr, "debug: %s: tmpfilelen is %i_-_",
+++				params->imagefile, tmpfilelen);
+++	if (tmpfile == NULL || bakfile == NULL || cmd == NULL) {
+++		fprintf (stderr, "%s: Could no allocate memory for (%s), "
++ 				"can't create tmpfile",
++ 				params->imagefile, params->cmdname);
+++		free(tmpfile);
+++		free(bakfile);
+++		free(cmd);
++ 		return (EXIT_FAILURE);
++ 	}
+++
+++	/* call dtc to include binary properties into the tmp file */
++ 	sprintf (tmpfile, "%s%s", params->imagefile, MKIMAGE_TMPFILE_SUFFIX);
+++	memset(bakfile, '\0', tmpfilelen + 4);
+++	memset(cmd, '\0', tmpfilelen * 2 + 35);
++ 
++ 	/* We either compile the source file, or use the existing FIT image */
++ 	if (params->auto_its) {
++ 		if (fit_build(params, tmpfile)) {
++ 			fprintf(stderr, "%s: failed to build FIT\n",
++ 				params->cmdname);
+++			free(tmpfile);
+++			free(bakfile);
+++			free(cmd);
++ 			return EXIT_FAILURE;
++ 		}
++-		*cmd = '\0';
++ 	} else if (params->datafile) {
++ 		/* dtc -I dts -O dtb -p 500 -o tmpfile datafile */
++ 		snprintf(cmd, sizeof(cmd), "%s %s -o \"%s\" \"%s\"",
++@@ -759,9 +774,6 @@
++ 		snprintf(cmd, sizeof(cmd), "cp \"%s\" \"%s\"",
++ 			 params->imagefile, tmpfile);
++ 	}
++-	if (strlen(cmd) >= MKIMAGE_MAX_DTC_CMDLINE_LEN - 1) {
++-		fprintf(stderr, "WARNING: command-line for FIT creation might be truncated and will probably fail.\n");
++-	}
++ 
++ 	if (*cmd && system(cmd) == -1) {
++ 		fprintf (stderr, "%s: system(%s) failed: %s\n",
++@@ -823,14 +835,20 @@
++ 		unlink (tmpfile);
++ 		unlink(bakfile);
++ 		unlink (params->imagefile);
+++		free(tmpfile);
+++		free(bakfile);
++ 		return EXIT_FAILURE;
++ 	}
++ 	unlink(bakfile);
+++	free(tmpfile);
+++	free(bakfile);
++ 	return EXIT_SUCCESS;
++ 
++ err_system:
++ 	unlink(tmpfile);
++ 	unlink(bakfile);
+++	free(tmpfile);
+++	free(bakfile);
++ 	return -1;
++ }
++ 
++diff -ur u-boot-2021.01-orig/tools/mkimage.h u-boot-2021.01/tools/mkimage.h
++--- u-boot-2021.01-orig/tools/mkimage.h	2021-05-23 04:36:15.839929007 +0200
+++++ u-boot-2021.01/tools/mkimage.h	2021-05-27 21:31:31.902765422 +0200
++@@ -40,8 +40,8 @@
++ }
++ 
++ #define MKIMAGE_TMPFILE_SUFFIX		".tmp"
++-#define MKIMAGE_MAX_TMPFILE_LEN		256
+++//#define MKIMAGE_MAX_TMPFILE_LEN		256
++ #define MKIMAGE_DEFAULT_DTC_OPTIONS	"-I dts -O dtb -p 500"
++-#define MKIMAGE_MAX_DTC_CMDLINE_LEN	2 * MKIMAGE_MAX_TMPFILE_LEN + 35
+++//#define MKIMAGE_MAX_DTC_CMDLINE_LEN	2 * MKIMAGE_MAX_TMPFILE_LEN + 35
++ 
++ #endif /* _MKIIMAGE_H_ */
