@@ -1,0 +1,40 @@
+From: Sven Roederer <SvenRoederer@users.noreply.github.com>
+Date: Fri, 12 Oct 2018 16:54:28 +0200
+Subject: wizard: do not save setting when devmode=1
+
+This helps to debug the wizard, by having the changes for review in
+the buffer.
+
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
+index da92f4b140b9dfba12723f0a8e4977ca1dda0c44..17be9b499216d3f2b6d1e20cbfc395bf756e90b1 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
+@@ -95,16 +95,18 @@ function commit()
+ 
+   tools.configureQOS()
+ 
+-  uci:commit("dhcp")
+-  uci:commit("olsrd")
+-  uci:commit("olsrd6")
+-  uci:commit("firewall")
+-  uci:commit("system")
+-  uci:commit("ffwizard")
+-  uci:commit("freifunk")
+-  uci:commit("wireless")
+-  uci:commit("network")
+-  uci:commit("qos")
++  if not uci:get("system", "ffberlin", "devmode") == "1" then
++    uci:commit("dhcp")
++    uci:commit("olsrd")
++    uci:commit("olsrd6")
++    uci:commit("firewall")
++    uci:commit("system")
++    uci:commit("ffwizard")
++    uci:commit("freifunk")
++    uci:commit("wireless")
++    uci:commit("network")
++    uci:commit("qos")
++  end
+ 
+   sys.init.enable("olsrd")
+   sys.init.enable("olsrd6")
