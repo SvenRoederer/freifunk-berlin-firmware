@@ -4,7 +4,7 @@ Subject: tools/mkimage: patch out hardcoded size of strings for filename handlin
 
 diff --git a/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch b/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..dede97468fc43484c3d87fe0d98081fa35f04ba9
+index 0000000000000000000000000000000000000000..809d9fdcb860c04a8555aa7aa59fb7c49fa3d7f2
 --- /dev/null
 +++ b/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch
 @@ -0,0 +1,105 @@

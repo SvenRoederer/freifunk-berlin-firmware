@@ -6,10 +6,10 @@ This reverts commit eaff91e3c6b1d412b7744d6921cb21b6caf79b28.
 according to https://github.com/freifunk/openwrt-packages/pull/17#ref-commit-22bb9b7
 
 diff --git a/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua b/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
-index e04cfaf7dfcbcdfa357986a7247310eb2366a360..adad7508bc899ac882f5c42269d725a0719887c8 100644
+index 2e037f59eab39faf6e72be2d596f5e87a6d48cfa..f35fa60dd34fdbb3d0619061fc9051cb12f8537d 100644
 --- a/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
 +++ b/modules/luci-mod-freifunk/luasrc/controller/freifunk/freifunk.lua
-@@ -91,6 +91,8 @@ function index()
+@@ -92,6 +92,8 @@ function index()
  	page.title  = _("Contact")
  	page.order  = 15
  

@@ -3,7 +3,7 @@ Date: Fri, 6 Sep 2019 08:29:50 +0000
 Subject: wifi_no_meshfwding_by_default
 
 diff --git a/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js b/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
-index c8a8e5c213b22175f1195a59a8de44dd1b98735e..1fd4bb3d5c5a52de828c3a36bac8d2f2edd8e2a0 100644
+index 748cb6254f4aeb67300a2e1130aae894717bb455..edcf7552132fc2cd15565c9d5d4bd56737d807cb 100644
 --- a/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
 +++ b/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
 @@ -943,7 +943,7 @@ return view.extend({
