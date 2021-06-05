@@ -1,0 +1,28 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 5 Jun 2021 12:03:39 +0200
+Subject: wizard: enable degub inn wireless
+
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
+index a3f06e8d3584de0066e3633469abe8fd763dff35..f14f3830e4dd1f10690a657b2e92263fb8789a55 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
+@@ -245,14 +245,14 @@ function main.write(self, section, value)
+       function(section)
+ --        print(section.name)
+         if section.name == "br-lan" then
+---          print("--match--")
++          tools.logger("__match__","ffwizard",5)
+ --      print('------------------')
+---      for key, value in pairs(section) do
+---        print(key .. ': ' .. tostring(value))
+---      end
++          for key, value in pairs(section) do
++            tools.logger(key .. ': ' .. tostring(value),"ffwizard-loop",5)
++          end
+ --      print(section[0])
+ --      print(uci:set("network", section['.name'], "name", "br-dhcp"))
+-          uci:set("network", section['.name'], "name", "br-dhcp")
++          tools.logger(tostring(uci:set("network", section['.name'], "name", "br-dhcp")),"ffwizard",5)
+         end
+       end
+     )

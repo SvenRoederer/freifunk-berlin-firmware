@@ -1,0 +1,30 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 5 Jun 2021 11:48:32 +0200
+Subject: wizard: fix some references to lua-tools
+
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/generalInfo.lua b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/generalInfo.lua
+index b6a831eabd59e809a5b3177842742b9cd04a5029..d5a6e7827600298233fdd6569684ee2a414ae372 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/generalInfo.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/generalInfo.lua
+@@ -1,7 +1,7 @@
+ local uci = require "luci.model.uci".cursor()
+ local sys = require "luci.sys"
+ local fs = require "nixio.fs"
+-local tools = require "luci.tools.freifunk.assistent.tools"
++local tools = require "luci.tools.freifunk.freifunk-berlin"
+ 
+ f = SimpleForm("ffwizward", "", "")
+ f.submit = "Next"
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/tools/freifunk/assistent/olsr.lua b/utils/luci-app-ffwizard-berlin/luasrc/tools/freifunk/assistent/olsr.lua
+index 1c870415bffd91281e264c9e4a33e36f28c127b8..3a70c1320f37cdf41e6d4b211bd60e5425406369 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/tools/freifunk/assistent/olsr.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/tools/freifunk/assistent/olsr.lua
+@@ -1,7 +1,7 @@
+ local util = require "luci.util"
+ local uci = require "luci.model.uci".cursor()
+ local ip = require "luci.ip"
+-local tools = require "luci.tools.freifunk.assistent.tools"
++local tools = require "luci.tools.freifunk.freifunk-berlin"
+ 
+ local sharenet = uci:get("ffwizard","settings","sharenet")
+ local community = "profile_"..uci:get("freifunk", "community", "name")
