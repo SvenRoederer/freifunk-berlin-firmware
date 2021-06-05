@@ -1,0 +1,15 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 5 Jun 2021 11:47:17 +0200
+Subject: lua-tools: fix
+
+diff --git a/addons/freifunk-berlin-lua-tools/luasrc/tools/freifunk/freifunk-berlin.lua b/addons/freifunk-berlin-lua-tools/luasrc/tools/freifunk/freifunk-berlin.lua
+index 780eaa78f3f1b7fe4ce69ce02599f757d23aa368..527009bf452f8498d0bb113d054fefbb6401f29b 100644
+--- a/addons/freifunk-berlin-lua-tools/luasrc/tools/freifunk/freifunk-berlin.lua
++++ b/addons/freifunk-berlin-lua-tools/luasrc/tools/freifunk/freifunk-berlin.lua
+@@ -1,5 +1,6 @@
+ local sys = require "luci.sys"
+ local util = require "luci.util"
++local uci = require "luci.model.uci".cursor()
+ 
+ module("luci.tools.freifunk.freifunk-berlin", package.seeall)
+ 
