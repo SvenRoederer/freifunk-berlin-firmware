@@ -1,0 +1,34 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Tue, 1 Jun 2021 01:42:20 +0200
+Subject: mod-freifunk: add UCI-setting to configure an alternative landingURL
+
+This extends 21e69cd27d736f13295e2af79108617ccc694b45 by a way to define a regular
+URL as landingpage. In contrast to the 'redirect_landingpage' option the new option
+'redirect_landingurl' allows to redirect to any webpage or any relative or absolute
+URL on the host.
+The option 'redirect_landingpage' has higher priority than 'redirect_landingurl'.
+Both are defined in the UCI-subsection "freifunk.luci".
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+
+diff --git a/modules/luci-mod-freifunk/luasrc/view/freifunk/index.htm b/modules/luci-mod-freifunk/luasrc/view/freifunk/index.htm
+index 00a1a831e03299cdafa7b000172ca11d06d070db..ff9b7dd07195d4d792956377ae4218a4fe5b038e 100644
+--- a/modules/luci-mod-freifunk/luasrc/view/freifunk/index.htm
++++ b/modules/luci-mod-freifunk/luasrc/view/freifunk/index.htm
+@@ -10,10 +10,14 @@ local http = require "luci.http"
+ 
+ local webAppRoot = http.getenv("PATH_INFO") == nil
+ local redirectPage = uci:get("freifunk", "luci", "redirect_landingpage") or ""
++local redirectUrl = uci:get("freifunk", "luci", "redirect_landingurl") or ""
+ 
+ if (webAppRoot and redirectPage ~= "") then
+-        local url = luci.dispatcher.build_url(redirectPage)
+-        http.redirect(url)
++	local url = luci.dispatcher.build_url(redirectPage)
++	http.redirect(url)
++end
++if (webAppRoot and redirectUrl ~= "") then
++	http.redirect(redirectUrl)
+ end
+ %>
+ 
