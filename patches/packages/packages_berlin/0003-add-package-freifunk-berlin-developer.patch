@@ -1,0 +1,35 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 9 May 2021 20:19:40 +0200
+Subject: add package "freifunk-berlin-developer"
+
+This contains some debug settings in UCI
+
+* drop package "freifunk-berlin-developer" in favor of setting it manually
+* system-defaults: initialize "ffberlin.devmode"
+
+diff --git a/defaults/freifunk-berlin-system-defaults/root/etc/uci-defaults/freifunk-berlin-system-defaults b/defaults/freifunk-berlin-system-defaults/root/etc/uci-defaults/freifunk-berlin-system-defaults
+index 85774f4dcf9f92392fa6dcf948279a7f87229899..f111ae1c48a89f6e927f6a1d83c5a250724a813a 100755
+--- a/defaults/freifunk-berlin-system-defaults/root/etc/uci-defaults/freifunk-berlin-system-defaults
++++ b/defaults/freifunk-berlin-system-defaults/root/etc/uci-defaults/freifunk-berlin-system-defaults
+@@ -9,17 +9,19 @@ if [ $(uci get system.@system[0].hostname) = OpenWrt ]; then
+   uci commit system
+ fi
+ 
++uci set system.ffberlin=settings
++
+ # set system.was_development flag if running non-releasecode was detected
+ SEMVER=$(echo ${DISTRIB_RELEASE%%-*} | \
+   grep -E "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$")
+ if [ -z ${SEMVER} ] && [ "$(uci -q get system.@system[0].was_development)" != "1" ]; then
+-  uci set system.@system[0].was_development=1
++  uci set system.ffberlin.was_development=1
+   uci commit system
+ fi
+ 
+-
+ guard "system"
+ 
+ uci set system.ntp.use_dhcp='0'
++uci set system.ffberlin.devmode='0'
+ 
+ uci commit system
