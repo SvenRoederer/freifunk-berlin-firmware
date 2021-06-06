@@ -1,0 +1,177 @@
+From: Michael Pratt <mcpratt@pm.me>
+Date: Tue, 4 May 2021 23:32:00 -0400
+Subject: ath79: use dynamic partitioning for TP-Link CPE series
+
+CPExxx and WBSxxx boards with AR9344 SOC
+use the OKLI lzma kernel loader
+with the offset of 3 blocks of length 4k (0x3000)
+in order to have a fake "kernel" that cannot grow larger
+than how it is defined in the now static OEM partition table.
+
+Before recent changes to the mtdsplit driver,
+the uImage parser for OKLI only supported images
+that started exactly on an eraseblock boundary.
+
+The mtdsplit parser for uImage now supports identifying images
+with any magic number value
+and at any offset from the eraseblock boundary
+using DTS properties to define those values.
+
+So, it is no longer necessary to use fixed sizes
+for kernel and rootfs
+
+Tested-by: Andrew Cameron <apcameron@softhome.net>	# CPE510 v2
+Tested-by: Bernhard Geier <freifunk@geierb.de>		# WBS210 v2
+Tested-by: Petrov <d7c48mWsPKx67w2@gmail.com>		# CPE210 v1
+Signed-off-by: Michael Pratt <mcpratt@pm.me>
+
+diff --git a/target/linux/ath79/dts/ar9344_tplink_cpe.dtsi b/target/linux/ath79/dts/ar9344_tplink_cpe.dtsi
+index d4b7de440a9deccc36e16dcc2e69b0aef79d46cd..fd6aa0f08bef73b9557728c96547e0a91e205464 100644
+--- a/target/linux/ath79/dts/ar9344_tplink_cpe.dtsi
++++ b/target/linux/ath79/dts/ar9344_tplink_cpe.dtsi
+@@ -4,6 +4,7 @@
+ 
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/mtd/partitions/uimage.h>
+ 
+ / {
+ 	aliases {
+@@ -59,20 +60,9 @@
+ 			partition@40000 {
+ 				label = "firmware";
+ 				reg = <0x040000 0x780000>;
+-
+-				compatible = "fixed-partitions";
+-				#address-cells = <1>;
+-				#size-cells = <1>;
+-
+-				partition@0 {
+-					label = "kernel";
+-					reg = <0x000000 0x300000>;
+-				};
+-
+-				partition@300000 {
+-					label = "rootfs";
+-					reg = <0x300000 0x480000>;
+-				};
++				compatible = "openwrt,uimage", "denx,uimage";
++				openwrt,ih-magic = <IH_MAGIC_OKLI>;
++				openwrt,offset = <0x3000>;
+ 			};
+ 
+ 			partition@7c0000 {
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index 90027221b679b7b0b29b11fecd1b3f4f5a0b3d6c..3047f4b6a3934613b00659840d2df3387b39ba69 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -154,8 +154,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -277,8 +276,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -356,8 +354,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -398,8 +395,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -443,8 +439,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -483,8 +478,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -523,8 +517,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -555,8 +548,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -587,8 +579,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -620,8 +611,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
+@@ -653,8 +643,7 @@ static struct device_info boards[] = {
+ 			{"default-mac", 0x30000, 0x00020},
+ 			{"product-info", 0x31100, 0x00100},
+ 			{"signature", 0x32000, 0x00400},
+-			{"os-image", 0x40000, 0x300000},
+-			{"file-system", 0x340000, 0x470000},
++			{"firmware", 0x40000, 0x770000},
+ 			{"soft-version", 0x7b0000, 0x00100},
+ 			{"support-list", 0x7b1000, 0x00400},
+ 			{"user-config", 0x7c0000, 0x10000},
