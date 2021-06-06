@@ -1,0 +1,21 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Thu, 3 Jun 2021 00:40:08 +0200
+Subject: wizard: adapt css to dualcolor theme "freifunk-generic"
+
+* "set password" dialog had "show password" toggles brack on dark-blue background
+  - change color to "--main-bright-color"
+
+tested with theme "freifunk-generic" and "bootstrap"
+
+diff --git a/utils/luci-app-ffwizard-berlin/htdocs/freifunk/assistent/assistent.css b/utils/luci-app-ffwizard-berlin/htdocs/freifunk/assistent/assistent.css
+index 2e8d10f92e6d828cbc02466c142c1bb085954cab..9c48fbd8329852c05ef06d12c588f7745c637953 100644
+--- a/utils/luci-app-ffwizard-berlin/htdocs/freifunk/assistent/assistent.css
++++ b/utils/luci-app-ffwizard-berlin/htdocs/freifunk/assistent/assistent.css
+@@ -17,3 +17,7 @@
+ #map {
+   margin-top:20px;
+ }
++
++button.cbi-button.cbi-button-neutral {
++	color: var(--main-bright-color);
++}
