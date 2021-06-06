@@ -1,0 +1,21 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 6 Jun 2021 14:21:18 +0200
+Subject: lua-tools: add function "dumptable(table)"
+
+logs a table directly via logger()
+
+diff --git a/addons/freifunk-berlin-lua-tools/luasrc/tools/freifunk/freifunk-berlin.lua b/addons/freifunk-berlin-lua-tools/luasrc/tools/freifunk/freifunk-berlin.lua
+index 7782cd8b37d2025c4d87da0927ebb34c6ced8c83..772a98485b103c32686efdf964bef416cbd59433 100644
+--- a/addons/freifunk-berlin-lua-tools/luasrc/tools/freifunk/freifunk-berlin.lua
++++ b/addons/freifunk-berlin-lua-tools/luasrc/tools/freifunk/freifunk-berlin.lua
+@@ -63,3 +63,10 @@ function mergeInto(config, section, options)
+ 	end
+ 	uci:save(config)
+ end
++
++function dumptable(table)
++	logger('dumping table', 'freifunk-berlin-tools', 5)
++	for key, value in pairs(table) do
++		logger(' ' .. key .. ': ' .. tostring(value),'freifunk-berlin-tools', 5)
++	end
++end
