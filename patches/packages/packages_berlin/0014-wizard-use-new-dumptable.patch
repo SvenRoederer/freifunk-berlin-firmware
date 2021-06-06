@@ -1,0 +1,23 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 6 Jun 2021 14:42:16 +0200
+Subject: wizard: use new dumptable()
+
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
+index f14f3830e4dd1f10690a657b2e92263fb8789a55..be4aef3f1bc0d70cda52fe1a6eff45aa557e6d1d 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
+@@ -245,11 +245,9 @@ function main.write(self, section, value)
+       function(section)
+ --        print(section.name)
+         if section.name == "br-lan" then
+-          tools.logger("__match__","ffwizard",5)
+---      print('------------------')
+-          for key, value in pairs(section) do
+-            tools.logger(key .. ': ' .. tostring(value),"ffwizard-loop",5)
+-          end
++          tools.logger("found br-lan device","ffwizard",5)
++          tools.logger('dumping contens',"ffwizard",5)
++          tools.dumptable(section)
+ --      print(section[0])
+ --      print(uci:set("network", section['.name'], "name", "br-dhcp"))
+           tools.logger(tostring(uci:set("network", section['.name'], "name", "br-dhcp")),"ffwizard",5)
