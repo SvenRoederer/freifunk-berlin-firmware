@@ -1,0 +1,121 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Sun, 30 May 2021 14:41:21 +0200
+Subject: treewide: use $(AUTORELEASE) for all manually managed intree packages
+
+OpenWrt added the AUTORELEASE macro with 21.02 release (https://github.com/openwrt/openwrt/commit/9ae3c6f94c616cfbf854d3ec749c7fafc9893942)
+which counts the commits since last manual "bump" or "update".
+In current workflows changing the PKG_RELEASE is often forgotten, which causes
+the same package-version after the code has changed. This causes some confusion
+to `opkg` and manual installation of the package.
+
+special cases:
+OWM: current version had a version number, but this had no real meaning
+meshwizard: as the state of the package is unknown the AUTORELEASE number is
+            just appended to the current versionnumber
+
+Signed-off-by: Sven Roederer <freifunk@it-solutions.geroedel.de>
+
+diff --git a/contrib/package/community-profiles/Makefile b/contrib/package/community-profiles/Makefile
+index 2f3d33e1573ac3e1a52e650fb632d5e818056e73..90933d771d1052d0868c2ad749607fc11376bdea 100644
+--- a/contrib/package/community-profiles/Makefile
++++ b/contrib/package/community-profiles/Makefile
+@@ -4,7 +4,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=community-profiles
+-PKG_RELEASE:=4
++PKG_RELEASE:=$(AUTORELEASE)
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
+diff --git a/contrib/package/freifunk-common/Makefile b/contrib/package/freifunk-common/Makefile
+index 5c6b8285a757789ed54dae9112be85633f609320..17e6a5b0510aca6c463dfaae0bf82b8d62abe554 100644
+--- a/contrib/package/freifunk-common/Makefile
++++ b/contrib/package/freifunk-common/Makefile
+@@ -4,7 +4,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=freifunk-common
+-PKG_RELEASE:=10
++PKG_RELEASE:=$(AUTORELEASE)
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
+diff --git a/contrib/package/freifunk-firewall/Makefile b/contrib/package/freifunk-firewall/Makefile
+index b9d328c66e84c390b3421b3a64879db2a8595389..b90f455f6d8246fde73938fe42cfa7127cb2d48e 100644
+--- a/contrib/package/freifunk-firewall/Makefile
++++ b/contrib/package/freifunk-firewall/Makefile
+@@ -7,7 +7,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=freifunk-firewall
+-PKG_RELEASE:=3
++PKG_RELEASE:=$(AUTORELEASE)
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
+diff --git a/contrib/package/freifunk-gwcheck/Makefile b/contrib/package/freifunk-gwcheck/Makefile
+index 6c2affe741339bd8f6d61ba1678c7149c5573673..3c3207d4c21efabc92dc4962f442f8731987a6db 100644
+--- a/contrib/package/freifunk-gwcheck/Makefile
++++ b/contrib/package/freifunk-gwcheck/Makefile
+@@ -4,7 +4,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=freifunk-gwcheck
+-PKG_RELEASE:=4
++PKG_RELEASE:=$(AUTORELEASE)
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
+diff --git a/contrib/package/freifunk-mapupdate/Makefile b/contrib/package/freifunk-mapupdate/Makefile
+index a9281ca20a8caf08fa5588bcbb62f2b616f0dadb..20611452c8f9b90b9a4faa3980e62c71478e10fb 100644
+--- a/contrib/package/freifunk-mapupdate/Makefile
++++ b/contrib/package/freifunk-mapupdate/Makefile
+@@ -4,7 +4,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=freifunk-mapupdate
+-PKG_RELEASE:=1
++PKG_RELEASE:=$(AUTORELEASE)
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
+diff --git a/contrib/package/freifunk-policyrouting/Makefile b/contrib/package/freifunk-policyrouting/Makefile
+index db3017f661d02a3a38a25e6ad6bd1d5d446892de..a6eefb636560f4d207eca68cc429d634973960f6 100644
+--- a/contrib/package/freifunk-policyrouting/Makefile
++++ b/contrib/package/freifunk-policyrouting/Makefile
+@@ -4,7 +4,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=freifunk-policyrouting
+-PKG_RELEASE:=7-berlin
++PKG_RELEASE:=$(AUTORELEASE)-berlin
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
+diff --git a/contrib/package/freifunk-watchdog/Makefile b/contrib/package/freifunk-watchdog/Makefile
+index c720c251d1b318f9b364adfc92e80eda607771e1..4df5ff29ff02d77f61aa52c963bb02476e36e9cf 100644
+--- a/contrib/package/freifunk-watchdog/Makefile
++++ b/contrib/package/freifunk-watchdog/Makefile
+@@ -8,7 +8,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=freifunk-watchdog
+-PKG_RELEASE:=8
++PKG_RELEASE:=$(AUTORELEASE)
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ PKG_BUILD_DEPENDS := uci
+diff --git a/contrib/package/meshwizard/Makefile b/contrib/package/meshwizard/Makefile
+index 62983465c1996bf43692903e56f342a97a1ff41e..3e788fb06f87ed52038451ad430821804032ca52 100644
+--- a/contrib/package/meshwizard/Makefile
++++ b/contrib/package/meshwizard/Makefile
+@@ -4,7 +4,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=meshwizard
+-PKG_RELEASE:=0.3.3
++PKG_RELEASE:=0.3.3-$(AUTORELEASE)
+ 
+ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+ 
