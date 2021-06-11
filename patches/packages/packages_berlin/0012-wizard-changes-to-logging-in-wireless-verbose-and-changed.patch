@@ -1,0 +1,21 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 6 Jun 2021 16:32:29 +0200
+Subject: wizard: changes to logging in wireless (verbose and changed)
+
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
+index 9ad36ce9a0b5e9b187892687d2b25bbe1827b636..3b4dc9b3840a9bf1e8cb700cea749563a02ae17e 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
+@@ -306,7 +306,11 @@ function main.write(self, section, value)
+   uci:save("dhcp")
+   uci:save("olsrd")
+   uci:save("olsrd6")
+-  uci:save("network")
++  if uci:save("network") == true then
++    tools.logger("uci:save network passed", "ffwizard",5)
++  else
++    tools.logger("uci:save network failed", "ffwizard",5)
++  end
+   uci:save("ffwizard")
+ end
+ 
