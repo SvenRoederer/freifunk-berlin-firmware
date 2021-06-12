@@ -1,0 +1,36 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 13 Jun 2021 01:00:29 +0200
+Subject: hackish fix for uplink-notunnel + UCI-bridgesetup
+
+diff --git a/uplinks/freifunk-berlin-uplink-notunnel/root/etc/uci-defaults/freifunk-berlin-z95_notunnel b/uplinks/freifunk-berlin-uplink-notunnel/root/etc/uci-defaults/freifunk-berlin-z95_notunnel
+index 58c525d5f72618494f7900025c90799f24bbb21a..34b9c75ad2761650c03ecd403ba9a393974b3cfa 100644
+--- a/uplinks/freifunk-berlin-uplink-notunnel/root/etc/uci-defaults/freifunk-berlin-z95_notunnel
++++ b/uplinks/freifunk-berlin-uplink-notunnel/root/etc/uci-defaults/freifunk-berlin-z95_notunnel
+@@ -48,20 +48,22 @@ add_kernelif_to_bridge() {
+   local device="$2"
+   local interface="$3"
+ 
+-  echo "--- config: $config ---"
++  echo >&2 "--- config: $config ---"
+   uci show network.$config
+   local thisdevice=$(uci get network.$config.name)
+-  echo "  $thisdevice"
++  echo >&2 "  $thisdevice"
+   if [ "$device" = "$thisdevice" ]; then
+-    echo "  adding interface $interface"
+-    ifnames=$(uci get network.$config.ports)
++    echo >&2 "  adding interface $interface"
++    ifnames=$(uci -q get network.$config.ports)
+     list_contains ifnames "$interface" || uci add_list network.$config.ports=$interface
++    echo $config
++    uci commit network.$config
+   fi
+ }
+ 
+ config_load network
+ config_foreach add_kernelif_to_bridge device br-wan ffuplink_wan
+-uci commit network.br-wan
++#uci commit network.br-wan
+ 
+ uci set network.ffuplink.proto=dhcp
+ uci set network.ffuplink.hostname=freifunk-$(echo $macaddr|tr -d :)-uplink
