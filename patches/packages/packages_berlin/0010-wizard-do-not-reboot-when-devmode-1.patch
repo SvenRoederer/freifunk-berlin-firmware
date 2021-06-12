@@ -3,22 +3,23 @@ Date: Tue, 9 Oct 2018 00:26:37 +0200
 Subject: wizard: do not reboot when devmode=1
 
 diff --git a/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm b/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
-index 6b3f6d303fdfd51148a22584eea6fa6410196458..69e241bfd89d8f3221199877cc44e8662d238dd6 100644
+index ccc3b4dc496e50bbade0d7e8aeefaf3517fc6fce..c18164dcfe972e51542e7521d81e415041691ee6 100644
 --- a/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
 +++ b/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
-@@ -2,11 +2,6 @@
+@@ -2,12 +2,6 @@
    -- remove landingpage redirection of luci-mod-freifunk before final reboot
    local uci = require "luci.model.uci".cursor()
    uci:set('freifunk', 'luci', 'redirect_landingurl', '')
 -
 -  if uci:get("system", "ffberlin", "devmode") == "0" then
 -    uci:commit('freifunk', 'luci')
+-    uci:save('freifunk')
 -    luci.sys.reboot()
 -  end
  %>
  
  <%+header%>
-@@ -32,16 +27,13 @@
+@@ -33,16 +27,14 @@
      </p>
    </div>
  <%
@@ -32,6 +33,7 @@ index 6b3f6d303fdfd51148a22584eea6fa6410196458..69e241bfd89d8f3221199877cc44e866
 +    print("<p>Das System ist im Entwickler-Modus und der automatische Neustart wird nicht ausgeführt.</p>")
 +  else
 +    uci:commit('freifunk', 'luci')
++    uci:save('freifunk')
 +    luci.sys.reboot()
    end
  %>
