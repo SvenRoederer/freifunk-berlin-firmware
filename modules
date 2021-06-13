@@ -10,7 +10,7 @@ PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
 PACKAGES_LUCI_COMMIT=19de3acddec1fa63cd895b3e0aa41fa0cae0ee88
 PACKAGES_LUCI_BRANCH=openwrt-21.02
 
-PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
+PACKAGES_ROUTING_REPO=https://github.com/openwrt/routing.git
 PACKAGES_ROUTING_COMMIT=57533a25e84932a7e50b8483843c840f0924bc0c
 PACKAGES_ROUTING_BRANCH=openwrt-21.02
 
