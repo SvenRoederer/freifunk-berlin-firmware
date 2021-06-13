@@ -3,10 +3,10 @@ Date: Sun, 6 Jun 2021 16:32:29 +0200
 Subject: wizard: changes to logging in wireless (verbose and changed)
 
 diff --git a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
-index 9ad36ce9a0b5e9b187892687d2b25bbe1827b636..3b4dc9b3840a9bf1e8cb700cea749563a02ae17e 100644
+index bd12a855681cdf0928f1b3e366d2d2fc1a65404b..645c82ac6fce73e8197b1b0eb9b3d35848f0b2ab 100644
 --- a/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
 +++ b/utils/luci-app-ffwizard-berlin/luasrc/model/cbi/freifunk/assistent/wireless.lua
-@@ -306,7 +306,11 @@ function main.write(self, section, value)
+@@ -299,7 +299,11 @@ function main.write(self, section, value)
    uci:save("dhcp")
    uci:save("olsrd")
    uci:save("olsrd6")
