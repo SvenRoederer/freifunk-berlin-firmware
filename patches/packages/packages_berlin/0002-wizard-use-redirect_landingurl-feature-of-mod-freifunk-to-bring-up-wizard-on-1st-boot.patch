@@ -4,30 +4,58 @@ Subject: wizard: use "redirect_landingurl" feature of mod-freifunk to bring up w
 
 The luci-mod-freifunk has the new feature to redirect to a custom page when LuCI is called
 without an explicit page (https://github.com/freifunk/openwrt-packages/commit/21e69cd27d736f13295e2af79108617ccc694b45). Let's
-use this to redirect to the wizard and remove the redirection when the wizard is finished.
+use this to redirect to the wizard and remove the redirection again when the wizard has
+finished.
 This way we don't need the "redirect on firstboot" patch (up to Kathleen 0.1.2) and can
-also drop our forked "luci-mod-freifunk-ui". "luci-mof-freifunk-ui" was basically a fork
-of "luci-mof-freifunk" with the mentioned patch included.
+also drop our forked "luci-mod-freifunk-ui", which is basically the same code with the
+mentioned patch included.
 
 Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
 
-diff --git a/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm b/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
-index 71cf6fadfc64cc515bf34b4ec061edb1356dded4..97dcfdec14d9b3a7eb985363f1f7c368443a9925 100644
---- a/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
-+++ b/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
-@@ -1,4 +1,10 @@
- <%
-+  -- remove landingpage redirection of luci-mod-freifunk before final reboot
-+  local uci = require "luci.model.uci".cursor()
-+  uci:set('freifunk', 'luci', 'redirect_landingurl', '')
-+  uci:commit('freifunk', 'luci')
-+  uci:save('freifunk')
-+
-   luci.sys.reboot()
- %>
+diff --git a/utils/luci-app-ffwizard-berlin/Makefile b/utils/luci-app-ffwizard-berlin/Makefile
+index 36399e6cfca2bdc97e986a0211d18f018441fef9..fd1c9e90cfd0b13dadef7c761c515a45a252819b 100644
+--- a/utils/luci-app-ffwizard-berlin/Makefile
++++ b/utils/luci-app-ffwizard-berlin/Makefile
+@@ -6,6 +6,12 @@ LUCI_TITLE:=Freifunk Berlin configuration wizard
+ LUCI_DEPENDS:=+luci-compat +luci-mod-admin-full +freifunk-policyrouting +luci-lib-jsonc +community-profiles +luci-lib-ipkg +freifunk-berlin-lua-tools
+ PKG_RELEASE:=7
  
++define Package/luci-app-ffwizard-berlin/postrm
++#!/bin/sh
++[ '/cgi-bin/luci/admin/freifunk/assistent?luci_username=root&luci_password=' = "$$(uci -q get freifunk.luci.redirect_landingurl)" ] &&
++  { uci delete freifunk.luci.redirect_landingurl; uci commit freifunk.luci; }
++endef
++
+ include ../../freifunk-berlin-generic.mk
+ 
+ # call BuildPackage - OpenWrt buildroot signature
+diff --git a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
+index da92f4b140b9dfba12723f0a8e4977ca1dda0c44..18f93c504f1c71665bd57c1737d59784043d1344 100644
+--- a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
++++ b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
+@@ -45,6 +45,9 @@ function commit()
+ 
+   uci:set("ffwizard","settings","runbefore","true")
+   uci:save("ffwizard")
++  -- remove landingpage redirection of luci-mod-freifunk, to restore default behavior
++  uci:set('freifunk', 'luci', 'redirect_landingurl', '')
++
+   local sharenet = uci:get("ffwizard","settings","sharenet")
+ 
+   local community = "profile_"..uci:get("freifunk","community","name")
+@@ -150,6 +153,10 @@ function reset()
+   uci:set("ffwizard","settings","runbefore","true")
+   uci:save("ffwizard")
+   uci:commit("ffwizard")
++  -- remove landingpage redirection of luci-mod-freifunk, to restore default behavior
++  uci:set('freifunk', 'luci', 'redirect_landingurl', '')
++  uci:save('freifunk')
++  uci:commit('freifunk', 'luci')
+ 
+   luci.http.redirect(luci.dispatcher.build_url("/"))
+ end
 diff --git a/utils/luci-app-ffwizard-berlin/root/etc/uci-defaults/wizarddefaults b/utils/luci-app-ffwizard-berlin/root/etc/uci-defaults/wizarddefaults
-index 9c850a03d993d5b42c82a5b271728d42a020f251..b0714f097c58a7af2875f4d6a31c019fe927cdff 100644
+index 9c850a03d993d5b42c82a5b271728d42a020f251..33a53aee3456906bf0b4ab884d62de663022b3cf 100644
 --- a/utils/luci-app-ffwizard-berlin/root/etc/uci-defaults/wizarddefaults
 +++ b/utils/luci-app-ffwizard-berlin/root/etc/uci-defaults/wizarddefaults
 @@ -6,3 +6,9 @@ uci set freifunk-policyrouting.pr.enable=1
@@ -35,8 +63,8 @@ index 9c850a03d993d5b42c82a5b271728d42a020f251..b0714f097c58a7af2875f4d6a31c019f
  uci set freifunk-policyrouting.pr.zones="freifunk"
  uci commit freifunk-policyrouting
 +
-+# redirect to wizard when it has never run before
-+[ $(uci -q get ffwizard.settings.runbefore) = 'true' ] && exit 0
++# redirect to wizard when it has never run before, will be removed when the wizard has finished
++[ 'true' = "$(uci -q get ffwizard.settings.runbefore)" ] && exit 0
 +uci set freifunk.luci=setting
 +uci set freifunk.luci.redirect_landingurl='/cgi-bin/luci/admin/freifunk/assistent?luci_username=root&luci_password='
 +uci commit freifunk.luci
