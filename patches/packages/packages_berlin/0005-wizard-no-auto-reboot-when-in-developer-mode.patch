@@ -5,26 +5,19 @@ Subject: wizard: no auto-reboot when in developer-mode
 Setting uci: system.ffberlin.devmode to "1" prevents the system from automatic reboot after finishing the wizard. This helps to check if the wizard is working correctly.
 
 diff --git a/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm b/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
-index 97dcfdec14d9b3a7eb985363f1f7c368443a9925..ccc3b4dc496e50bbade0d7e8aeefaf3517fc6fce 100644
+index 71cf6fadfc64cc515bf34b4ec061edb1356dded4..068bbe0ca9ba481df63eb2fe0b6c3cab15a39de4 100644
 --- a/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
 +++ b/utils/luci-app-ffwizard-berlin/luasrc/view/freifunk/assistent/reboot.htm
-@@ -2,10 +2,12 @@
-   -- remove landingpage redirection of luci-mod-freifunk before final reboot
-   local uci = require "luci.model.uci".cursor()
-   uci:set('freifunk', 'luci', 'redirect_landingurl', '')
--  uci:commit('freifunk', 'luci')
--  uci:save('freifunk')
- 
+@@ -1,5 +1,7 @@
+ <%
 -  luci.sys.reboot()
 +  if uci:get("system", "ffberlin", "devmode") == "0" then
-+    uci:commit('freifunk', 'luci')
-+    uci:save('freifunk')
 +    luci.sys.reboot()
 +  end
  %>
  
  <%+header%>
-@@ -30,6 +32,16 @@
+@@ -24,6 +26,16 @@
        sobald dein Router neugestartet hat.
      </p>
    </div>

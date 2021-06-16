@@ -6,10 +6,10 @@ This helps to debug the wizard, by having the changes for review in
 the buffer.
 
 diff --git a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
-index da92f4b140b9dfba12723f0a8e4977ca1dda0c44..36166e99c8ab0ad693625a8204da4748689c3e5e 100644
+index 18f93c504f1c71665bd57c1737d59784043d1344..efe4a42c5ed6e0b07afee002a5f6a65e08156c6e 100644
 --- a/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
 +++ b/utils/luci-app-ffwizard-berlin/luasrc/controller/assistent/assistent.lua
-@@ -95,16 +95,24 @@ function commit()
+@@ -98,16 +98,20 @@ function commit()
  
    tools.configureQOS()
  
@@ -34,11 +34,7 @@ index da92f4b140b9dfba12723f0a8e4977ca1dda0c44..36166e99c8ab0ad693625a8204da4748
 +    uci:commit("ffwizard")
 +    uci:commit("freifunk")
 +    uci:commit("wireless")
-+    if uci:commit("network") == true then
-+      fftools.logger("uci:commit network passwd")
-+    else
-+      fftools.logger("uci:commit network failed")
-+    end
++    uci:commit("network")
 +    uci:commit("qos")
 +  end
  
