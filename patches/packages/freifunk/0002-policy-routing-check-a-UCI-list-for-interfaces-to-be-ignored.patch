@@ -1,0 +1,35 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Fri, 18 Jun 2021 21:21:07 +0200
+Subject: policy-routing: check a UCI-list for interfaces to be ignored
+
+diff --git a/contrib/package/freifunk-policyrouting/files/etc/hotplug.d/iface/30-policyrouting b/contrib/package/freifunk-policyrouting/files/etc/hotplug.d/iface/30-policyrouting
+index fc5d802486fda9f05dcc7614747a0d32fd622f86..0de267067f2d92e45eacb099d3346b9efd35aea9 100644
+--- a/contrib/package/freifunk-policyrouting/files/etc/hotplug.d/iface/30-policyrouting
++++ b/contrib/package/freifunk-policyrouting/files/etc/hotplug.d/iface/30-policyrouting
+@@ -3,10 +3,26 @@
+ . /lib/functions.sh
+ . /lib/functions/network.sh
+ 
++ignore_interface() {
++  exit_on_match() {
++#    echo "testing: param: __$1__"
++#    echo "testing: term: __${INTERFACE}__"
++#    [ $1 = "$INTERFACE" ] && echo "exit 0"
++    [ $1 = "$INTERFACE" ] && exit 0
++  }
++
++#  echo "config:" $1
++  # only check list "ignore_ifname" of section freifunk-policyrouting.pr
++  [ 'pr' = "$1" ] && config_list_foreach "$1" ignore_ifname exit_on_match
++}
++
+ proto="4"
+ #[ -f /proc/net/ipv6_route ] && proto="4 6"
+ 
+ config_load freifunk-policyrouting
++# exit if we should not on this interface
++config_foreach ignore_interface settings
++
+ config_get enable pr enable
+ config_get fallback pr fallback
+ config_get strict pr strict

@@ -1,0 +1,41 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 19 Jun 2021 00:04:47 +0200
+Subject: network-defaults: exclude "wan" and "ffuplink" from handling by freifunk-policyrouting
+
+This adds a UCI-setting to ginore the "wan" and "ffuplink" interface in the hotplug
+script of freifunk-policyrouting.
+Before this has been archived by patching the upstream script at buildtime.
+Downside of this new solution: the uci-script is only run on package-install. When
+installing the Freifunk-policiyrouting package later, the interfaces are not added
+to the ignorelist.
+
+diff --git a/defaults/freifunk-berlin-network-defaults/root/etc/uci-defaults/freifunk-berlin-ffuplink-defaults b/defaults/freifunk-berlin-network-defaults/root/etc/uci-defaults/freifunk-berlin-ffuplink-defaults
+index f31bdbb8b8abc3e6509a01d3b3e2defad2a962fd..9c54c0cbceb2c0089601290d2ffd9905247ae651 100644
+--- a/defaults/freifunk-berlin-network-defaults/root/etc/uci-defaults/freifunk-berlin-ffuplink-defaults
++++ b/defaults/freifunk-berlin-network-defaults/root/etc/uci-defaults/freifunk-berlin-ffuplink-defaults
+@@ -2,6 +2,10 @@
+ 
+ . /lib/functions/freifunk-berlin-network.sh
+ . /lib/functions/guard.sh
++
++uci -q get freifunk-policyrouting.pr >/dev/null && \
++  { uci add_list freifunk-policyrouting.pr.ignore_ifname='ffuplink';  uci commit freifunk-policyrouting.pr; }
++
+ guard "ffberlin_uplink"
+ 
+ # create ffberlin-uplink file an fill with basic settings
+diff --git a/defaults/freifunk-berlin-network-defaults/root/etc/uci-defaults/freifunk-berlin-network-defaults b/defaults/freifunk-berlin-network-defaults/root/etc/uci-defaults/freifunk-berlin-network-defaults
+index 7f794971c4448ccaa5de4672cdbc5fb38ff0cd1d..847900e679e0744c7f14bc6aee46b4f0bb30483a 100644
+--- a/defaults/freifunk-berlin-network-defaults/root/etc/uci-defaults/freifunk-berlin-network-defaults
++++ b/defaults/freifunk-berlin-network-defaults/root/etc/uci-defaults/freifunk-berlin-network-defaults
+@@ -2,6 +2,10 @@
+ 
+ . /lib/functions.sh
+ . /lib/functions/guard.sh
++
++uci -q get freifunk-policyrouting.pr >/dev/null && \
++  { uci add_list freifunk-policyrouting.pr.ignore_ifname='wan';  uci commit freifunk-policyrouting.pr; }
++
+ guard "network"
+ 
+ # find_first_section_for_name(sectionname uci-config searchname)
