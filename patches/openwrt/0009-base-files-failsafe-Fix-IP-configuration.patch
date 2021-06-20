@@ -1,0 +1,59 @@
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sat, 19 Jun 2021 20:36:09 +0200
+Subject: base-files: failsafe: Fix IP configuration
+
+Adapt the preinit_config_board() to the board.json network changes. It
+now looks for the device and the ports variables to configure the LAN
+network.
+
+This works with swconfig configurations.
+
+Fixes: FS#3866
+Fixes: d42640e389a8 ("base-files: use "ports" array in board.json network for bridges")
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+
+diff --git a/package/base-files/files/lib/preinit/10_indicate_preinit b/package/base-files/files/lib/preinit/10_indicate_preinit
+index 3c59929790168c12d1745c395f171b08b6d06f8a..ae9fcfecc89e7a18a47c5446516e15b2e5645faf 100644
+--- a/package/base-files/files/lib/preinit/10_indicate_preinit
++++ b/package/base-files/files/lib/preinit/10_indicate_preinit
+@@ -72,28 +72,34 @@ preinit_config_board() {
+ 
+ 	json_select network
+ 		json_select "lan"
+-			json_get_vars ifname
++			json_get_vars device
++			json_get_values ports ports
+ 		json_select ..
+ 	json_select ..
+ 
+-	[ -n "$ifname" ] || return
++	[ -n "$device" -o -n "$ports" ] || return
++
++	# swconfig uses $device and DSA uses ports
++	[ -z "$ports" ] && {
++		ports="$device"
++	}
+ 
+ 	# only use the first one
+-	ifname=${ifname%% *}
++	ports=${ports%% *}
+ 
+ 	if [ -x /sbin/swconfig ]; then
+ 		# configure the switch, if present
+ 
+ 		json_get_keys keys switch
+ 		for key in $keys; do
+-			preinit_config_switch $key $ifname
++			preinit_config_switch $key $ports
+ 		done
+ 	else
+ 		# trim any vlan ids
+-		ifname=${ifname%\.*}
++		ports=${ports%\.*}
+ 	fi
+ 
+-	pi_ifname=$ifname
++	pi_ifname=$ports
+ 
+ 	preinit_ip_config $pi_ifname
+ }

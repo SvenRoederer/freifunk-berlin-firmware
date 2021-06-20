@@ -1,0 +1,32 @@
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sat, 19 Jun 2021 20:36:10 +0200
+Subject: base-files: failsafe: Start also CPU interface for DSA
+
+On a DSA switch the ports have an upper device, the CPU device, e.g.
+eth0. This device has to be in up state to bring up the lower devices
+like lan1.
+
+Parse the link device from "ip link show" and bring it into up stated
+before bringing up the actual interface.
+
+This is needed to make network in failsafe on systems with DSA work.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+
+diff --git a/package/base-files/files/lib/preinit/10_indicate_preinit b/package/base-files/files/lib/preinit/10_indicate_preinit
+index ae9fcfecc89e7a18a47c5446516e15b2e5645faf..a3bc289dd663cef04925bc92e666a5ae5aa6152e 100644
+--- a/package/base-files/files/lib/preinit/10_indicate_preinit
++++ b/package/base-files/files/lib/preinit/10_indicate_preinit
+@@ -12,6 +12,12 @@ preinit_ip_config() {
+ 	fi
+ 
+ 	grep -q "$netdev" /proc/net/dev || return
++	
++	# Get the link interface e.g. eth0 in lan1@eth0
++	iflink=$(ip link show dev ${netdev} |sed -nr 's/.*@([a-zA-Z0-9]*): .*/\1/p')
++	if [ -n "$iflink" ]; then
++		ip link set dev $iflink up
++	fi
+ 
+ 	if [ -n "$vid" ]; then
+ 		ip link add link $netdev name $1 type vlan id $vid

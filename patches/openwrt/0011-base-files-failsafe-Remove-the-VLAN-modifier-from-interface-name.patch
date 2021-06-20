@@ -1,0 +1,22 @@
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sat, 19 Jun 2021 20:36:11 +0200
+Subject: base-files: failsafe: Remove the VLAN modifier from interface name
+
+Some interfaces have a VLAN modifier like :t in lan1:t, this modifier
+should be removed from the interface before calling preinit_ip_config().
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+
+diff --git a/package/base-files/files/lib/preinit/10_indicate_preinit b/package/base-files/files/lib/preinit/10_indicate_preinit
+index a3bc289dd663cef04925bc92e666a5ae5aa6152e..2fa812e91f73a250d384b7f949a92964008fd88b 100644
+--- a/package/base-files/files/lib/preinit/10_indicate_preinit
++++ b/package/base-files/files/lib/preinit/10_indicate_preinit
+@@ -103,6 +103,8 @@ preinit_config_board() {
+ 	else
+ 		# trim any vlan ids
+ 		ports=${ports%\.*}
++		# trim any vlan modifiers like :t
++		ports=${ports%\:*}
+ 	fi
+ 
+ 	pi_ifname=$ports
