@@ -4,14 +4,14 @@ Subject: tools/mkimage: patch out hardcoded size of strings for filename handlin
 
 diff --git a/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch b/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..dede97468fc43484c3d87fe0d98081fa35f04ba9
+index 0000000000000000000000000000000000000000..807fc96b67239f246725f08ad6acc99c1507499f
 --- /dev/null
 +++ b/tools/mkimage/patches/901-mkimage-no-hardcoded-charlength.patch
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,108 @@
 +diff -ur u-boot-2021.01-orig/tools/fit_image.c u-boot-2021.01/tools/fit_image.c
 +--- u-boot-2021.01-orig/tools/fit_image.c	2021-01-11 19:11:43.000000000 +0100
-++++ u-boot-2021.01/tools/fit_image.c	2021-05-27 21:37:52.158651416 +0200
-+@@ -723,33 +723,48 @@
+++++ u-boot-2021.01/tools/fit_image.c	2021-06-25 14:49:25.391215630 +0200
++@@ -723,23 +723,34 @@
 +  */
 + static int fit_handle_file(struct image_tool_params *params)
 + {
@@ -21,8 +21,9 @@ index 0000000000000000000000000000000000000000..dede97468fc43484c3d87fe0d98081fa
 ++//	char tmpfile[MKIMAGE_MAX_TMPFILE_LEN];
 ++//	char bakfile[MKIMAGE_MAX_TMPFILE_LEN + 4] = {0};
 ++//	char cmd[MKIMAGE_MAX_DTC_CMDLINE_LEN];
-++	char *tmpfile, *bakfile, *cmd = NULL;
+++	char *tmpfile, *bakfile, *cmd;
 ++	int tmpfilelen = strlen (params->imagefile);
+++	int cmdlen = 2 * tmpfilelen + 50;
 + 	size_t size_inc;
 + 	int ret;
 + 
@@ -33,9 +34,9 @@ index 0000000000000000000000000000000000000000..dede97468fc43484c3d87fe0d98081fa
 +-	if (strlen (params->imagefile) +
 +-		strlen (MKIMAGE_TMPFILE_SUFFIX) + 1 > sizeof (tmpfile)) {
 +-		fprintf (stderr, "%s: Image file name (%s) too long, "
-++	tmpfile = malloc (tmpfilelen + strlen (MKIMAGE_TMPFILE_SUFFIX) + 1);
-++	bakfile = malloc (tmpfilelen + 4);
-++	cmd = malloc (tmpfilelen * 2 + 35);
+++	tmpfile = calloc (tmpfilelen + strlen (MKIMAGE_TMPFILE_SUFFIX) + 1, sizeof(char*));
+++	bakfile = calloc (tmpfilelen + strlen (MKIMAGE_TMPFILE_SUFFIX) + 35, sizeof(char*));
+++	cmd = calloc (cmdlen, sizeof(char*));
 ++
 ++	fprintf (stderr, "debug: %s: tmpfilelen is %i_-_\n",
 ++				params->imagefile, tmpfilelen);
@@ -49,13 +50,10 @@ index 0000000000000000000000000000000000000000..dede97468fc43484c3d87fe0d98081fa
 + 		return (EXIT_FAILURE);
 + 	}
 ++
-++	/* call dtc to include binary properties into the tmp file */
 + 	sprintf (tmpfile, "%s%s", params->imagefile, MKIMAGE_TMPFILE_SUFFIX);
-++	memset(bakfile, '\0', tmpfilelen + 4);
-++	memset(cmd, '\0', tmpfilelen * 2 + 35);
 + 
 + 	/* We either compile the source file, or use the existing FIT image */
-+ 	if (params->auto_its) {
++@@ -747,21 +758,21 @@
 + 		if (fit_build(params, tmpfile)) {
 + 			fprintf(stderr, "%s: failed to build FIT\n",
 + 				params->cmdname);
@@ -67,9 +65,14 @@ index 0000000000000000000000000000000000000000..dede97468fc43484c3d87fe0d98081fa
 +-		*cmd = '\0';
 + 	} else if (params->datafile) {
 + 		/* dtc -I dts -O dtb -p 500 -o tmpfile datafile */
-+ 		snprintf(cmd, sizeof(cmd), "%s %s -o \"%s\" \"%s\"",
-+@@ -759,9 +774,6 @@
-+ 		snprintf(cmd, sizeof(cmd), "cp \"%s\" \"%s\"",
++-		snprintf(cmd, sizeof(cmd), "%s %s -o \"%s\" \"%s\"",
+++		snprintf(cmd, cmdlen, "%s %s -o \"%s\" \"%s\"",
++ 			 MKIMAGE_DTC, params->dtc, tmpfile, params->datafile);
+++		fprintf(stderr, "DEBUG: Trying to execute \"%s\"\n", cmd);
++ 		debug("Trying to execute \"%s\"\n", cmd);
++ 	} else {
++-		snprintf(cmd, sizeof(cmd), "cp \"%s\" \"%s\"",
+++		snprintf(cmd, cmdlen, "cp \"%s\" \"%s\"",
 + 			 params->imagefile, tmpfile);
 + 	}
 +-	if (strlen(cmd) >= MKIMAGE_MAX_DTC_CMDLINE_LEN - 1) {
@@ -78,7 +81,7 @@ index 0000000000000000000000000000000000000000..dede97468fc43484c3d87fe0d98081fa
 + 
 + 	if (*cmd && system(cmd) == -1) {
 + 		fprintf (stderr, "%s: system(%s) failed: %s\n",
-+@@ -823,14 +835,20 @@
++@@ -823,14 +834,20 @@
 + 		unlink (tmpfile);
 + 		unlink(bakfile);
 + 		unlink (params->imagefile);
