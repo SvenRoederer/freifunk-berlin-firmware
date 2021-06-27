@@ -4,16 +4,6 @@
 -wpad-basic-wolfssl
 wpad-basic
 
--ath10k-ct
--kmod-ath10k-ct
--kmod-ath10k-ct-smallbuffers
--ath10k-firmware-qca9888-ct
-kmod-ath10k
-#ath10k-board-qca988x
-#ath10k-firmware-qca988x
-ath10k-board-qca9888
-ath10k-firmware-qca9888
-
 # Defaults
 freifunk-berlin-dhcp-defaults
 freifunk-berlin-firewall-defaults
