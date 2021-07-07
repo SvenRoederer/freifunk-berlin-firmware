@@ -57,6 +57,7 @@ shorewall-lite
 shorewall6-lite
 
 tcpdump
+less
 
 apcupsd
 #kmod-usb-serial
