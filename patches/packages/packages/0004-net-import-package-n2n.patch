@@ -1,0 +1,200 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Thu, 8 Jul 2021 02:14:48 +0200
+Subject: net: import package n2n
+
+it's a peer2peer VPN
+this imports d29e0a031e3e9bcbc173d3e796341d7719e from https://github.com/SvenRoederer/n2n-vpn
+
+diff --git a/net/n2n/Makefile b/net/n2n/Makefile
+new file mode 100644
+index 0000000000000000000000000000000000000000..42d65c962c28d11957b4329951d6f21ec9ca4136
+--- /dev/null
++++ b/net/n2n/Makefile
+@@ -0,0 +1,80 @@
++#
++# Copyright (C) 2021 - ntop.org and contributors
++#
++
++include $(TOPDIR)/rules.mk
++
++PKG_NAME:=n2n
++PKG_RELEASE:=1
++
++PKG_SOURCE_PROTO:=git
++PKG_SOURCE_URL:=https://github.com/SvenRoederer/n2n-vpn.git
++PKG_SOURCE_DATE:=2021-04-03
++PKG_SOURCE_VERSION:=c3c5999fcf5b12d2e542973cfc6b749821b52261
++#PKG_VERSION:=2.9.0-git.$(PKG_SOURCE_VERSION)
++
++#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
++#PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
++
++PKG_MAINTAINER:=Emanuele Faranda <faranda@ntop.org>
++PKG_LICENSE:=GPL3
++PKG_BUILD_PARALLEL:=1
++
++include $(INCLUDE_DIR)/package.mk
++include $(INCLUDE_DIR)/cmake.mk
++
++define Package/n2n/Default
++  SECTION:=net
++  CATEGORY:=Network
++  TITLE:=N2N Peer-to-peer VPN
++  URL:=http://www.ntop.org/n2n
++  SUBMENU:=VPN
++endef
++
++define Package/n2n-edge
++  $(call Package/n2n/Default)
++  TITLE+= client (edge node)
++  DEPENDS+=+kmod-tun +resolveip +libopenssl
++endef
++
++define Package/n2n-supernode
++  $(call Package/n2n/Default)
++  TITLE+= server (supernode)
++endef
++
++define Package/n2n-edge/description
++The client node for the N2N infrastructure
++endef
++
++define Package/n2n-supernode/description
++The supernode for the N2N infrastructure
++endef
++
++define Package/n2n-edge/conffiles
++/etc/n2n/edge.conf
++endef
++
++define Package/n2n-edge/install
++	$(INSTALL_DIR) $(1)/usr/bin
++	$(INSTALL_BIN) $(PKG_BUILD_DIR)/edge $(1)/usr/bin/
++	$(INSTALL_DIR) $(1)/etc/init.d
++	$(INSTALL_BIN) $(PKG_BUILD_DIR)/packages/openwrt/etc/init.d/edge $(1)/etc/init.d/edge
++	$(INSTALL_DIR) $(1)/etc/n2n
++	$(INSTALL_CONF) $(PKG_BUILD_DIR)/packages/etc/n2n/edge.conf.sample $(1)/etc/n2n/edge.conf
++endef
++
++define Package/n2n-supernode/conffiles
++/etc/n2n/supernode.conf
++endef
++
++define Package/n2n-supernode/install
++	$(INSTALL_DIR) $(1)/usr/bin
++	$(INSTALL_BIN) $(PKG_BUILD_DIR)/supernode $(1)/usr/bin/
++	$(INSTALL_DIR) $(1)/etc/init.d
++	$(INSTALL_BIN) $(PKG_BUILD_DIR)/packages/openwrt/etc/init.d/supernode $(1)/etc/init.d/supernode
++	$(INSTALL_DIR) $(1)/etc/n2n
++	$(INSTALL_CONF) $(PKG_BUILD_DIR)/packages/etc/n2n/supernode.conf.sample $(1)/etc/n2n/supernode.conf
++endef
++
++$(eval $(call BuildPackage,n2n-edge))
++$(eval $(call BuildPackage,n2n-supernode))
+diff --git a/net/n2n/README.md b/net/n2n/README.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..44b229fef70bff5653ad6f14dafb0035429bb9a6
+--- /dev/null
++++ b/net/n2n/README.md
+@@ -0,0 +1,39 @@
++## Prerequisites
++
++This instructions explain how to build an OpenWRT .ipk package for n2n.
++
++Before going on, it is required to have a working cross-compiling build
++environment for the OpenWRT version installed into your device. This usually
++comes down to the following steps:
++
++1. Download and extract the SDK toolchain for your device. The toolchain
++   must match the *exact* OpenWRT version installed in your device. Toolchain
++   for official OpenWRT images can be downloaded from https://downloads.openwrt.org
++
++2. Build the toolchain: run `make menuconfig`, save the configuration, then
++   run `make` to build the cross compiling tools
++
++3. Download the feeds with `./scripts/feeds update -a`
++
++## Compilation
++
++From the OpenWRT build directory:
++
++```
++git clone https://github.com/ntop/n2n n2n
++cp -r n2n/packages/openwrt package/n2n
++make menuconfig # select Network -> VPN -> n2n-edge and n2n-supernode
++make package/n2n/compile V=s
++```
++
++If everything went fine, two ipk will be generated, one for the n2n-edge
++and the other for n2n-supernode. They can be found with `find . -name "n2n*.ipk"`,
++copied to the target device, and installed with `opkg install`.
++
++## Configuration
++
++The edge node can be started with `/etc/init.d/edge start`.
++Its configuration file is `/etc/n2n/edge.conf`.
++
++The supernode can be started with `/etc/init.d/supernode start`.
++Its configuration file is `/etc/n2n/supernode.conf`.
+diff --git a/net/n2n/etc/init.d/edge b/net/n2n/etc/init.d/edge
+new file mode 100644
+index 0000000000000000000000000000000000000000..84e2b57faa72e1432d1e87054b34e341f75f5eae
+--- /dev/null
++++ b/net/n2n/etc/init.d/edge
+@@ -0,0 +1,25 @@
++#!/bin/sh /etc/rc.common
++START=90
++STOP=10
++
++USE_PROCD=1
++PROG=/usr/bin/edge
++CONFIGFILE=/etc/n2n/edge.conf
++
++start_service() {
++	procd_open_instance
++	procd_set_param command $PROG $CONFIGFILE
++	procd_set_param file $CONFIGFILE
++	procd_set_param respawn
++	procd_close_instance
++}
++
++stop_service()
++{
++	service_stop $PROG
++}
++
++service_triggers()
++{
++	procd_add_reload_trigger "edge"
++}
+diff --git a/net/n2n/etc/init.d/supernode b/net/n2n/etc/init.d/supernode
+new file mode 100644
+index 0000000000000000000000000000000000000000..56aa81ddcb57330322ee407c42f829d1930070ec
+--- /dev/null
++++ b/net/n2n/etc/init.d/supernode
+@@ -0,0 +1,25 @@
++#!/bin/sh /etc/rc.common
++START=90
++STOP=10
++
++USE_PROCD=1
++PROG=/usr/bin/supernode
++CONFIGFILE=/etc/n2n/supernode.conf
++
++start_service() {
++	procd_open_instance
++	procd_set_param command $PROG $CONFIGFILE
++	procd_set_param file $CONFIGFILE
++	procd_set_param respawn
++	procd_close_instance
++}
++
++stop_service()
++{
++	service_stop $PROG
++}
++
++service_triggers()
++{
++	procd_add_reload_trigger "supernode"
++}
