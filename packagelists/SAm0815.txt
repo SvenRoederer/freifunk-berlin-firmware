@@ -49,6 +49,8 @@ xinetd
 
 #openvpn-openssl
 #luci-app-wireguard
+n2n-edge
+babeld
 
 ppp
 ppp-mod-pppoe
