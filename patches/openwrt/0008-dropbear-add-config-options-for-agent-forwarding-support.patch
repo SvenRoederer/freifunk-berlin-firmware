@@ -1,0 +1,58 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 12 Jul 2021 00:03:11 +0200
+Subject: dropbear: add config options for agent-forwarding support
+
+* SSH agent forwarding might cause security issues, locally and on the jump
+  machine (https://defn.io/2019/04/12/ssh-forwarding/). So allow to
+  completely disabling it.
+* separate options for client and server
+* keep it enabled by default
+
+diff --git a/package/network/services/dropbear/Config.in b/package/network/services/dropbear/Config.in
+index 15000eff53e4f8bc388fdcaa1c252b78429c662c..d4644fc88f9582f4caa4e7915cc8ffd4992c3cea 100644
+--- a/package/network/services/dropbear/Config.in
++++ b/package/network/services/dropbear/Config.in
+@@ -95,6 +95,11 @@ config DROPBEAR_DBCLIENT
+ 	bool "Build dropbear with dbclient"
+ 	default y
+ 
++config DROPBEAR_DBCLIENT_AGENTFORWARD
++	bool "Enable agent forwarding in dbclient"
++	default y
++	depends on DROPBEAR_DBCLIENT
++
+ config DROPBEAR_SCP
+ 	bool "Build dropbear with scp"
+ 	default y
+@@ -109,4 +114,8 @@ config DROPBEAR_ASKPASS
+ 
+ 		Increases binary size by about 0.1 kB (MIPS).
+ 
++config DROPBEAR_AGENTFORWARD
++	bool "Enable agent forwarding"
++	default y
++
+ endmenu
+diff --git a/package/network/services/dropbear/Makefile b/package/network/services/dropbear/Makefile
+index 8bbb26f829be7c730f5709f826d3ab5eb8318617..d28f10412748692f2da2bc9ed7e41150e8502ed6 100644
+--- a/package/network/services/dropbear/Makefile
++++ b/package/network/services/dropbear/Makefile
+@@ -32,7 +32,8 @@ PKG_CONFIG_DEPENDS:= \
+ 	CONFIG_DROPBEAR_CURVE25519 CONFIG_DROPBEAR_ZLIB \
+ 	CONFIG_DROPBEAR_ED25519 CONFIG_DROPBEAR_CHACHA20POLY1305 \
+ 	CONFIG_DROPBEAR_UTMP CONFIG_DROPBEAR_PUTUTLINE \
+-	CONFIG_DROPBEAR_DBCLIENT CONFIG_DROPBEAR_SCP CONFIG_DROPBEAR_ASKPASS
++	CONFIG_DROPBEAR_DBCLIENT CONFIG_DROPBEAR_SCP CONFIG_DROPBEAR_ASKPASS \
++	CONFIG_DROPBEAR_DBCLIENT_AGENTFORWARD CONFIG_DROPBEAR_AGENTFORWARD
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+@@ -137,6 +138,8 @@ DB_OPT_CONFIG = \
+ 	!!DROPBEAR_ECC_384|CONFIG_DROPBEAR_ECC_FULL|1|0 \
+ 	!!DROPBEAR_ECC_521|CONFIG_DROPBEAR_ECC_FULL|1|0 \
+ 	DROPBEAR_CLI_ASKPASS_HELPER|CONFIG_DROPBEAR_ASKPASS|1|0 \
++	DROPBEAR_CLI_AGENTFWD|CONFIG_DROPBEAR_DBCLIENT_AGENTFORWARD|1|0 \
++	DROPBEAR_SVR_AGENTFWD|CONFIG_DROPBEAR_AGENTFORWARD|1|0 \
+ 
+ 
+ TARGET_CFLAGS += -DARGTYPE=3 -ffunction-sections -fdata-sections -flto
