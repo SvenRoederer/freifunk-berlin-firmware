@@ -8,7 +8,7 @@ PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
 PACKAGES_LUCI_COMMIT=d354f0b107c0d54e5f9d2ec39c7f600909807e94
 
 PACKAGES_FREIFUNK_REPO=https://github.com/freifunk/openwrt-packages.git
-PACKAGES_FREIFUNK_COMMIT=1e2d5ffb85965e0b8168d06baf40ebca4fdc9fce
+PACKAGES_FREIFUNK_COMMIT=d88313c182b65d29a6e8b816951b0d1b9541c7d5
 
 PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
 PACKAGES_ROUTING_COMMIT=8483b6d99fc6fb2d9c5917892d4493b1b2caaf27
