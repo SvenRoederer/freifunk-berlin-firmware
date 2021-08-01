@@ -1,0 +1,31 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 27 Sep 2020 01:29:38 +0200
+Subject: kernel: ath79-tiny deactivate more features
+
+deactivate some drivers, interfaces and debug-features that
+* are not available on ath79
+* can usually not be used as of missing hardware-interfaces
+* reduce kernelsize by removing DEBUG functions
+
+diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
+index c42f44b004bf3b3626fc7634b6b5df4d1547275b..e8316c0ad8a7b057e986679df10276d00888c50e 100644
+--- a/target/linux/ath79/tiny/config-default
++++ b/target/linux/ath79/tiny/config-default
+@@ -12,4 +12,17 @@ CONFIG_PHYLINK=y
+ # CONFIG_PHY_AR7200_USB is not set
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
++# CONFIG_AIO is not set
++CONFIG_BLOCK=y
++# CONFIG_DEBUG_FS is not set
++# CONFIG_DEBUG_KERNEL is not set
++# CONFIG_HAVE_DEBUG_KMEMLEAK is not set
++# CONFIG_HAVE_DEBUG_STACKOVERFLOW is not set
++# CONFIG_HAVE_IDE is not set
++# CONFIG_HAVE_KVM is not set
++# CONFIG_ISDN is not set
++# CONFIG_NVMEM is not set
++# CONFIG_SND_DRIVERS is not set
++# CONFIG_STAGING is not set
++# CONFIG_VIRTIO_MENU is not set
+ # CONFIG_USB_SUPPORT is not set
