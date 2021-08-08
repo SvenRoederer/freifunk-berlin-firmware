@@ -37,7 +37,6 @@ zram-swap
 -ca-bundle
 -uclient-fetch
 -uboot-envtools
--procd
 -getrandom
 -urngd
 -fwtool
