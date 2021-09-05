@@ -1,0 +1,17 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 5 Sep 2021 19:20:11 +0200
+Subject: ath79: disable some MTD options (VIRT_CONCAT, PARSER_CYBERTAN)
+
+* PARSER_CYBERTAN seems only relavant for Broadcom trx
+* VIRT_CONCAT might only affect board where MTD is covering multiple chips
+
+diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
+index 1e712f540abe1134b53bb4c4a9f185f05f892b9d..79e8048d052882efb0d08653779750e1f13fb7d3 100644
+--- a/target/linux/ath79/tiny/config-default
++++ b/target/linux/ath79/tiny/config-default
+@@ -26,3 +26,5 @@ CONFIG_LOG_BUF_SHIFT=16
+ # CONFIG_STAGING is not set
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_USB_SUPPORT is not set
++# CONFIG_MTD_PARSER_CYBERTAN is not set
++# CONFIG_MTD_VIRT_CONCAT is not set
