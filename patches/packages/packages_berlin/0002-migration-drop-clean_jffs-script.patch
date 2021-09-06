@@ -1,0 +1,17 @@
+From: Sven Roederer <freifunk@it-solutions.geroedel.de>
+Date: Mon, 6 Sep 2021 23:40:35 +0200
+Subject: migration: drop "clean_jffs" script
+
+This script was causing several issues and is not needed since we are doing `sysupgrade -k` always. (`-k` prevent adding unchanged files into the backup-archive)
+* https://github.com/freifunk-berlin/firmware/issues/641
+* https://github.com/freifunk-berlin/firmware-packages/commit/cd0e613192906b95dce11ffbeb654ca278036f8e
+diff --git a/utils/freifunk-berlin-migration/uci-defaults/zz_freifunk-berlin-migration-clean_jffs.sh b/utils/freifunk-berlin-migration/uci-defaults/zz_freifunk-berlin-migration-clean_jffs.sh
+deleted file mode 100644
+index b5613689354b7c18e2739a6c07307b72ad13dffb..0000000000000000000000000000000000000000
+--- a/utils/freifunk-berlin-migration/uci-defaults/zz_freifunk-berlin-migration-clean_jffs.sh
++++ /dev/null
+@@ -1,4 +0,0 @@
+-#!/usr/bin/env sh
+-
+-# delete any overlay config files duplicated from romfs by sysupgrade - saves JFFS2 space
+-cd /overlay/upper/etc/config/ && for i in *; do [ -f "$i" ] && if cmp -s "$i" "/rom/etc/config/$i"; then rm -f "$i"; fi; done;
