@@ -54,5 +54,5 @@ yuncore_a782;-kmod-ath10k-ct -ath10k-firmware-qca9888-ct kmod-ath10k ath10k-firm
 mikrotik_routerboard-750gr3:block-mount kmod-fs-f2fs kmod-sdhci-mt7620
 
 # boards with integrated DSL-port need additional hardware-support (see Issue #838)
-avm_fritz7360sl:luci-proto-ipv6 luci-proto-ppp ppp ppp-mod-pppoe
+avm_fritz7360sl:luci-proto-ppp ppp ppp-mod-pppoe
 
