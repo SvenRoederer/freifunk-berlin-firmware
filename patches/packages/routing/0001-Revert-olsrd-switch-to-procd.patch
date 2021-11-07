@@ -1,5 +1,5 @@
 From: Sven Roederer <devel-sven@geroedel.de>
-Date: Sat, 4 Sep 2021 15:22:44 +0200
+Date: Sun, 7 Nov 2021 16:52:41 +0100
 Subject: Revert "olsrd: switch to procd"
 
 This reverts all changes related to switching to procd, as it seems not
@@ -1803,10 +1803,10 @@ index d0fe5c1d8d57f5c2d58fce9c5210e223d90c2bd0..00000000000000000000000000000000
 -	[ -z "$OLSRD_CONFIG_FILE" ] && return 1
 -}
 diff --git a/olsrd/files/olsrd4.init b/olsrd/files/olsrd4.init
-index 28a84a647bcdae5872c1ced3ff03135ca3834827..718b3e01216bb17e3d816c95b7297225313a5dce 100644
+index 62cb66d6ffac32834552789f073fc3e859cce344..718b3e01216bb17e3d816c95b7297225313a5dce 100644
 --- a/olsrd/files/olsrd4.init
 +++ b/olsrd/files/olsrd4.init
-@@ -4,62 +4,11 @@
+@@ -4,76 +4,11 @@
  . $IPKG_INSTROOT/lib/functions/olsrd.sh
  
  START=65
@@ -1821,10 +1821,24 @@ index 28a84a647bcdae5872c1ced3ff03135ca3834827..718b3e01216bb17e3d816c95b7297225
 -	ubus -t 15 wait_for network.interface.$1 2>/dev/null
 -}
 -
+-wait_for_wireless()
+-{
+-	local count=0
+-	ubus -t 15 wait_for network.wireless 2>/dev/null
+-	while [ $count -lt 30 ]; do
+-		if  [ "$(ubus call network.wireless status | jsonfilter -e '@[*]["pending"]' | grep true | wc -l)" == "0" ]; then
+-			break
+-		fi
+-		count=$((count+1))
+-		sleep 1
+-	done
+-}
+-
 -boot()
 -{
 -	config_load network
 -	config_foreach wait_for_network interface
+-	wait_for_wireless
 -	rc_procd start_service
 -}
 -
@@ -1837,18 +1851,18 @@ index 28a84a647bcdae5872c1ced3ff03135ca3834827..718b3e01216bb17e3d816c95b7297225
 -	local _respawn_threshold
 -	local _respawn_timeout
 -	local _respawn_retry
--
+ 
 -	config_get _respawn_threshold procd respawn_threshold 3600
 -	config_get _respawn_timeout procd respawn_timeout 15
 -	config_get _respawn_retry procd respawn_retry 0
++SERVICE_DAEMONIZE=1
++SERVICE_WRITE_PID=1
  
 -	procd_set_param command "$BIN"
 -	procd_append_param command -f ${CONF}
 -	procd_append_param command -nofork
 -	procd_append_param command -pidfile ${PID}
-+SERVICE_DAEMONIZE=1
-+SERVICE_WRITE_PID=1
- 
+-
 -	# restart if olsrd dies
 -	procd_set_param respawn $_respawn_threshold $_respawn_timeout $_respawn_retry
 -
@@ -1888,10 +1902,10 @@ index 52a9b21cd73aa8ce44b0472dfe456eb18f278375..7a03f28de70f15a183a5910661ea3fa7
 -	option respawn_timeout '15'
 -	option respawn_retry '0'
 diff --git a/olsrd/files/olsrd6.init b/olsrd/files/olsrd6.init
-index 8f9b91acc807a8abce13182274c75280285d8ad8..1dcc4a0bdd9215ac4c243ccb78234d357436935d 100644
+index a20e96728aff1a7ce162d5d83a6f440b249c5a86..1dcc4a0bdd9215ac4c243ccb78234d357436935d 100644
 --- a/olsrd/files/olsrd6.init
 +++ b/olsrd/files/olsrd6.init
-@@ -4,62 +4,11 @@
+@@ -4,76 +4,11 @@
  . $IPKG_INSTROOT/lib/functions/olsrd.sh
  
  START=65
@@ -1906,10 +1920,24 @@ index 8f9b91acc807a8abce13182274c75280285d8ad8..1dcc4a0bdd9215ac4c243ccb78234d35
 -	ubus -t 15 wait_for network.interface.$1 2>/dev/null
 -}
 -
+-wait_for_wireless()
+-{
+-	local count=0
+-	ubus -t 15 wait_for network.wireless 2>/dev/null
+-	while [ $count -lt 30 ]; do
+-		if  [ "$(ubus call network.wireless status | jsonfilter -e '@[*]["pending"]' | grep true | wc -l)" == "0" ]; then
+-			break
+-		fi
+-		count=$((count+1))
+-		sleep 1
+-	done
+-}
+-
 -boot()
 -{
 -	config_load network
 -	config_foreach wait_for_network interface
+-	wait_for_wireless
 -	rc_procd start_service
 -}
 -
@@ -1922,18 +1950,18 @@ index 8f9b91acc807a8abce13182274c75280285d8ad8..1dcc4a0bdd9215ac4c243ccb78234d35
 -	local _respawn_threshold
 -	local _respawn_timeout
 -	local _respawn_retry
--
+ 
 -	config_get _respawn_threshold procd _respawn_threshold 3600
 -	config_get _respawn_timeout procd respawn_timeout 15
 -	config_get _respawn_retry procd respawn_retry 0
++SERVICE_DAEMONIZE=1
++SERVICE_WRITE_PID=1
  
 -	procd_set_param command "$BIN"
 -	procd_append_param command -f ${CONF}
 -	procd_append_param command -nofork
 -	procd_append_param command -pidfile ${PID}
-+SERVICE_DAEMONIZE=1
-+SERVICE_WRITE_PID=1
- 
+-
 -	# restart if olsrd dies
 -	procd_set_param respawn $_respawn_threshold $_respawn_timeout $_respawn_retry
 -
