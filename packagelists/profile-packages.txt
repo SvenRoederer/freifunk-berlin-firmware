@@ -51,7 +51,10 @@ yuncore_a770;-kmod-ath10k-ct -ath10k-firmware-qca9887-ct kmod-ath10k ath10k-firm
 yuncore_a782;-kmod-ath10k-ct -ath10k-firmware-qca9888-ct kmod-ath10k ath10k-firmware-qca9888
 
 # boards with mass-storage (SATA, SD-cards) will benefit from additional packages
-mikrotik_routerboard-750gr3:block-mount kmod-fs-f2fs kmod-sdhci-mt7620
+mikrotik_routerboard-750gr3:block-mount kmod-fs-f2fs kmod-sdhci-mt7620 -wpad-basic
+ubnt_edgepoint-r6:-wpad-basic
+ubnt_edgerouter-x:-wpad-basic
+ubnt_edgerouter-x:-wpad-basic
 
 # boards with integrated DSL-port need additional hardware-support (see Issue #838)
 avm_fritz7360sl:luci-proto-ppp ppp ppp-mod-pppoe
