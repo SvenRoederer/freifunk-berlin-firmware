@@ -1,5 +1,5 @@
 OPENWRT_REPO=https://github.com/openwrt/openwrt.git
-OPENWRT_COMMIT=d745835ae19caf1999924a434abd25e92cce4343
+OPENWRT_COMMIT=b764cb9e5b1040b6dc13773f8cc153ce6cd7c44d
 
 PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
 PACKAGES_PACKAGES_COMMIT=df847e1c0349c3f1f557d7ddc9e3563b7ccb69e9
