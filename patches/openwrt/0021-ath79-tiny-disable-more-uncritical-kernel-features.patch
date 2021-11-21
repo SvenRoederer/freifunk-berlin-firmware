@@ -1,0 +1,23 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 22 Nov 2021 00:38:15 +0100
+Subject: ath79-tiny: disable more (uncritical) kernel-features
+
+to safe runtime-ram
+
+diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
+index fb6b618a14112053ab1063e3a79ff5642d00066b..ea59a07bab4d7933b1ac1f2e3b408e256216822a 100644
+--- a/target/linux/ath79/tiny/config-default
++++ b/target/linux/ath79/tiny/config-default
+@@ -29,3 +29,12 @@ CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT=12
+ # CONFIG_USB_SUPPORT is not set
+ # CONFIG_MTD_PARSER_CYBERTAN is not set
+ # CONFIG_MTD_VIRT_CONCAT is not set
++# CONFIG_HIGH_RES_TIMERS is not set
++# CONFIG_RCU_EXPERT is not set
++# CONFIG_BASE_FULL is not set
++# CONFIG_ADVISE_SYSCALLS is not set
++# CONFIG_BPF_SYSCALL is not set
++# CONFIG_SLUB is not set
++CONFIG_SLOB=y
++# CONFIG_NETWORK_FILESYSTEMS is not set
++# RUNTIME_TESTING_MENU is not set
