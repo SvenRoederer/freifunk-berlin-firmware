@@ -1,0 +1,29 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 27 Nov 2021 18:13:04 +0100
+Subject: procd: depend on ext4 fs and tools when enabling TMPFS_ZRAM
+
+ensures that the kernel-modules and tools are present at init-time
+
+diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
+index 30d5adf4278c7f32c7abb18cba2f7220b324849d..4de1ccd945bfac4d059b2bad5729750de0265cea 100644
+--- a/package/system/procd/Makefile
++++ b/package/system/procd/Makefile
+@@ -45,7 +45,8 @@ define Package/procd/Default
+   SECTION:=base
+   CATEGORY:=Base system
+   DEPENDS:=+ubusd +ubus +libjson-script +ubox +USE_GLIBC:librt +libubox \
+-	  +libubus +libblobmsg-json +libjson-c +jshn
++	  +libubus +libblobmsg-json +libjson-c +jshn \
++	  +PROCD_ZRAM_TMPFS:kmod-fs-ext4 +PROCD_ZRAM_TMPFS:e2fsprogs
+   TITLE:=OpenWrt system process manager
+   USERID:=:dialout=20 :audio=29
+ endef
+@@ -106,6 +107,8 @@ config PROCD_SHOW_BOOT
+ 
+ config PROCD_ZRAM_TMPFS
+ 	bool
++	select PACKAGE_kmod-fs-ext4
++	select PACKAGE_e2fsprogs
+ 	default n
+ 	prompt "Mount /tmp using zram."
+ endmenu

@@ -1,0 +1,54 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 27 Nov 2021 18:09:01 +0100
+Subject: procd: make TMPFS_ZRAM work with Busybox mkfs.ext2
+
+diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
+index 30d5adf4278c7f32c7abb18cba2f7220b324849d..1d70836f3c0553c2a3f37109d03ec8897b3c6445 100644
+--- a/package/system/procd/Makefile
++++ b/package/system/procd/Makefile
+@@ -8,7 +8,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=procd
+-PKG_RELEASE:=$(AUTORELEASE)
++PKG_RELEASE:=$(AUTORELEASE).berlin1
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL=$(PROJECT_GIT)/project/procd.git
+@@ -45,7 +45,8 @@ define Package/procd/Default
+   SECTION:=base
+   CATEGORY:=Base system
+   DEPENDS:=+ubusd +ubus +libjson-script +ubox +USE_GLIBC:librt +libubox \
+-	  +libubus +libblobmsg-json +libjson-c +jshn
++	  +libubus +libblobmsg-json +libjson-c +jshn \
++	  +PROCD_ZRAM_TMPFS:busybox +PROCD_ZRAM_TMPFS:kmod-fs-ext4
+   TITLE:=OpenWrt system process manager
+   USERID:=:dialout=20 :audio=29
+ endef
+@@ -106,6 +107,8 @@ config PROCD_SHOW_BOOT
+ 
+ config PROCD_ZRAM_TMPFS
+ 	bool
++	select PACKAGE_kmod-fs-ext4
++	select BUSYBOX_CONFIG_MKFS_EXT2
+ 	default n
+ 	prompt "Mount /tmp using zram."
+ endmenu
+diff --git a/package/system/procd/patches/001-zram_use-mke2fs.patch b/package/system/procd/patches/001-zram_use-mke2fs.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..fc9c251e4c2416360989c767168eaaca37057aab
+--- /dev/null
++++ b/package/system/procd/patches/001-zram_use-mke2fs.patch
+@@ -0,0 +1,12 @@
++diff -ur procd-2021-02-23-37eed131.orig/initd/zram.c procd-2021-02-23-37eed131/initd/zram.c
++--- procd-2021-02-23-37eed131.orig/initd/zram.c	2021-02-23 01:42:37.000000000 +0100
+++++ procd-2021-02-23-37eed131/initd/zram.c	2021-11-27 16:39:24.773154318 +0100
++@@ -83,7 +83,7 @@
++ int
++ mount_zram_on_tmp(void)
++ {
++-	char *mkfs[] = { "/usr/sbin/mkfs.ext4", "-b", "4096", "-F", "-L", "TEMP", "-m", "0", "/dev/zram0", NULL };
+++	char *mkfs[] = { "/sbin/mkfs.ext2", "-b", "4096", "-F", "-L", "TEMP", "-m", "0", "/dev/zram0", NULL };
++ 	FILE *fp;
++ 	long zramsize;
++ 	pid_t pid;

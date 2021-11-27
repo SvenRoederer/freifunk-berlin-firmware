@@ -1,0 +1,56 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 27 Nov 2021 18:10:53 +0100
+Subject: Revert "procd: make TMPFS_ZRAM work with Busybox mkfs.ext2"
+
+This reverts commit 52465b5fd3ceb6fe5189f065e9be18af1a7b315a.
+
+diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
+index 1d70836f3c0553c2a3f37109d03ec8897b3c6445..30d5adf4278c7f32c7abb18cba2f7220b324849d 100644
+--- a/package/system/procd/Makefile
++++ b/package/system/procd/Makefile
+@@ -8,7 +8,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=procd
+-PKG_RELEASE:=$(AUTORELEASE).berlin1
++PKG_RELEASE:=$(AUTORELEASE)
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL=$(PROJECT_GIT)/project/procd.git
+@@ -45,8 +45,7 @@ define Package/procd/Default
+   SECTION:=base
+   CATEGORY:=Base system
+   DEPENDS:=+ubusd +ubus +libjson-script +ubox +USE_GLIBC:librt +libubox \
+-	  +libubus +libblobmsg-json +libjson-c +jshn \
+-	  +PROCD_ZRAM_TMPFS:busybox +PROCD_ZRAM_TMPFS:kmod-fs-ext4
++	  +libubus +libblobmsg-json +libjson-c +jshn
+   TITLE:=OpenWrt system process manager
+   USERID:=:dialout=20 :audio=29
+ endef
+@@ -107,8 +106,6 @@ config PROCD_SHOW_BOOT
+ 
+ config PROCD_ZRAM_TMPFS
+ 	bool
+-	select PACKAGE_kmod-fs-ext4
+-	select BUSYBOX_CONFIG_MKFS_EXT2
+ 	default n
+ 	prompt "Mount /tmp using zram."
+ endmenu
+diff --git a/package/system/procd/patches/001-zram_use-mke2fs.patch b/package/system/procd/patches/001-zram_use-mke2fs.patch
+deleted file mode 100644
+index fc9c251e4c2416360989c767168eaaca37057aab..0000000000000000000000000000000000000000
+--- a/package/system/procd/patches/001-zram_use-mke2fs.patch
++++ /dev/null
+@@ -1,12 +0,0 @@
+-diff -ur procd-2021-02-23-37eed131.orig/initd/zram.c procd-2021-02-23-37eed131/initd/zram.c
+---- procd-2021-02-23-37eed131.orig/initd/zram.c	2021-02-23 01:42:37.000000000 +0100
+-+++ procd-2021-02-23-37eed131/initd/zram.c	2021-11-27 16:39:24.773154318 +0100
+-@@ -83,7 +83,7 @@
+- int
+- mount_zram_on_tmp(void)
+- {
+--	char *mkfs[] = { "/usr/sbin/mkfs.ext4", "-b", "4096", "-F", "-L", "TEMP", "-m", "0", "/dev/zram0", NULL };
+-+	char *mkfs[] = { "/sbin/mkfs.ext2", "-b", "4096", "-F", "-L", "TEMP", "-m", "0", "/dev/zram0", NULL };
+- 	FILE *fp;
+- 	long zramsize;
+- 	pid_t pid;
