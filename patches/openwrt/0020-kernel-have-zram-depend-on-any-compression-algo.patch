@@ -1,0 +1,22 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 28 Nov 2021 01:29:22 +0100
+Subject: kernel: have zram depend on any compression-algo
+
+Drop hard dependency to lzo and allow using any compression-algorithm via
+virtual feature KERNEL_CRYPTO_COMPRESSOR.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/package/kernel/linux/modules/other.mk b/package/kernel/linux/modules/other.mk
+index 83d998c83a5153360d337dca8283e44cc89aa608..eb686c7ee6b638511f8545a5db0c01e662388b52 100644
+--- a/package/kernel/linux/modules/other.mk
++++ b/package/kernel/linux/modules/other.mk
+@@ -914,7 +914,7 @@ $(eval $(call KernelPackage,ikconfig))
+ define KernelPackage/zram
+   SUBMENU:=$(OTHER_MENU)
+   TITLE:=ZRAM
+-  DEPENDS:=+kmod-lib-lzo
++  DEPENDS:=+KERNEL_CRYPTO_COMPRESSOR
+   KCONFIG:= \
+ 	CONFIG_ZSMALLOC \
+ 	CONFIG_ZRAM \

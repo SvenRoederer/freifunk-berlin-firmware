@@ -1,0 +1,45 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sun, 28 Nov 2021 01:23:04 +0100
+Subject: kernel: provide a virtual feature KERNEL_CRYPTO_COMPRESSOR
+
+Add this virtual feature for all existing compressors / decompressors of the
+CRYPTO-API. This allows other packages to depend on at least one of them.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/package/kernel/linux/modules/lib.mk b/package/kernel/linux/modules/lib.mk
+index a0029a52f7a13c7ab6f2acec01177fdecbb26b24..338c52cad46fea0de0e6f5458b18cccb9f7d7ac6 100644
+--- a/package/kernel/linux/modules/lib.mk
++++ b/package/kernel/linux/modules/lib.mk
+@@ -122,6 +122,7 @@ define KernelPackage/lib-lzo
+   SUBMENU:=$(LIB_MENU)
+   TITLE:=LZO support
+   DEPENDS:=+kmod-crypto-acompress +kmod-lib-lzo-core
++  PROVIDES:=KERNEL_CRYPTO_COMPRESSOR
+   KCONFIG:=CONFIG_CRYPTO_LZO
+   FILES:=$(LINUX_DIR)/crypto/lzo.ko
+   AUTOLOAD:=$(call AutoProbe,lzo)
+@@ -138,6 +139,7 @@ define KernelPackage/lib-lzo-rle
+   SUBMENU:=$(LIB_MENU)
+   TITLE:=LZO-RLE support
+   DEPENDS:=+kmod-crypto-acompress +kmod-lib-lzo-core
++  PROVIDES:=KERNEL_CRYPTO_COMPRESSOR
+   KCONFIG:=CONFIG_CRYPTO_LZO
+   FILES:=$(LINUX_DIR)/crypto/lzo-rle.ko
+   AUTOLOAD:=$(call AutoProbe,lzo-rle)
+@@ -154,6 +156,7 @@ define KernelPackage/lib-zstd
+   SUBMENU:=$(LIB_MENU)
+   TITLE:=ZSTD support
+   DEPENDS:=+kmod-crypto-acompress
++  PROVIDES:=KERNEL_CRYPTO_COMPRESSOR
+   KCONFIG:= \
+ 	CONFIG_CRYPTO_ZSTD \
+ 	CONFIG_ZSTD_COMPRESS \
+@@ -178,6 +181,7 @@ define KernelPackage/lib-lz4
+   SUBMENU:=$(LIB_MENU)
+   TITLE:=LZ4 support
+   DEPENDS:=+kmod-crypto-acompress
++  PROVIDES:=KERNEL_CRYPTO_COMPRESSOR
+   KCONFIG:= \
+ 	CONFIG_CRYPTO_LZ4 \
+ 	CONFIG_LZ4_COMPRESS \
