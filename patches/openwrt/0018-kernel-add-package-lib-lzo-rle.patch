@@ -1,0 +1,80 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 27 Nov 2021 03:57:58 +0100
+Subject: kernel: add package lib-lzo-rle
+
+Create a kernel-package for the LZO-RLE compressor/decompressor of the CRYPTO-API,
+to provide an alternative implementation. On ARM benchmarks have shown 27% speedup
+with similar compression than original LZO.
+Both implementations depend on the same lzo kernel-library, which has been moved
+into a separate package.
+Make both implementations available to the user.
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/package/kernel/linux/modules/lib.mk b/package/kernel/linux/modules/lib.mk
+index 9a341932bdeb3c9816b82eeeecc7114f24615fcc..a0029a52f7a13c7ab6f2acec01177fdecbb26b24 100644
+--- a/package/kernel/linux/modules/lib.mk
++++ b/package/kernel/linux/modules/lib.mk
+@@ -98,20 +98,33 @@ endef
+ $(eval $(call KernelPackage,lib-crc32c))
+ 
+ 
+-define KernelPackage/lib-lzo
++define KernelPackage/lib-lzo-core
+   SUBMENU:=$(LIB_MENU)
+-  TITLE:=LZO support
+-  DEPENDS:=+kmod-crypto-acompress
++  TITLE:=common LZO support-library
+   KCONFIG:= \
+-	CONFIG_CRYPTO_LZO \
+ 	CONFIG_LZO_COMPRESS \
+ 	CONFIG_LZO_DECOMPRESS
+   HIDDEN:=1
+   FILES:= \
+-	$(LINUX_DIR)/crypto/lzo.ko \
+ 	$(LINUX_DIR)/lib/lzo/lzo_compress.ko \
+ 	$(LINUX_DIR)/lib/lzo/lzo_decompress.ko
+-  AUTOLOAD:=$(call AutoProbe,lzo lzo_compress lzo_decompress)
++  AUTOLOAD:=$(call AutoProbe,lzo_compress lzo_decompress)
++endef
++
++define KernelPackage/lib-lzo-core/description
++ Kernel module with LZO compression/decompression code
++endef
++
++$(eval $(call KernelPackage,lib-lzo-core))
++
++
++define KernelPackage/lib-lzo
++  SUBMENU:=$(LIB_MENU)
++  TITLE:=LZO support
++  DEPENDS:=+kmod-crypto-acompress +kmod-lib-lzo-core
++  KCONFIG:=CONFIG_CRYPTO_LZO
++  FILES:=$(LINUX_DIR)/crypto/lzo.ko
++  AUTOLOAD:=$(call AutoProbe,lzo)
+ endef
+ 
+ define KernelPackage/lib-lzo/description
+@@ -121,6 +134,22 @@ endef
+ $(eval $(call KernelPackage,lib-lzo))
+ 
+ 
++define KernelPackage/lib-lzo-rle
++  SUBMENU:=$(LIB_MENU)
++  TITLE:=LZO-RLE support
++  DEPENDS:=+kmod-crypto-acompress +kmod-lib-lzo-core
++  KCONFIG:=CONFIG_CRYPTO_LZO
++  FILES:=$(LINUX_DIR)/crypto/lzo-rle.ko
++  AUTOLOAD:=$(call AutoProbe,lzo-rle)
++endef
++
++define KernelPackage/lib-lzo-rle/description
++ Kernel module for LZO-rle compression/decompression support
++endef
++
++$(eval $(call KernelPackage,lib-lzo-rle))
++
++
+ define KernelPackage/lib-zstd
+   SUBMENU:=$(LIB_MENU)
+   TITLE:=ZSTD support
