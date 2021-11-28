@@ -1,9 +1,17 @@
 From: Sven Roederer <devel-sven@geroedel.de>
 Date: Sat, 27 Nov 2021 07:11:34 +0100
-Subject: kernel: make zram honor available compressors when selecting the initial one
+Subject: kernel: make zram honor available compressors when selecting the initial algo
 
-* based on https://patchwork.ozlabs.org/project/openwrt/patch/541cbfbd-76f2-59b3-a867-47b6f0fc7da9@gmail.com/
-* kernel expects "lzo-rle" to be loaded, this causes error when having zram build into the kernel, but not the compressor
+When initializing the ZRAM it has a hardcoded default of "lzo-rle" compressor. This
+compressor is not available in OpenWrt as only "lzo" is provided. The current
+behaviour make the PROCD_ZRAM_TMPFS feature failing, as procd-init is relying on
+the kernels default-algo, which is not present. So setting tmpfs falls back to not
+use ZRAM.
+Patch the kernel to keep the current preference to "lzo-rle" but check that it is
+present. If not, fall back to "lzo" or any other of the known compressors.
+
+See also:
+* http://lists.openwrt.org/pipermail/openwrt-devel/2020-September/031430.html
 * 419f149e482641ddc520f80a7ab2038f7e2ebc8a
 
 Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
