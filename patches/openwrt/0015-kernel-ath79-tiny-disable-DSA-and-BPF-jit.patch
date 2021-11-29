@@ -1,0 +1,24 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 29 Nov 2021 02:42:41 +0100
+Subject: kernel: ath79-tiny: disable DSA and BPF-jit
+
+diff --git a/target/linux/ath79/tiny/config-default b/target/linux/ath79/tiny/config-default
+index b97e20657b1ab07a5b3218bdcb155c77c3f4b63a..6e19b94a9928d4363f8656ed62ec2f88cde56965 100644
+--- a/target/linux/ath79/tiny/config-default
++++ b/target/linux/ath79/tiny/config-default
+@@ -1,9 +1,6 @@
+ CONFIG_LEDS_RESET=y
+ CONFIG_NET_DEVLINK=y
+-CONFIG_NET_DSA=y
+-CONFIG_NET_DSA_MV88E6060=y
+-# CONFIG_NET_DSA_TAG_QCA is not set
+-CONFIG_NET_DSA_TAG_TRAILER=y
++# CONFIG_NET_DSA is not set
+ CONFIG_NET_SWITCHDEV=y
+ # CONFIG_PARTITION_ADVANCED is not set
+ CONFIG_PHYLINK=y
+@@ -100,3 +97,4 @@ CONFIG_SLOB=y
+ # CONFIG_NET_VENDOR_VIA is not set
+ # CONFIG_NET_VENDOR_WIZNET is not set
+ # CONFIG_NET_VENDOR_XILINX is not set
++# CONFIG_BPF_JIT is not set
