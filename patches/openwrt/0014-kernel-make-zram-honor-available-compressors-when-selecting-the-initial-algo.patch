@@ -1,0 +1,175 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 27 Nov 2021 07:11:34 +0100
+Subject: kernel: make zram honor available compressors when selecting the initial algo
+
+When initializing the ZRAM it has a hardcoded default of "lzo-rle" compressor. This
+compressor is not available in OpenWrt as only "lzo" is provided. The current
+behaviour make the PROCD_ZRAM_TMPFS feature failing, as procd-init is relying on
+the kernels default-algo, which is not present. So setting tmpfs falls back to not
+use ZRAM.
+Patch the kernel to keep the current preference to "lzo-rle" but check that it is
+present. If not, fall back to "lzo" or any other of the known compressors.
+
+See also:
+* http://lists.openwrt.org/pipermail/openwrt-devel/2020-September/031430.html
+* 419f149e482641ddc520f80a7ab2038f7e2ebc8a
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+
+diff --git a/target/linux/generic/pending-5.4/801-zram_default-algo.patch b/target/linux/generic/pending-5.4/801-zram_default-algo.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..b4b047d9f413a0cf6195f0eba16b0a365926d011
+--- /dev/null
++++ b/target/linux/generic/pending-5.4/801-zram_default-algo.patch
+@@ -0,0 +1,151 @@
++diff -ur linux-5.4.154.orig/drivers/block/zram/zcomp.c linux-5.4.154.mod/drivers/block/zram/zcomp.c
++--- linux-5.4.154.orig/drivers/block/zram/zcomp.c	2021-10-17 10:42:35.000000000 +0200
+++++ linux-5.4.154.mod/drivers/block/zram/zcomp.c	2021-11-27 05:58:28.846154038 +0100
++@@ -14,23 +14,17 @@
++ 
++ #include "zcomp.h"
++ 
++-static const char * const backends[] = {
++-	"lzo",
++-	"lzo-rle",
++-#if IS_ENABLED(CONFIG_CRYPTO_LZ4)
++-	"lz4",
++-#endif
++-#if IS_ENABLED(CONFIG_CRYPTO_LZ4HC)
++-	"lz4hc",
++-#endif
++-#if IS_ENABLED(CONFIG_CRYPTO_842)
++-	"842",
++-#endif
++-#if IS_ENABLED(CONFIG_CRYPTO_ZSTD)
++-	"zstd",
++-#endif
++-	NULL
++-};
+++static void zcomp_get_backends(void)
+++{
+++	if (!crypto_has_alg("lzo", 0, 0))
+++		pr_info("lzo compressor not found\n");
+++	else
+++		pr_info("lzo compressor found\n");
+++	if (!crypto_has_alg("lzo-rle", 0, 0))
+++		pr_info("lzo-rle compressor not found\n");
+++	else
+++		pr_info("lzo-rle compressor found\n");
+++}
++ 
++ static void zcomp_strm_free(struct zcomp_strm *zstrm)
++ {
++@@ -88,6 +82,8 @@
++ 	ssize_t sz = 0;
++ 	int i = 0;
++ 
+++	zcomp_get_backends();
+++
++ 	for (; backends[i]; i++) {
++ 		if (!strcmp(comp, backends[i])) {
++ 			known_algorithm = true;
++@@ -197,6 +193,8 @@
++ 		goto cleanup;
++ 	return 0;
++ 
+++	zcomp_get_backends();
+++
++ cleanup:
++ 	free_percpu(comp->stream);
++ 	return ret;
++@@ -222,6 +220,7 @@
++ 	struct zcomp *comp;
++ 	int error;
++ 
+++	zcomp_get_backends();
++ 	if (!zcomp_available_algorithm(compress))
++ 		return ERR_PTR(-EINVAL);
++ 
++diff -ur linux-5.4.154.orig/drivers/block/zram/zcomp.h linux-5.4.154.mod/drivers/block/zram/zcomp.h
++--- linux-5.4.154.orig/drivers/block/zram/zcomp.h	2021-10-17 10:42:35.000000000 +0200
+++++ linux-5.4.154.mod/drivers/block/zram/zcomp.h	2021-11-27 05:55:03.882428478 +0100
++@@ -6,6 +6,24 @@
++ #ifndef _ZCOMP_H_
++ #define _ZCOMP_H_
++ 
+++static const char * const backends[] = {
+++        "lzo-rle",
+++        "lzo",
+++#if IS_ENABLED(CONFIG_CRYPTO_LZ4)
+++        "lz4",
+++#endif
+++#if IS_ENABLED(CONFIG_CRYPTO_LZ4HC)
+++        "lz4hc",
+++#endif
+++#if IS_ENABLED(CONFIG_CRYPTO_842)
+++        "842",
+++#endif
+++#if IS_ENABLED(CONFIG_CRYPTO_ZSTD)
+++        "zstd",
+++#endif
+++        NULL
+++};
+++
++ struct zcomp_strm {
++ 	/* compression/decompression buffer */
++ 	void *buffer;
++@@ -37,4 +55,5 @@
++ 		const void *src, unsigned int src_len, void *dst);
++ 
++ bool zcomp_set_max_streams(struct zcomp *comp, int num_strm);
+++//void zcomp_get_backends(void);
++ #endif /* _ZCOMP_H_ */
++diff -ur linux-5.4.154.orig/drivers/block/zram/zram_drv.c linux-5.4.154.mod/drivers/block/zram/zram_drv.c
++--- linux-5.4.154.orig/drivers/block/zram/zram_drv.c	2021-10-17 10:42:35.000000000 +0200
+++++ linux-5.4.154.mod/drivers/block/zram/zram_drv.c	2021-11-27 06:50:47.171198302 +0100
++@@ -41,7 +41,6 @@
++ static DEFINE_MUTEX(zram_index_mutex);
++ 
++ static int zram_major;
++-static const char *default_compressor = "lzo-rle";
++ 
++ /* Module params (documentation at end) */
++ static unsigned int num_devices = 1;
++@@ -1882,6 +1881,7 @@
++ 	struct zram *zram;
++ 	struct request_queue *queue;
++ 	int ret, device_id;
+++	int comp_count = 0;
++ 
++ 	zram = kzalloc(sizeof(struct zram), GFP_KERNEL);
++ 	if (!zram)
++@@ -1915,6 +1915,24 @@
++ 		goto out_free_queue;
++ 	}
++ 
+++	/* check default compressors and select 1st available */
+++	for (; backends[comp_count]; comp_count++) {
+++		if (crypto_has_alg(backends[comp_count], 0, 0)) {
+++			pr_info("Using %s compressor as zram default\n",
+++					backends[comp_count]);
+++			strlcpy(zram->compressor, backends[comp_count],
+++				sizeof(zram->compressor));
+++		} else {
+++			pr_warn("%s compressor not found. Checking next ...\n",
+++					backends[comp_count]);
+++		}
+++	}
+++	if (!zram->compressor) {
+++		pr_err("Error finding a default compressor\n");
+++		ret = -ENXIO;
+++		goto out_free_queue;
+++	}
+++
++ 	zram->disk->major = zram_major;
++ 	zram->disk->first_minor = device_id;
++ 	zram->disk->fops = &zram_devops;
++@@ -1957,8 +1975,6 @@
++ 			(BDI_CAP_STABLE_WRITES | BDI_CAP_SYNCHRONOUS_IO);
++ 	device_add_disk(NULL, zram->disk, zram_disk_attr_groups);
++ 
++-	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
++-
++ 	zram_debugfs_register(zram);
++ 	pr_info("Added device: %s\n", zram->disk->disk_name);
++ 	return device_id;
