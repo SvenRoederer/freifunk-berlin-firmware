@@ -1,0 +1,91 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Mon, 29 Nov 2021 02:10:35 +0100
+Subject: kernel: cleanup "zram_default-algo" patch
+
+diff --git a/target/linux/generic/pending-5.4/801-zram_default-algo.patch b/target/linux/generic/pending-5.4/801-zram_default-algo.patch
+index b4b047d9f413a0cf6195f0eba16b0a365926d011..332bf24fedc003a10e1a574c4858eafd30634488 100644
+--- a/target/linux/generic/pending-5.4/801-zram_default-algo.patch
++++ b/target/linux/generic/pending-5.4/801-zram_default-algo.patch
+@@ -1,7 +1,7 @@
+-diff -ur linux-5.4.154.orig/drivers/block/zram/zcomp.c linux-5.4.154.mod/drivers/block/zram/zcomp.c
++diff -ur linux-5.4.154.orig/drivers/block/zram/zcomp.c linux-5.4.154/drivers/block/zram/zcomp.c
+ --- linux-5.4.154.orig/drivers/block/zram/zcomp.c	2021-10-17 10:42:35.000000000 +0200
+-+++ linux-5.4.154.mod/drivers/block/zram/zcomp.c	2021-11-27 05:58:28.846154038 +0100
+-@@ -14,23 +14,17 @@
+++++ linux-5.4.154/drivers/block/zram/zcomp.c	2021-11-29 02:07:04.118702563 +0100
++@@ -14,24 +14,6 @@
+  
+  #include "zcomp.h"
+  
+@@ -22,49 +22,13 @@ diff -ur linux-5.4.154.orig/drivers/block/zram/zcomp.c linux-5.4.154.mod/drivers
+ -#endif
+ -	NULL
+ -};
+-+static void zcomp_get_backends(void)
+-+{
+-+	if (!crypto_has_alg("lzo", 0, 0))
+-+		pr_info("lzo compressor not found\n");
+-+	else
+-+		pr_info("lzo compressor found\n");
+-+	if (!crypto_has_alg("lzo-rle", 0, 0))
+-+		pr_info("lzo-rle compressor not found\n");
+-+	else
+-+		pr_info("lzo-rle compressor found\n");
+-+}
+- 
++-
+  static void zcomp_strm_free(struct zcomp_strm *zstrm)
+  {
+-@@ -88,6 +82,8 @@
+- 	ssize_t sz = 0;
+- 	int i = 0;
+- 
+-+	zcomp_get_backends();
+-+
+- 	for (; backends[i]; i++) {
+- 		if (!strcmp(comp, backends[i])) {
+- 			known_algorithm = true;
+-@@ -197,6 +193,8 @@
+- 		goto cleanup;
+- 	return 0;
+- 
+-+	zcomp_get_backends();
+-+
+- cleanup:
+- 	free_percpu(comp->stream);
+- 	return ret;
+-@@ -222,6 +220,7 @@
+- 	struct zcomp *comp;
+- 	int error;
+- 
+-+	zcomp_get_backends();
+- 	if (!zcomp_available_algorithm(compress))
+- 		return ERR_PTR(-EINVAL);
+- 
+-diff -ur linux-5.4.154.orig/drivers/block/zram/zcomp.h linux-5.4.154.mod/drivers/block/zram/zcomp.h
++ 	if (!IS_ERR_OR_NULL(zstrm->tfm))
++diff -ur linux-5.4.154.orig/drivers/block/zram/zcomp.h linux-5.4.154/drivers/block/zram/zcomp.h
+ --- linux-5.4.154.orig/drivers/block/zram/zcomp.h	2021-10-17 10:42:35.000000000 +0200
+-+++ linux-5.4.154.mod/drivers/block/zram/zcomp.h	2021-11-27 05:55:03.882428478 +0100
+++++ linux-5.4.154/drivers/block/zram/zcomp.h	2021-11-29 02:05:57.777496700 +0100
+ @@ -6,6 +6,24 @@
+  #ifndef _ZCOMP_H_
+  #define _ZCOMP_H_
+@@ -90,15 +54,9 @@ diff -ur linux-5.4.154.orig/drivers/block/zram/zcomp.h linux-5.4.154.mod/drivers
+  struct zcomp_strm {
+  	/* compression/decompression buffer */
+  	void *buffer;
+-@@ -37,4 +55,5 @@
+- 		const void *src, unsigned int src_len, void *dst);
+- 
+- bool zcomp_set_max_streams(struct zcomp *comp, int num_strm);
+-+//void zcomp_get_backends(void);
+- #endif /* _ZCOMP_H_ */
+-diff -ur linux-5.4.154.orig/drivers/block/zram/zram_drv.c linux-5.4.154.mod/drivers/block/zram/zram_drv.c
++diff -ur linux-5.4.154.orig/drivers/block/zram/zram_drv.c linux-5.4.154/drivers/block/zram/zram_drv.c
+ --- linux-5.4.154.orig/drivers/block/zram/zram_drv.c	2021-10-17 10:42:35.000000000 +0200
+-+++ linux-5.4.154.mod/drivers/block/zram/zram_drv.c	2021-11-27 06:50:47.171198302 +0100
+++++ linux-5.4.154/drivers/block/zram/zram_drv.c	2021-11-29 02:04:57.400399244 +0100
+ @@ -41,7 +41,6 @@
+  static DEFINE_MUTEX(zram_index_mutex);
+  
