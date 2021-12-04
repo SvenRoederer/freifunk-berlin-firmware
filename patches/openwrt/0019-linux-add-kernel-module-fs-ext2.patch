@@ -1,0 +1,34 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Sat, 4 Dec 2021 19:26:57 +0100
+Subject: linux: add kernel-module fs-ext2
+
+as a small simple unix-filesystem, e.g for ZRAM_TMP
+
+diff --git a/package/kernel/linux/modules/fs.mk b/package/kernel/linux/modules/fs.mk
+index d43542b17e5372e232752a34b68f529f75e006f5..d2f92e85ab798833233224e733e0d273779f3ffe 100644
+--- a/package/kernel/linux/modules/fs.mk
++++ b/package/kernel/linux/modules/fs.mk
+@@ -179,6 +179,23 @@ endef
+ $(eval $(call KernelPackage,fs-exportfs))
+ 
+ 
++define KernelPackage/fs-ext2
++  SUBMENU:=$(FS_MENU)
++  TITLE:=EXT2 filesystem support
++  KCONFIG:= \
++	CONFIG_EXT2_FS \
++	CONFIG_EXT2_FS_XATTR=n
++  FILES:= $(LINUX_DIR)/fs/ext2/ext2.ko
++  AUTOLOAD:=$(call AutoLoad,30,ext2)
++endef
++
++define KernelPackage/fs-ext2/description
++ Kernel module for EXT2 filesystem support
++endef
++
++$(eval $(call KernelPackage,fs-ext2))
++
++
+ define KernelPackage/fs-ext4
+   SUBMENU:=$(FS_MENU)
+   TITLE:=EXT4 filesystem support
