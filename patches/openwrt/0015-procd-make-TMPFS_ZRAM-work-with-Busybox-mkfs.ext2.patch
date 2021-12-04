@@ -21,7 +21,7 @@ index 30d5adf4278c7f32c7abb18cba2f7220b324849d..1d70836f3c0553c2a3f37109d03ec889
    DEPENDS:=+ubusd +ubus +libjson-script +ubox +USE_GLIBC:librt +libubox \
 -	  +libubus +libblobmsg-json +libjson-c +jshn
 +	  +libubus +libblobmsg-json +libjson-c +jshn \
-+	  +PROCD_ZRAM_TMPFS:busybox +PROCD_ZRAM_TMPFS:kmod-fs-ext4
++	  +PROCD_ZRAM_TMPFS:busybox +PROCD_ZRAM_TMPFS:kmod-fs-ext2
    TITLE:=OpenWrt system process manager
    USERID:=:dialout=20 :audio=29
  endef
@@ -29,7 +29,7 @@ index 30d5adf4278c7f32c7abb18cba2f7220b324849d..1d70836f3c0553c2a3f37109d03ec889
  
  config PROCD_ZRAM_TMPFS
  	bool
-+	select PACKAGE_kmod-fs-ext4
++	select PACKAGE_kmod-fs-ext2
 +	select BUSYBOX_CONFIG_MKFS_EXT2
  	default n
  	prompt "Mount /tmp using zram."
