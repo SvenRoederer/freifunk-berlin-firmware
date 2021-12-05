@@ -46,7 +46,6 @@ libiwinfo-lua
 uhttpd
 uhttpd-mod-ubus
 px5g-wolfssl
-luci-mod-freifunk
 luci-app-olsr
 freifunk-common-olsr
 luci-app-olsr-services
