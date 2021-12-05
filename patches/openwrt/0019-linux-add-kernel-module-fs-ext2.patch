@@ -4,21 +4,27 @@ Subject: linux: add kernel-module fs-ext2
 
 as a small simple unix-filesystem, e.g for ZRAM_TMP
 
+also introduce a "kmod-lib-mbcache" as this is a shares module for all ext-fs versions
+make this a hidden config-option
+
 diff --git a/package/kernel/linux/modules/fs.mk b/package/kernel/linux/modules/fs.mk
-index d43542b17e5372e232752a34b68f529f75e006f5..d2f92e85ab798833233224e733e0d273779f3ffe 100644
+index d43542b17e5372e232752a34b68f529f75e006f5..5bca474e83de3e267e42e14c619f1bfe80205bc1 100644
 --- a/package/kernel/linux/modules/fs.mk
 +++ b/package/kernel/linux/modules/fs.mk
-@@ -179,6 +179,23 @@ endef
+@@ -179,22 +179,42 @@ endef
  $(eval $(call KernelPackage,fs-exportfs))
  
  
 +define KernelPackage/fs-ext2
 +  SUBMENU:=$(FS_MENU)
 +  TITLE:=EXT2 filesystem support
++  DEPENDS:= +kmod-lib-mbcache
 +  KCONFIG:= \
 +	CONFIG_EXT2_FS \
-+	CONFIG_EXT2_FS_XATTR=n
-+  FILES:= $(LINUX_DIR)/fs/ext2/ext2.ko
++	CONFIG_EXT2_FS_XATTR=n \
++	EXT2_FS_POSIX_ACL=n \
++	EXT2_FS_SECURITY
++  FILES:=$(LINUX_DIR)/fs/ext2/ext2.ko
 +  AUTOLOAD:=$(call AutoLoad,30,ext2)
 +endef
 +
@@ -32,3 +38,46 @@ index d43542b17e5372e232752a34b68f529f75e006f5..d2f92e85ab798833233224e733e0d273
  define KernelPackage/fs-ext4
    SUBMENU:=$(FS_MENU)
    TITLE:=EXT4 filesystem support
+   DEPENDS := \
+     +kmod-lib-crc16 \
+     +kmod-crypto-hash \
+-    +kmod-crypto-crc32c
++    +kmod-crypto-crc32c \
++    +kmod-lib-mbcache
+   KCONFIG:= \
+ 	CONFIG_EXT4_FS \
+ 	CONFIG_EXT4_ENCRYPTION=n \
+ 	CONFIG_JBD2
+   FILES:= \
+ 	$(LINUX_DIR)/fs/ext4/ext4.ko \
+-	$(LINUX_DIR)/fs/jbd2/jbd2.ko \
+-	$(LINUX_DIR)/fs/mbcache.ko
+-  AUTOLOAD:=$(call AutoLoad,30,mbcache jbd2 ext4,1)
++	$(LINUX_DIR)/fs/jbd2/jbd2.ko
++  AUTOLOAD:=$(call AutoLoad,30,jbd2 ext4,1)
+ endef
+ 
+ define KernelPackage/fs-ext4/description
+@@ -304,6 +324,22 @@ endef
+ 
+ $(eval $(call KernelPackage,fs-jfs))
+ 
++define KernelPackage/lib-mbcache
++  SUBMENU:=$(FS_MENU)
++  TITLE:=Meta block cache for Extended Attributes
++  HIDDEN:=1
++  KCONFIG:=CONFIG_FS_MBCACHE
++  FILES:=$(LINUX_DIR)/fs/mbcache.ko
++  AUTOLOAD:=$(call AutoLoad,30,mbcache)
++endef
++
++define KernelPackage/lib-mbcache/description
++ Kernel module to support ext2/ext3/ext4
++endef
++
++$(eval $(call KernelPackage,lib-mbcache))
++
++
+ define KernelPackage/fs-minix
+   SUBMENU:=$(FS_MENU)
+   TITLE:=Minix filesystem support
