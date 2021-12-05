@@ -36,13 +36,22 @@ index 30d5adf4278c7f32c7abb18cba2f7220b324849d..16f3588aaa21778bc64ea1e691649bea
  endmenu
 diff --git a/package/system/procd/patches/001-zram_use-mke2fs.patch b/package/system/procd/patches/001-zram_use-mke2fs.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..fc9c251e4c2416360989c767168eaaca37057aab
+index 0000000000000000000000000000000000000000..a0a8814e10aed6882930f92ac7d899fe5c7e4601
 --- /dev/null
 +++ b/package/system/procd/patches/001-zram_use-mke2fs.patch
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,30 @@
 +diff -ur procd-2021-02-23-37eed131.orig/initd/zram.c procd-2021-02-23-37eed131/initd/zram.c
 +--- procd-2021-02-23-37eed131.orig/initd/zram.c	2021-02-23 01:42:37.000000000 +0100
 ++++ procd-2021-02-23-37eed131/initd/zram.c	2021-11-27 16:39:24.773154318 +0100
++@@ -19,7 +19,7 @@
++ #define KB(x) (x * 1024)
++ 
++ #define ZRAM_MOD_PATH "/lib/modules/%s/zram.ko"
++-#define EXT4_MOD_PATH "/lib/modules/%s/ext4.ko"
+++#define EXT4_MOD_PATH "/lib/modules/%s/ext2.ko"
++ 
++ static long
++ proc_meminfo(void)
 +@@ -83,7 +83,7 @@
 + int
 + mount_zram_on_tmp(void)
@@ -52,3 +61,12 @@ index 0000000000000000000000000000000000000000..fc9c251e4c2416360989c767168eaaca
 + 	FILE *fp;
 + 	long zramsize;
 + 	pid_t pid;
++@@ -118,7 +118,7 @@
++ 	}
++ 
++ 	if (!is_container()) {
++-		ret = mount("/dev/zram0", "/tmp", "ext4", MS_NOSUID | MS_NODEV | MS_NOATIME, "errors=continue,noquota");
+++		ret = mount("/dev/zram0", "/tmp", "ext2", MS_NOSUID | MS_NODEV | MS_NOATIME, NULL);
++ 		if (ret < 0) {
++ 			ERROR("Can't mount /dev/zram0 on /tmp: %m\n");
++ 			return errno;
