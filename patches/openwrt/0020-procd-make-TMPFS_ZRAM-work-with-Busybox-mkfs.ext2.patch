@@ -3,7 +3,7 @@ Date: Sat, 27 Nov 2021 18:09:01 +0100
 Subject: procd: make TMPFS_ZRAM work with Busybox mkfs.ext2
 
 diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
-index 30d5adf4278c7f32c7abb18cba2f7220b324849d..1d70836f3c0553c2a3f37109d03ec8897b3c6445 100644
+index 30d5adf4278c7f32c7abb18cba2f7220b324849d..16f3588aaa21778bc64ea1e691649bead822f671 100644
 --- a/package/system/procd/Makefile
 +++ b/package/system/procd/Makefile
 @@ -8,7 +8,7 @@
