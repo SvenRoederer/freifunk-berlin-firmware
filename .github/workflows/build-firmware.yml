@@ -117,7 +117,7 @@ jobs:
         echo "next_buildstep=${nextstep}" >>$GITHUB_ENV
     - name: Archive build logs
       if: ${{ !cancelled() }}
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2.3.1
       with:
         name: ${{matrix.target}}_logs
         path: logs
@@ -129,14 +129,14 @@ jobs:
     - name: Archive imagebuilder and sdk
       if: ${{ !cancelled() }}
       continue-on-error: true
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2.3.1
       with:
         name: ${{ matrix.target }}_build-tools
         path: tmp_build-tools
     - name: Archive binaries
       if: ${{ !cancelled() }}
       continue-on-error: true
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2.3.1
       with:
         name: ${{ matrix.target }}_bins
         path: openwrt/bin/
