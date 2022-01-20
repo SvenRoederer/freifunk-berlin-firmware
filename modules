@@ -22,6 +22,6 @@ PACKAGES_PACKAGES_BERLIN_REPO=https://github.com/freifunk-berlin/firmware-packag
 PACKAGES_PACKAGES_BERLIN_COMMIT=5184f2dce5ab85b22a69dc36e09f1d8c7e36ca0b
 
 PACKAGES_PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
-PACKAGES_PACKAGES_GLUON_COMMIT=a85fa336bad29c857ae76228414e500b8876752c
+PACKAGES_PACKAGES_GLUON_COMMIT=308166e3c6b2d571606dd1dbfadd2bb8e31d8f90
 
 GLUON_FEEDS='packages luci routing freifunk packages_berlin packages_gluon'
