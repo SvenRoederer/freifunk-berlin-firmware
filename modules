@@ -5,7 +5,7 @@ PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
 PACKAGES_PACKAGES_COMMIT=80430078794ee5a91cbcc6f62886948cdf9e82ba
 
 PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
-PACKAGES_LUCI_COMMIT=e5a97eb551ce0fdc50d640eb7f8a1b117da1ae1a
+PACKAGES_LUCI_COMMIT=b683ff3ea2bbd49a38b12bab4225440ba3de5ff5
 
 PACKAGES_FREIFUNK_REPO=https://github.com/freifunk/openwrt-packages.git
 PACKAGES_FREIFUNK_COMMIT=4274b35e4b964db15902cc7c8eda2a4dc4e071d0
