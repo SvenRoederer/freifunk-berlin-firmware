@@ -3,10 +3,10 @@ Date: Fri, 6 Sep 2019 08:29:50 +0000
 Subject: imagebuilder-custom-postinst-script
 
 diff --git a/target/imagebuilder/files/Makefile b/target/imagebuilder/files/Makefile
-index 2bdb2b5bde155b9565bd8e6d3cf862b737e079f1..8cd367407d5deb175648fd7e3315d114bf85f3f5 100644
+index 78ec7e2e94a94ebe10d374770b16330ee4014ad8..67ec0e9dbcd5cf3245afe0d37e4177060a4c02b9 100644
 --- a/target/imagebuilder/files/Makefile
 +++ b/target/imagebuilder/files/Makefile
-@@ -117,6 +117,9 @@ _call_image: staging_dir/host/.prereq-build
+@@ -143,6 +143,9 @@ _call_image: staging_dir/host/.prereq-build
  	$(MAKE) package_reload
  	$(MAKE) package_install
  	$(MAKE) -s prepare_rootfs
