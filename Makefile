@@ -252,7 +252,7 @@ setup-sdk: .stamp-patched
 	tar -xJf $(SDK_FILE) --strip-components=1 -C $(SDK_DIR)
 	# generating feeds.conf
 	# replace src-git openwrt
-	sed -i -e "/^src-git base/d" $(SDK_DIR)/feeds.conf.default
+	sed -i -e "/^src-git-full base/d" $(SDK_DIR)/feeds.conf.default
 	echo "src-link base ../../openwrt/package" >> $(SDK_DIR)/feeds.conf.default
 #	# replace ../../ by ../ (for relative feeds-path)
 #	#sed -i -e "s/..\/..\//..\//" $(SDK_DIR)/feeds.conf.default
