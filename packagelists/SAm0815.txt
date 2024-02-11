@@ -10,7 +10,7 @@ fstools
 micrond
 
 -wpad-basic
--wpad-basic-wolfssl
+-wpad-basic-mbedtls
 wpad-basic-openssl
 
 iw
@@ -65,5 +65,5 @@ apcupsd
 #kmod-usb-serial
 kmod-usb-serial-pl2303
 
+-libustream-mbedtls
 libustream-openssl
--libustream-wolfssl
