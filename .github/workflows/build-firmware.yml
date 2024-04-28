@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install dependencies
-      run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python libssl-dev
+      run: sudo apt-get --quiet --assume-yes --no-install-recommends --no-show-upgraded install git build-essential libncurses5-dev zlib1g-dev gawk time unzip libxml-perl flex wget gawk gettext quilt python-is-python3 libssl-dev
     - name: setup build-environment
       run: |
         mkdir logs
