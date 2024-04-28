@@ -1,25 +1,27 @@
-OPENWRT_REPO=https://github.com/openwrt/openwrt.git
-OPENWRT_COMMIT=fe6b9b0588a47e0a6aabc6a51aa676e7e7204174
+OPENWRT_REPO=https://git.openwrt.org/openwrt/openwrt.git
+OPENWRT_COMMIT=2b61e258b4f95027dfc4babfa13a1d68fae27ff0
+OPENWRT_BRANCH=openwrt-23.05
 
 PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
-PACKAGES_PACKAGES_COMMIT=238046303d3408c622a2c2c2fc25fbc26cdd20e4
+PACKAGES_PACKAGES_COMMIT=063b2393cbc3e5aab9d2b40b2911cab1c3967c59
+PACKAGES_PACKAGES_BRANCH=openwrt-23.05
 
 PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
-PACKAGES_LUCI_COMMIT=d1c4adff93aa5ec0892d0ff7b98d56f21c6e531d
-
-PACKAGES_FREIFUNK_REPO=https://github.com/freifunk/openwrt-packages.git
-PACKAGES_FREIFUNK_COMMIT=62948cc1b8d934a709fa5d1104fa230334f979ec
+PACKAGES_LUCI_COMMIT=b07cf9dcfc37e021e5619a41c847e63afbd5d34a
+PACKAGES_LUCI_BRANCH=openwrt-23.05
 
 PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
-PACKAGES_ROUTING_COMMIT=b81e9c8bab72ada2ecb97a9dd36f691aceedda38
+PACKAGES_ROUTING_COMMIT=648753932d5a7deff7f2bdb33c000018a709ad84
+PACKAGES_ROUTING_BRANCH=openwrt-23.05
+
+PACKAGES_FREIFUNK_REPO=https://github.com/freifunk/openwrt-packages.git
+PACKAGES_FREIFUNK_COMMIT=73454e6fe1bdc902c69ca0079d979fdb94d6fb1f
+PACKAGES_FREIFUNK_BRANCH=openwrt-19.07
 
 PACKAGES_PACKAGES_BERLIN_REPO=https://github.com/freifunk-berlin/firmware-packages.git
-PACKAGES_PACKAGES_BERLIN_COMMIT=a1e6df9e2945187411eb1fc5104097fb6231179c
+PACKAGES_PACKAGES_BERLIN_COMMIT=c3c0f4b86b2f0812f8c3737ada35ee3cb02fe1fd
 
 PACKAGES_PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
-PACKAGES_PACKAGES_GLUON_COMMIT=95c805c863cd0818f0e5196d3b7bde6860fd2861
+PACKAGES_PACKAGES_GLUON_COMMIT=033401c18ecbf5073f5330b4462af6e450e358ff
 
-PACKAGES_PACKAGES_PDM_REPO=https://github.com/Freifunk-Potsdam/firmware-packages.git
-PACKAGES_PACKAGES_PDM_COMMIT=d379099ffd9b6c81cce1e7f63cda05aee1e4b96d
-
-GLUON_FEEDS='packages luci freifunk routing packages_berlin packages_gluon packages_pdm'
+GLUON_FEEDS='packages luci freifunk routing packages_berlin packages_gluon'
