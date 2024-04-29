@@ -1,0 +1,19 @@
+From: Sven Roederer <devel-sven@geroedel.de>
+Date: Tue, 30 Apr 2024 00:53:17 +0200
+Subject: tunneldigger: change download-protocol from git:// to https://
+
+git:// seems not to be available anymore
+
+diff --git a/addons/freifunk-berlin-tunneldigger/Makefile b/addons/freifunk-berlin-tunneldigger/Makefile
+index 610f295a725516a4d7cebc6d9c978fbaa78cfd8d..30461f0e48d170ed79644e6260a4a4cdf6bb4336 100644
+--- a/addons/freifunk-berlin-tunneldigger/Makefile
++++ b/addons/freifunk-berlin-tunneldigger/Makefile
+@@ -4,7 +4,7 @@ PKG_NAME:=freifunk-berlin-tunneldigger
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_URL:=git://github.com/wlanslovenija/tunneldigger.git
++PKG_SOURCE_URL:=https://github.com/wlanslovenija/tunneldigger.git
+ PKG_SOURCE_DATE:=2017-12-13
+ PKG_SOURCE_VERSION:=d7db350011076d6a83855d412885a29a7d142b6e
+ 
