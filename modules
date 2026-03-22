@@ -2,7 +2,7 @@ OPENWRT_REPO=https://github.com/openwrt/openwrt.git
 OPENWRT_COMMIT=20ae49dde7786fcfa795a2315b5abd12cdc236d7
 
 PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
-PACKAGES_PACKAGES_COMMIT=57e2957e8b892c93e6f3d9a3d1aa0bd80eada7ea
+PACKAGES_PACKAGES_COMMIT=2947457420de6b1afb265cbefe2a22598d6f5b03
 
 PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
 PACKAGES_LUCI_COMMIT=9d9c68624db63c9a23e5f94e826a5f306a6e90eb
